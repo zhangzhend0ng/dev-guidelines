@@ -1,0 +1,12 @@
+# Global maintainers
+*       @zhangzhend0ng
+
+# C++ domain
+cpp/    @zhangzhend0ng
+
+# Language-agnostic guidelines
+common/ @zhangzhend0ng
+
+# Tooling and CI
+scripts/        @zhangzhend0ng
+.github/        @zhangzhend0ng
