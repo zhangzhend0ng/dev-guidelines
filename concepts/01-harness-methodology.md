@@ -57,3 +57,7 @@ draft → reviewed → stable → deprecated → archived
 2. **Mechanical over memory.** Checklists processed systematically, not recalled.
 3. **Fresh over frozen.** Review cycles prevent rot.
 4. **Specific over vague.** "Use RAII" is vague. "Bind every acquired resource to an owning object in the constructor; release in the destructor; destructor must not throw; mark move operations noexcept" is specific.
+
+## See Also
+
+- [Harness Evolution and Lifecycle Governance](../common/meta/harness-evolution.md) — when to promote, deprecate, split, or challenge a harness

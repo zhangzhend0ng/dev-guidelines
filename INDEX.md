@@ -17,32 +17,44 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
-| cpp-const-correctness | [Const Correctness Checklist](cpp/correctness/const-correctness.md) | cpp | N | draft | 2026.05 |
+| cpp-thread-safety | [Concurrency and Thread Safety Checklist](cpp\concurrency\thread-safety.md) | cpp | N | draft | 2026.06 |
+| cpp-const-correctness | [Const Correctness Checklist](cpp\correctness\const-correctness.md) | cpp | N | draft | 2026.05 |
+| cpp-exception-safety | [Exception Safety Guarantees Checklist](cpp\correctness\exception-safety.md) | cpp | N | draft | 2026.06 |
+| cpp-lifetime | [Object Lifetime and Dangling References Checklist](cpp\lifetime\dangling-references.md) | cpp | N | draft | 2026.06 |
+| cpp-undefined-behavior | [Undefined Behavior Prevention Checklist](cpp\correctness\undefined-behavior.md) | cpp | N | draft | 2026.06 |
 
 ### design
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
-| common-error-handling | [Error Handling Strategy Checklist](common/error-handling/error-handling-strategy.md) | common | C | draft | 2026.05 |
+| common-error-handling | [Error Handling Strategy Checklist](common\error-handling\error-handling-strategy.md) | common | C | draft | 2026.05 |
 
 ### functions
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
-| cpp-param-validation | [Parameter Validation Checklist](cpp/functions/parameter-validation.md) | cpp | C | draft | 2026.05 |
+| cpp-param-validation | [Parameter Validation Checklist](cpp\functions\parameter-validation.md) | cpp | C | draft | 2026.05 |
+
+### meta
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| common-harness-evolution | [Harness Evolution and Lifecycle Governance](common\meta\harness-evolution.md) | common | A | draft | 2026.05 |
 
 ### resource-management
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
-| cpp-raii | [RAII and Resource Management Checklist](cpp/memory/raii.md) | cpp | N | draft | 2026.05 |
-| cpp-ownership | [Smart Pointer and Ownership Semantics Checklist](cpp/memory/ownership.md) | cpp | N | draft | 2026.05 |
+| cpp-move-semantics | [Move Semantics and Rule of Five Checklist](cpp\memory\move-semantics.md) | cpp | N | draft | 2026.06 |
+| cpp-raii | [RAII and Resource Management Checklist](cpp\memory\raii.md) | cpp | N | draft | 2026.05 |
+| cpp-ownership | [Smart Pointer and Ownership Semantics Checklist](cpp\memory\ownership.md) | cpp | N | draft | 2026.05 |
 
 ### security
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
-| common-input-validation | [Input Validation Checklist](common/security/input-validation.md) | common | N | draft | 2026.05 |
+| common-input-validation | [Input Validation Checklist](common\security\input-validation.md) | common | N | draft | 2026.05 |
+
 <!-- INDEX_END -->
 
 ## Category Descriptions
