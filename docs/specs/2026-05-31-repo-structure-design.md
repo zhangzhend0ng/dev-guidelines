@@ -1,6 +1,6 @@
 # Dev-Guidelines Repository Structure Design v1.0
 
-**Status:** REVISED (Round 1 Santa Review)
+**Status:** REVISED (Round 2 Santa Review)
 **Date:** 2026-05-31
 
 ---
@@ -74,7 +74,17 @@ dev-guidelines/
 - **Scripts in Python** — Cross-platform by default (Windows/Linux/macOS). Requires Python 3.10+.
 - **Community files added** — `CONTRIBUTING.md`, `CHANGELOG.md`, `CODEOWNERS`, `ISSUE_TEMPLATE/`, `PULL_REQUEST_TEMPLATE.md`.
 
-### Naming Conventions
+### Date Format Convention
+
+To avoid ambiguity across tooling, all date fields use **ISO 8601 calendar date format** (`YYYY-MM-DD`). Month-precision fields omit the day component (`YYYY-MM`).
+
+| Field | Format | Example | Rationale |
+|-------|--------|---------|-----------|
+| `version` | `YYYY.MM` | `2026.05` | Uses dots as a conventional version delimiter (not a date field) |
+| `last_validated` | `YYYY-MM-DD` | `2025-12-01` | ISO 8601; day precision for audit trail |
+| Reference table "Last Verified" | `YYYY-MM` | `2026-04` | Month precision sufficient for review tracking |
+
+**Note on `version` field:** Although `2026.05` resembles a date, it is treated as a version identifier following the `<year>.<month>` convention common in rolling-release documentation projects. This is distinct from SemVer and intentionally signals that harnesses follow a calendar-based release model rather than a feature-based versioning scheme.
 
 | Artifact | Convention | Example |
 |----------|-----------|---------|
@@ -167,11 +177,11 @@ Consensus-tier sources require 12-month review. To prevent unsustainable backlog
 
 | Priority Band | Criteria | Review Cycle |
 |---------------|----------|-------------|
-| C-Critical | Referenced by ≥3 harnesses OR in a security-related harness | 6 months |
-| C-Routine | Referenced by 1-2 harnesses, non-security | 12 months |
-| C-Low | Informational only, not load-bearing for any checklist item | 24 months |
+| Critical-C | Referenced by ≥3 harnesses OR in a security-related harness | 6 months |
+| Routine-C | Referenced by 1-2 harnesses, non-security | 12 months |
+| Low-C | Informational only, not load-bearing for any checklist item | 24 months |
 
-A `scripts/validate.py --stale` command identifies all citations past their review window and reports them grouped by priority.
+**Accountability:** The CODEOWNER of the directory containing the harness is responsible for running `validate.py --stale` and performing reviews within their review windows. If a CODEOWNER is unresponsive for >2 consecutive cycles, the repo maintainer reassigns the directory. The `scripts/validate.py --stale` command identifies all citations past their review window and reports them grouped by priority and by responsible CODEOWNER.
 
 ---
 
@@ -190,6 +200,7 @@ tier: "C"                         # Highest tier among all cited sources (N/C/A)
 scope: "Select validation mechanism for function parameters in public APIs"
 version: "2026.05"               # Date-based: YYYY.MM of last content change
 status: "draft"                  # draft → reviewed → stable → deprecated
+stable_since: ""                 # Set when status becomes "stable" (YYYY-MM-DD)
 last_validated: "2025-12-01"
 review_cycle: "12m"
 tags:
@@ -227,14 +238,26 @@ draft ──(peer review)──> reviewed ──(used in ≥1 real project)─�
   └──(abandoned)──> [delete]  └──(superseded)──> deprecated ──(1yr)──> [archive]
 ```
 
-| Transition | Gate |
-|------------|------|
-| draft → reviewed | At least one other person reviews and approves |
-| reviewed → stable | Used in at least one real code review or implementation without issues for ≥1 month |
-| any → deprecated | A superseding harness is published; old harness links to new via `supersedes` |
-| deprecated → archive | After 12 months, deprecated harness moved to `archive/` directory |
+| Transition | Gate | Verification |
+|------------|------|-------------|
+| draft → reviewed | At least one approving PR review from a CODEOWNER of the directory | GitHub PR review approval |
+| reviewed → stable | Used in at least one real code review without issues for ≥1 month, confirmed by a CODEOWNER | `stable_since` date recorded in frontmatter; author submits PR changing status, CODEOWNER approves |
+| any → deprecated | A superseding harness is published; old harness `supersedes` field points to new, and `related` links are updated per Section 4.4 | PR review + validate.py passes |
+| deprecated → archive | After 12 months in deprecated state. Directory `archive/<language>/<original-path>/` | Automated CI check flags harnesses past archive date |
 
-### 3.4 Internal Sections
+### 3.4 Deprecation Propagation
+
+When a harness is deprecated:
+
+1. The `supersedes` field in the **new** harness points to the deprecated one
+2. The `status` of the deprecated harness is set to `deprecated`
+3. All harnesses that `related`-link to the deprecated harness MUST be updated within the same PR to either:
+   - Point to the superseding harness (preferred), or
+   - Document in the `related` entry why the deprecated reference remains valid (e.g., `"cpp/old-topic (deprecated; retained for historical context)"`)
+4. `validate.py` emits a **warning** for `related` links to `deprecated` harnesses and an **error** for links to `archived` harnesses
+5. The deprecated harness body text includes a prominent note at the top: `> **DEPRECATED:** Superseded by [New Harness](../path/to/new.md). Will be archived after YYYY-MM-DD.`
+
+### 3.5 Internal Sections
 
 1. **Title + Summary** (REQUIRED) — Tier icon, based-on sources, applicable/non-applicable scope
 2. **Prerequisites / Concepts** (OPTIONAL) — Background knowledge needed for the checklist
@@ -271,7 +294,16 @@ Cross-references MUST be bidirectional: if A links to B, B's `related` field mus
 
 ### 3.7 Diátaxis Consideration
 
-Each harness blends "how-to guide" (checklist) with "reference" (sources) and "explanation" (anti-patterns). This is a deliberate trade-off: the blended format allows a reviewer to complete a full review pass without switching between 3-4 files. The file is structured so sections can be read independently — a reviewer who only needs the checklist can skip directly to Section 3.
+Each harness blends "how-to guide" (checklist) with "reference" (sources) and "explanation" (anti-patterns). This is a deliberate trade-off with known risks.
+
+**Diátaxis warning acknowledged:** The Diátaxis framework recommends separating documentation modes because readers approach each with different mental states — mixing modes can disorient readers.
+
+**Mitigations:**
+1. Each section is clearly labeled with its mode (e.g., `## Checklist` = how-to, `## Anti-Patterns` = explanation, `## Reference Sources` = reference)
+2. Sections are structured to be independently readable — a reviewer who only needs the checklist can skip directly to it
+3. The frontmatter `scope` field signals the primary task-oriented intent
+
+**Revisit criteria:** If an annual contributor survey or GitHub Discussion indicates >30% of readers find the blended format confusing, the harness model will be split into separate files: a how-to checklist and a reference companion document.
 
 ---
 
@@ -355,11 +387,23 @@ Performs:
   2. Tier consistency check (no deprecated sources without replacement)
   3. Category consistency (file path matches frontmatter category)
   4. Cross-reference bidirectionality (related links go both ways)
-  5. --stale: Report all citations past their review window
-  6. --dead-links: Check all external URLs return 200
-  7. --json: Machine-readable output for CI integration
+  5. Harness ID uniqueness (no two active harnesses share the same id;
+     no new harness reuses an id from the archive/ directory)
+  6. --stale: Report all citations past their review window
+  7. --dead-links: Check all external URLs return 200
+  8. --json: Machine-readable output for CI integration
 
-Dependencies: Python 3.10+, PyYAML, requests
+Exit codes:
+  0 = all clear
+  1 = frontmatter errors (hard fail in CI)
+  2 = cross-reference errors (hard fail in CI)
+  3 = stale citations (warn in CI; only when --stale)
+  4 = dead links (warn in CI; only when --dead-links)
+
+The script collects ALL errors before exiting (does not stop on first error).
+Dependencies: Python 3.10+, PyYAML, requests (pinned in requirements.txt).
+The Python floor is reviewed annually and bumped when the oldest supported
+Python in Ubuntu LTS / Debian stable / macOS homebrew advances.
 ```
 
 ### 6.2 `scripts/generate_index.py`
@@ -375,29 +419,42 @@ in INDEX.md. Run as a pre-commit hook and in CI.
 ### 6.3 CI Pipeline
 
 `.github/workflows/validate.yml` runs on every PR:
-1. `python scripts/validate.py --json` — hard-fail on frontmatter errors
-2. `python scripts/validate.py --stale` — warn-only on stale citations
+1. `python scripts/validate.py --json` — hard-fail on frontmatter errors (exit code 1-2)
+2. `python scripts/validate.py --stale` — warn-only on stale citations (exit code 3)
 3. `python scripts/generate_index.py --check` — fail if INDEX.md is out of sync
 4. Dead-link check runs weekly, not per-PR
+
+### 6.4 `requirements.txt`
+
+```
+PyYAML==6.0.2
+requests==2.32.3
+```
+
+### 6.5 CHANGELOG Format
+
+The repo-level `CHANGELOG.md` follows [Keep a Changelog](https://keepachangelog.com) format and records **structural changes**: new harnesses added, harnesses deprecated/archived, tooling updates, and template changes. Per-harness changelogs (in frontmatter `changelog` field + rendered in the document footer) record **content changes** to that specific harness. The repo CHANGELOG does not duplicate per-harness entries but links to them.
 
 ---
 
 ## 7. Migration Plan
 
 ### Phase 0: Structure Bootstrap (this branch)
-1. Create directory structure as specified in Section 1
-2. Write `templates/harness.template.md`
-3. Write `scripts/validate.py` and `scripts/generate_index.py`
-4. Write `CONTRIBUTING.md`, `CHANGELOG.md`, `ROADMAP.md`, `CODEOWNERS`
-5. Set up `.github/workflows/validate.yml`
-6. Bootstrap `INDEX.md` with auto-generation zone
+
+**Dependency order:**
+1. Create directory structure → prerequisite for all subsequent steps
+2. Write `templates/harness.template.md` → locks frontmatter schema; prerequisite for step 3
+3. Write `scripts/validate.py` and `scripts/generate_index.py` → depends on template format being stable
+4. Write `CONTRIBUTING.md`, `CHANGELOG.md`, `ROADMAP.md`, `CODEOWNERS` → can run in parallel with step 5
+5. Set up `.github/workflows/validate.yml` → depends on step 3 (scripts must exist)
+6. Bootstrap `INDEX.md` with auto-generation zone → last step, after scripts and directory structure are in place
 
 ### Phase 0.5: Existing Content Migration
 1. Copy `function_design_harness.md` → `cpp/functions/parameter-validation.md`
 2. Add complete frontmatter to the copy
 3. Add `<!-- MIGRATED: superseded by cpp/functions/parameter-validation.md -->` to old file
 4. Update `README.md` to point to new structure
-5. Commit. Old file stays as redirect for one release cycle, then removed.
+5. Commit. Old file stays as redirect for 3 months, then removed. A CI check warns when the removal date is approaching.
 
 ### Phase 1: First 5 New Harnesses
 1. `cpp/memory/raii.md`
@@ -411,7 +468,107 @@ Per ROADMAP.md priorities.
 
 ---
 
-## 8. Summary of Santa Round 1 Fixes
+## 8. Supporting Artifacts
+
+### 8.1 ROADMAP.md Format
+
+A priority-ordered table of planned harnesses, updated every 6 months:
+
+```markdown
+| Priority | Topic | Language | Category | Est. Effort | Target Phase |
+|----------|-------|----------|----------|-------------|-------------|
+| 1 | RAII | cpp | resource-management | M | Phase 1 |
+| 2 | Ownership | cpp | resource-management | M | Phase 1 |
+| ... | ... | ... | ... | ... | ... |
+
+### Planned Languages
+| Language | Status | Target Date |
+|----------|--------|-------------|
+| python | planned | TBD |
+| go | planned | TBD |
+| rust | planned | TBD |
+```
+
+Maintained by repo maintainers. Harnesses graduate from ROADMAP.md to the directory tree when work begins.
+
+### 8.2 CODEOWNERS
+
+Concrete initial assignments, stored in `CODEOWNERS` at repo root:
+
+```
+# Global maintainers
+*       @repo-maintainers
+
+# C++ domain
+cpp/    @cpp-domain-owners
+
+# Language-agnostic guidelines
+common/ @repo-maintainers
+
+# Tooling and CI
+scripts/        @repo-maintainers
+.github/        @repo-maintainers
+```
+
+CODEOWNERS are responsible for: reviewing harness PRs in their domain, performing review-cycle refreshes, and responding to tier challenges. If a CODEOWNER is unresponsive for >2 consecutive review cycles, the repo maintainer reassigns the directory.
+
+### 8.3 Issue Templates
+
+**`.github/ISSUE_TEMPLATE/new-harness.md`** — Minimum sections:
+- Proposed harness title
+- Language (`cpp` / `common` / other)
+- Category (from INDEX.md categories)
+- Scope (one sentence, following the `<action> for <what> in <context>` template)
+- Proposed tier (N/C/A) and justification
+- Preliminary checklist items (3-5 bullet points)
+- Relevant authoritative sources (with tentative tier classification)
+
+**`.github/ISSUE_TEMPLATE/authority-challenge.md`** — Minimum sections:
+- Disputed source (exact citation from an existing harness)
+- Current tier classification
+- Proposed tier classification
+- Evidence (at least one counter-source of equal or higher tier, or evidence that the source meets deprecation criteria per Section 2.5)
+- Affected harnesses and checklist items
+- Suggested replacement source (if proposing demotion to deprecated)
+
+**Process:** Any contributor can file. Adjudicated by the CODEOWNER of the affected directory, with a decision within 14 days. If the challenger disagrees with the decision, they escalate by filing a second challenge with additional evidence, resolved by majority vote of all CODEOWNERS.
+
+### 8.4 New Source Admission
+
+When adding a new authoritative source to a harness's `based_on` list:
+
+1. Contributor submits a PR that includes a tier-justification table matching Section 2.2 criteria
+2. At least one CODEOWNER of the directory approves
+3. If the source classification is disputed, the `authority-challenge` issue template is used for resolution
+
+### 8.5 New Language Addition Checklist
+
+When a new language directory is created:
+1. Create `<lang>/` directory with subdirectories per category
+2. Add CODEOWNERS entry for `<lang>/`
+3. Add language to CI matrix in `validate.yml`
+4. Add entry to ROADMAP.md marking it as active
+5. Update `scripts/generate_index.py` if language-specific index grouping is needed
+6. If the language has unique frontmatter requirements, revise `templates/harness.template.md`
+
+### 8.6 Within-Common/ Placement
+
+Extends Section 4.1's decision tree for common/ harness placement:
+
+```
+Does the harness primarily address one category?
+  ├─ YES → Place in that category's subdirectory
+  └─ NO  → Does it span exactly 2 categories?
+              ├─ YES → Place in the more specific subdirectory;
+              │         add a cross-reference from the other subdirectory
+              └─ NO (spans 3+) → Place in common/cross-cutting/
+```
+
+---
+
+## 9. Change History
+
+### Round 1 Fixes (Santa Review R1)
 
 | Issue | Fix |
 |-------|-----|
@@ -421,18 +578,41 @@ Per ROADMAP.md priorities.
 | Empty future directories | Replaced by ROADMAP.md |
 | No common/language cross-cutting rules | Section 4 with decision tree and consistency rules |
 | Naming conventions incomplete/inconsistent | Consolidated table in Section 1 |
-| Citation format inconsistent | Unified: inline `(N)`/`(C)`/`(A)` + `[Rx]` key; full timeliness in reference table |
-| Checkbox `[ ]` vs authority `[A]` clash | Authority uses bold parentheses `(N)` instead of brackets |
+| Citation format inconsistent | Unified: inline `(N)`/`(C)`/`(A)` + `[Rx]` key |
+| Checkbox `[ ]` vs authority `[A]` clash | Authority uses bold parentheses `(N)` |
 | No anti-pattern entry structure | Appearance → Trap → Consequence → Fix template |
 | No scope field constraint | Template: `<action> for <what> in <context>` |
 | No migration plan | Section 7 with Phase 0/0.5/1/2 |
-| No CONTRIBUTING.md/CHANGELOG.md/CODEOWNERS | Added to directory structure and design |
+| No community files | CONTRIBUTING.md, CHANGELOG.md, CODEOWNERS, ROADMAP.md added |
 | SemVer for docs inappropriate | Changed to date-based `YYYY.MM` |
 | No harness lifecycle definition | Section 3.3 with transition gates |
 | No authority assignment criteria | Section 2.2 with 4-dimension criteria table |
 | Timeliness tags cluttering inline text | Moved to reference table; inline carries only tier letter |
-| Review burden unsustainable | Section 2.6 with C-Critical/Routine/Low priority bands |
+| Review burden unsustainable | Section 2.6 with Critical-C/Routine-C/Low-C priority bands |
 | Conflict resolution subjective | Specific measurable criteria with escalation path |
 | Scripts on Windows | Switched to Python 3.10+, cross-platform |
-| Diátaxis mode-blending concern | Section 3.7 documents deliberate trade-off |
+| Diátaxis mode-blending concern | Section 3.7/3.8 documents deliberate trade-off |
 | SEI CERT language-first divergence | Section 4 documents rationale for common/language split |
+
+### Round 2 Fixes (Santa Review R2)
+
+| Issue | Fix |
+|-------|-----|
+| Three date formats incompatible | Date Format Convention added (Section 1); version uses dots, all others ISO 8601 |
+| Deprecation propagation undefined | Section 3.4: related-link update rules; validate.py warning/error semantics |
+| "Release cycle" undefined | Replaced with "3 months" in Phase 0.5 |
+| ROADMAP.md content unspecified | Section 8.1: format, fields, maintenance cadence |
+| C-Critical naming overload | Renamed to Critical-C / Routine-C / Low-C |
+| Review accountability missing | CODEOWNER = responsible for review cycles (Section 2.6) |
+| Lifecycle gates lack verification | Section 3.3: added Verification column (PR approval, stable_since field, CI check) |
+| CODEOWNERS hollow | Section 8.2: concrete initial assignments |
+| Issue templates unspecified | Section 8.3: minimum sections for new-harness.md and authority-challenge.md |
+| Tier challenge process missing | Section 8.3: filing process, adjudication, escalation path |
+| New source admission process missing | Section 8.4: PR + tier-justification table + CODEOWNER approval |
+| Script exit codes undefined | Section 6.1: 0=clear, 1=frontmatter, 2=xref, 3=stale, 4=dead; collect-all mode; requirements.txt |
+| CHANGELOG format unspecified | Section 6.5: Keep a Changelog format; repo-level vs per-harness split |
+| Multi-language expansion checklist missing | Section 8.5: 6-step checklist |
+| Common/ placement conflicts | Section 8.6: within-common/ decision tree for multi-category harnesses |
+| Harness ID permanence unenforced | Section 6.1: ID uniqueness check in validate.py |
+| Phase 0 dependency ordering | Section 7: explicit dependency chain for bootstrap steps |
+| Diátasis justification too shallow | Section 3.7: expanded with risk acknowledgment, 3 mitigations, and revisit criteria |
