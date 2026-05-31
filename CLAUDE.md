@@ -4,7 +4,16 @@ This repository is a structured knowledge base of code review checklists ("harne
 
 ## When to Use Harnesses
 
-You are expected to proactively reference relevant harnesses in these situations:
+**Harness-driven review is MANDATORY for all code reviews.** The protocol is defined in [common/code-review/harness-driven-review.md](common/code-review/harness-driven-review.md). Key rules:
+
+- Load the protocol harness FIRST, BEFORE reading any code
+- Identify applicable harnesses from INDEX.md BEFORE examining the diff
+- Apply every checklist item; tag findings with tier, line, and fix
+- Gate the verdict: (N) failure = BLOCKING, (C) failure = needs justification
+
+Skipping harness application is a process violation. Code reviews without harness findings should be re-done.
+
+Proactively reference relevant harnesses in these situations as well:
 
 | Trigger | Action |
 |---------|--------|

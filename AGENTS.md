@@ -31,9 +31,10 @@ Every harness file (`common/**/*.md`, `cpp/**/*.md`) has:
 
 ## Key Rules
 
-1. **Always commit each logical change separately.** Phase-by-phase, harness-by-harness.
-2. **Run `python scripts/validate.py` before committing** any harness change.
-3. **Run `python scripts/generate_index.py` if you add/remove/rename a harness.**
-4. **Cross-references must be bidirectional.** If A links to B, B's `related` field lists A.
-5. **Source references include timeliness tags.** Check Reference Sources table format.
-6. **Directory structure:** `common/` for language-agnostic, `cpp/` for C++ specific.
+1. **Code review MUST follow the harness-driven review protocol.** Load [common/code-review/harness-driven-review.md](common/code-review/harness-driven-review.md), identify all applicable harnesses BEFORE reading the code, apply each checklist item, and gate the verdict on tiered findings. Do not issue a review without passing this protocol.
+2. **Always commit each logical change separately.** Phase-by-phase, harness-by-harness.
+3. **Run `python scripts/validate.py` before committing** any harness change.
+4. **Run `python scripts/generate_index.py` if you add/remove/rename a harness.**
+5. **Cross-references must be bidirectional.** If A links to B, B's `related` field lists A.
+6. **Source references include timeliness tags.** Check Reference Sources table format.
+7. **Directory structure:** `common/` for language-agnostic, `cpp/` for C++ specific.
