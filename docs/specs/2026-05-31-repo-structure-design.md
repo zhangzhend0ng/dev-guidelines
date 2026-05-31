@@ -92,7 +92,8 @@ To avoid ambiguity across tooling, all date fields use **ISO 8601 calendar date 
 | Harness files | `<topic>.md` | `raii.md`, `const-correctness.md` |
 | Template files | `<name>.template.md` | `harness.template.md` |
 | Script files | `<name>.py` | `validate.py` |
-| Non-harness markdown | UPPER_CASE.md | `README.md`, `INDEX.md`, `CONTRIBUTING.md` |
+| Non-harness markdown (repo root) | UPPER_CASE.md | `README.md`, `INDEX.md`, `CONTRIBUTING.md` |
+| GitHub templates (`.github/`) | kebab-case (GitHub convention) | `new-harness.md`, `authority-challenge.md` |
 | Spec files | `YYYY-MM-DD-<topic>-design.md` | `2026-05-31-repo-structure-design.md` |
 | Language directories | lowercase | `cpp/`, `python/`, `go/` |
 | Sub-directories by concern | kebab-case | `api-design/`, `error-handling/` |
@@ -224,12 +225,23 @@ changelog:
 
 | Field | Constraint | Example |
 |-------|-----------|---------|
+| `type` | Always `harness` for guidelines documents | `harness` |
 | `id` | `<language>-<slug>`, stable, never reused after deprecation | `cpp-param-validation` |
+| `title` | Human-readable display title | `"Parameter Validation Checklist"` |
+| `language` | `common` or language code (`cpp`, `python`, `go`, `rust`) | `cpp` |
+| `category` | From INDEX.md categories list (Section 5.2) | `functions` |
+| `tier` | Single letter: `N` / `C` / `A` (highest among all cited sources) | `C` |
 | `scope` | Template: `<action> for <what> in <context>` | `Select validation mechanism for function parameters in public APIs` |
 | `version` | `YYYY.MM` date-based; bump on any content change | `2026.05` |
 | `status` | Controlled vocabulary: `draft` / `reviewed` / `stable` / `deprecated` | `draft` |
-| `tier` | Single letter: `N` / `C` / `A` (highest among all cited sources) | `C` |
-| `review_cycle` | `6m` / `12m` / `24m` based on tier and C-priority band | `12m` |
+| `stable_since` | `YYYY-MM-DD` or empty; set when status becomes `stable` | `""` |
+| `last_validated` | `YYYY-MM-DD` of last full review | `2025-12-01` |
+| `review_cycle` | `6m` / `12m` / `24m` based on tier and priority band | `12m` |
+| `tags` | List of lowercase keywords for search/indexing | `[validation, parameters, contracts]` |
+| `based_on` | List of `[Tier] Source Clause` citations | `["[C] C++ Core Guidelines I.6"]` |
+| `related` | List of harness file paths (relative to repo root) | `["common/security/input-validation"]` |
+| `supersedes` | List of harness IDs this harness replaces | `[]` |
+| `changelog` | List of `"YYYY.MM: Description"` entries | `["2026.05: Initial draft"]` |
 
 ### 3.3 Harness Lifecycle
 
@@ -243,7 +255,7 @@ draft ──(peer review)──> reviewed ──(used in ≥1 real project)─�
 |------------|------|-------------|
 | draft → reviewed | At least one approving PR review from a CODEOWNER of the directory | GitHub PR review approval |
 | reviewed → stable | Used in at least one real code review without issues for ≥1 month, confirmed by a CODEOWNER | `stable_since` date recorded in frontmatter; author submits PR changing status, CODEOWNER approves |
-| any → deprecated | A superseding harness is published; old harness `supersedes` field points to new, and `related` links are updated per Section 4.4 | PR review + validate.py passes |
+| any → deprecated | A superseding harness is published; old harness `supersedes` field points to new, and `related` links are updated per Section 3.4 | PR review + validate.py passes |
 | deprecated → archive | After 12 months in deprecated state. Directory `archive/<language>/<original-path>/` | Automated CI check flags harnesses past archive date |
 
 ### 3.4 Deprecation Propagation
@@ -565,6 +577,17 @@ Does the harness primarily address one category?
               └─ NO (spans 3+) → Place in common/cross-cutting/
 ```
 
+### 8.7 Remaining Artifacts
+
+| Artifact | Content |
+|----------|---------|
+| `templates/language-pack.template.md` | Checklist for adding a new language: directory structure, CODEOWNERS, CI config, ROADMAP update. Mirrors Section 8.5. |
+| `.github/PULL_REQUEST_TEMPLATE.md` | Standard PR checklist: linked issue, harness template compliance, tier justification, CODEOWNER review required. |
+| `README.md` | Repo overview, quick start, link to INDEX.md, contribution guide link. |
+| `CONTRIBUTING.md` | Harness lifecycle (Section 3.3), proposal workflow, review standards, tier assignment process (Sections 8.3-8.4). |
+| `LICENSE` | MIT or Apache 2.0 (project choice). |
+| `.editorconfig` | Standard config: `charset = utf-8`, `indent_style = space`, `indent_size = 2`, `trim_trailing_whitespace = true` for `.md` files. |
+
 ---
 
 ## 9. Change History
@@ -573,7 +596,7 @@ Does the harness primarily address one category?
 
 | Issue | Fix |
 |-------|-----|
-| OWASP ASVS B/C contradiction | OWASP consistently N-tier |
+| OWASP ASVS B/C contradiction | OWASP consistently C-tier (Consensus) |
 | A/B/C naming collision | Renamed to Normative/Consensus/Advisory (N/C/A) |
 | `.harness.md` suffix unjustified | Plain `.md` with `type: harness` frontmatter |
 | Empty future directories | Replaced by ROADMAP.md |
