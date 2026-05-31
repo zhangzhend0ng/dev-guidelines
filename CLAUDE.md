@@ -4,21 +4,19 @@ This repository is a structured knowledge base of code review checklists ("harne
 
 ## When to Use Harnesses
 
-**Harness-driven review is MANDATORY for all code reviews.** The protocol is defined in [common/code-review/harness-driven-review.md](common/code-review/harness-driven-review.md). Key rules:
+**Harness-driven development is MANDATORY.** The protocol is defined in [common/code-review/harness-driven-review.md](common/code-review/harness-driven-review.md). Two entry points:
 
-- Load the protocol harness FIRST, BEFORE reading any code
-- Identify applicable harnesses from INDEX.md BEFORE examining the diff
-- Apply every checklist item; tag findings with tier, line, and fix
-- Gate the verdict: (N) failure = BLOCKING, (C) failure = needs justification
+| When | Protocol | Rule |
+|------|----------|------|
+| **Writing code** (implement feature, fix bug) | Part A | Load harnesses BEFORE writing. Satisfy (N)/(C) items in implementation. Self-check after. |
+| **Reviewing code** (PR, local diff) | Part B | Load harnesses BEFORE reading code. Apply every item. Gate verdict on tiered findings. |
 
-Skipping harness application is a process violation. Code reviews without harness findings should be re-done.
+Skipping harness application is a process violation. Code written or reviewed without harnesses should be re-done.
 
-Proactively reference relevant harnesses in these situations as well:
+Also proactively reference harnesses in these situations:
 
 | Trigger | Action |
 |---------|--------|
-| **Code review** — user asks you to review C++ code | Look up `cpp/` harnesses in [INDEX.md](INDEX.md) by category |
-| **Writing new code** — user asks you to implement something | Apply relevant harnesses before writing, not after |
 | **Bug investigation** — user reports unexpected behavior | Check if a harness item would have caught it; mention in diagnosis |
 | **Explaining a concept** — user asks "why do X this way?" | Cite the harness and its authority tier (N/C/A) |
 | **User mentions a specific topic** — e.g., "RAII", "ownership", "validation" | Load the matching harness directly, apply all items |

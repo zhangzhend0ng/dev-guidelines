@@ -31,7 +31,10 @@ Every harness file (`common/**/*.md`, `cpp/**/*.md`) has:
 
 ## Key Rules
 
-1. **Code review MUST follow the harness-driven review protocol.** Load [common/code-review/harness-driven-review.md](common/code-review/harness-driven-review.md), identify all applicable harnesses BEFORE reading the code, apply each checklist item, and gate the verdict on tiered findings. Do not issue a review without passing this protocol.
+1. **Harness-driven development is MANDATORY for writing and reviewing code.** Load [common/code-review/harness-driven-review.md](common/code-review/harness-driven-review.md):
+   - **Before writing code:** Identify applicable harnesses FIRST (Part A), satisfy (N)/(C) items during implementation.
+   - **During code review:** Identify harnesses BEFORE reading code (Part B), apply every checklist item, gate verdict on tiered findings.
+   Do not write or approve code without passing relevant harnesses.
 2. **Always commit each logical change separately.** Phase-by-phase, harness-by-harness.
 3. **Run `python scripts/validate.py` before committing** any harness change.
 4. **Run `python scripts/generate_index.py` if you add/remove/rename a harness.**
