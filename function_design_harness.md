@@ -1,4 +1,6 @@
-# Function Design Harness — Parameter Validation Checklist
+<!-- MIGRATED: superseded by cpp/functions/parameter-validation.md -->
+# [MIGRATED] Function Design Harness
+> **MIGRATED:** This file has moved to [cpp/functions/parameter-validation.md](cpp/functions/parameter-validation.md). This copy will be removed after 2026-08-31.
 
 **Based on:** C++ Core Guidelines (I.6/I.12/I.13), SEI/CERT API00-C (v2025), ISO P1743R0 (Bloomberg BDE).
 **Scope:** 函数设计评审 与 新函数编写 时的入参校验决策准则。
