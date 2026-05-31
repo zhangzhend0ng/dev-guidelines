@@ -13,6 +13,12 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 ## All Harnesses by Category
 
 <!-- INDEX_START -->
+### code-review
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| common-harness-driven-review | [Harness-Driven Review Protocol](common\code-review\harness-driven-review.md) | common | A | draft | 2026.06 |
+
 ### correctness
 
 | ID | Title | Language | Tier | Status | Version |
