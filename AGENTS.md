@@ -10,6 +10,7 @@ You are in the `dev-guidelines` repository. Cross-project shared development gui
 | Understand the repo structure | [Design Spec](docs/specs/2026-05-31-repo-structure-design.md) |
 | Create a new harness | [Template](templates/harness.template.md) + [Contributing Guide](CONTRIBUTING.md) |
 | Understand the methodology | [concepts/](concepts/01-harness-methodology.md) — harness philosophy + tier system |
+| Govern harness lifecycle & evolution | [common/meta/harness-evolution.md](common/meta/harness-evolution.md) — when to promote, deprecate, split, or challenge |
 | Look up an authoritative source | [references/sources.md](references/sources.md) — N/C/A registry (29 entries) |
 | Use a prompt template | [prompts/](prompts/code-review-with-harness.md) — AI code review + harness creation |
 | Validate all harnesses | `python scripts/validate.py --json` |
