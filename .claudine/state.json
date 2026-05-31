@@ -1,0 +1,39 @@
+{
+  "conversations": [
+    {
+      "id": "565a7650-60ed-433c-a98c-2ffbd6e85259",
+      "title": "把仓库推到远端github分支",
+      "description": "Let me check the current state of the repository first.",
+      "category": "task",
+      "status": "in-review",
+      "lastMessage": "| 5 | Docs as Code | `version: \"1.0.0\"` 应改为日期版本或序号 |\n等待两个 reviewer 完成...",
+      "agents": [
+        {
+          "id": "claude-main",
+          "name": "Claude",
+          "avatar": "",
+          "isActive": true
+        }
+      ],
+      "gitBranch": "feature/harness-setup",
+      "hasError": false,
+      "isInterrupted": false,
+      "hasQuestion": false,
+      "isRateLimited": false,
+      "lastActivity": {
+        "toolName": "Write",
+        "summary": "c:\\Users\\75186\\dev-guidelines\\docs\\specs\\2026-05-31-repo-structure-design.md",
+        "outputHint": "File created successfully at: c:\\Users\\75186\\dev-guidelines\\docs\\specs\\2026-05-31-repo-structure-des...",
+        "status": "completed"
+      },
+      "createdAt": "2026-05-31T13:13:34.977Z",
+      "updatedAt": "2026-05-31T13:38:26.808Z",
+      "filePath": "c:\\Users\\75186\\.claude\\projects\\c--Users-75186-dev-guidelines\\565a7650-60ed-433c-a98c-2ffbd6e85259.jsonl",
+      "workspacePath": "C:\\Users\\75186\\dev-guidelines",
+      "provider": "claude-code",
+      "shortId": "T-356",
+      "previousStatus": "in-review"
+    }
+  ],
+  "lastUpdated": "2026-05-31T13:38:27.356Z"
+}
