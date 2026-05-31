@@ -1,0 +1,42 @@
+name: Validate Harnesses
+
+on:
+  pull_request:
+    branches: [master, main]
+    paths:
+      - "common/**"
+      - "cpp/**"
+      - "templates/**"
+  schedule:
+    - cron: "0 9 * * 1"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: pip install -r scripts/requirements.txt
+      - name: Frontmatter and cross-reference checks
+        run: python scripts/validate.py --json
+      - name: Stale citation check (warn only)
+        run: python scripts/validate.py --stale
+        continue-on-error: true
+      - name: Index sync check
+        run: python scripts/generate_index.py --check
+
+  dead-links:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: pip install -r scripts/requirements.txt
+      - name: Check external links
+        run: python scripts/validate.py --dead-links
