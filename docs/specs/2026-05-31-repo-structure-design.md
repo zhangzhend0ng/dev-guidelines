@@ -81,6 +81,7 @@ To avoid ambiguity across tooling, all date fields use **ISO 8601 calendar date 
 | Field | Format | Example | Rationale |
 |-------|--------|---------|-----------|
 | `version` | `YYYY.MM` | `2026.05` | Uses dots as a conventional version delimiter (not a date field) |
+| `stable_since` | `YYYY-MM-DD` or empty; set when status becomes "stable" | `""` |
 | `last_validated` | `YYYY-MM-DD` | `2025-12-01` | ISO 8601; day precision for audit trail |
 | Reference table "Last Verified" | `YYYY-MM` | `2026-04` | Month precision sufficient for review tracking |
 
@@ -268,7 +269,7 @@ When a harness is deprecated:
 7. **Reference Sources** (REQUIRED) — Table: Label | Tier | Source | Clause | Timeliness | Last Verified
 8. **Changelog** (REQUIRED) — Summarized from frontmatter `changelog` field for human readability
 
-### 3.5 Checklist Item Specification
+### 3.6 Checklist Item Specification
 
 Each item MUST contain:
 - A decision condition (answerable with yes/no or a choice from enumerated options)
@@ -282,7 +283,7 @@ Each item MAY contain:
 
 **Granularity:** 5-10 items per harness. Hard maximum 12. One item = one independent decision point.
 
-### 3.6 Cross-Reference Convention
+### 3.7 Cross-Reference Convention
 
 When harness A references harness B in body text:
 
@@ -292,7 +293,7 @@ When harness A references harness B in body text:
 
 Cross-references MUST be bidirectional: if A links to B, B's `related` field must list A.
 
-### 3.7 Diátaxis Consideration
+### 3.8 Diátaxis Consideration
 
 Each harness blends "how-to guide" (checklist) with "reference" (sources) and "explanation" (anti-patterns). This is a deliberate trade-off with known risks.
 
@@ -591,7 +592,7 @@ Does the harness primarily address one category?
 | Review burden unsustainable | Section 2.6 with Critical-C/Routine-C/Low-C priority bands |
 | Conflict resolution subjective | Specific measurable criteria with escalation path |
 | Scripts on Windows | Switched to Python 3.10+, cross-platform |
-| Diátaxis mode-blending concern | Section 3.7/3.8 documents deliberate trade-off |
+| Diátasis mode-blending concern | Section 3.8 documents deliberate trade-off |
 | SEI CERT language-first divergence | Section 4 documents rationale for common/language split |
 
 ### Round 2 Fixes (Santa Review R2)
