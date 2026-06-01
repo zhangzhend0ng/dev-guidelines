@@ -63,12 +63,12 @@ changelog:
 - [ ] Edge cases: empty input, null, boundaries, concurrent access → **(C)** [R1]
 - [ ] Invariants documented and preserved → **(C)** [R1]
 
-### 4. Security  **(N)** [R1][R2]
+### 4. Security  **(C)** [R1][R2]
 
-- [ ] No injection vectors (SQL, command, path traversal) → **(N)** [R2]
-- [ ] Auth gates on all protected endpoints → **(N)** [R2]
-- [ ] No secrets, tokens, keys in code or logs → **(N)** [R2]
-- [ ] No new deps with CRITICAL/HIGH CVEs → **(N)** [R2]
+- [ ] No injection vectors (SQL, command, path traversal) → **(C)** [R2]
+- [ ] Auth gates on all protected endpoints → **(C)** [R2]
+- [ ] No secrets, tokens, keys in code or logs → **(C)** [R2]
+- [ ] No new deps with CRITICAL/HIGH CVEs → **(C)** [R2]
 
 ### 5. Test Coverage  **(C)** [R1][R4]
 

@@ -43,9 +43,9 @@ changelog:
 
 ## Checklist
 
-### 1. Error Response Format  **(N)** [R1]
+### 1. Error Response Format  **(C)** [R1]
 
-- [ ] Every error response uses RFC 7807 problem detail → **(N)** [R1]
+- [ ] Every error response uses RFC 7807 problem detail → **(C)** [R1]
 - [ ] Content-Type `application/problem+json` → **(C)** [R1]
 - [ ] Multiple errors returned as array with per-error `source` → **(C)** [R2]
 
@@ -77,11 +77,11 @@ changelog:
 - [ ] Rate-limited endpoints return HTTP 429 + `Retry-After` → **(C)** [R3]
 - [ ] Error body follows RFC 7807 → **(C)** [R3]
 
-### 7. Security Baseline  **(N)** [R3]
+### 7. Security Baseline  **(C)** [R3]
 
-- [ ] All endpoints use TLS (HTTPS only) → **(N)** [R3]
-- [ ] Authentication on all non-public endpoints → **(N)** [R3]
-- [ ] Input validation on every endpoint → **(N)** [R3]
+- [ ] All endpoints use TLS (HTTPS only) → **(C)** [R3]
+- [ ] Authentication on all non-public endpoints → **(C)** [R3]
+- [ ] Input validation on every endpoint → **(C)** [R3]
 
 ---
 
@@ -104,13 +104,24 @@ New endpoint?
 
 ### 1. 200 OK with Error Body
 
-- **Appearance:** HTTP 200 with `{"error": "not found"}`.
-- **Fix:** Use correct status codes. Errors follow RFC 7807.
+- **Appearance:** HTTP 200 with `{"error": "not found"}` in body.
+- **Trap:** Simpler to always return 200; avoids handling different status codes in clients.
+- **Consequence:** Monitoring tools, CDNs, and HTTP clients cannot distinguish success from failure. Caching layers cache error responses. Retry logic cannot know which requests are safe to retry.
+- **Fix:** Use correct HTTP status codes. Error bodies follow RFC 7807.
 
 ### 2. Breaking Change Without Version
 
-- **Appearance:** Rename field or change type in minor release.
-- **Fix:** Never remove published fields. Deprecate with sunset date. Breaking = new version.
+- **Appearance:** Rename a field or change its type in a minor release.
+- **Trap:** "It's a small change, nobody uses that field."
+- **Consequence:** Client breaks without warning. Production incident. Trust in API stability evaporates. Downstream teams add defensive workarounds that compound over time.
+- **Fix:** Never remove or rename published fields. Deprecate old fields with sunset dates. Gate breaking changes behind new API version.
+
+---
+
+## See Also
+
+- [Input Validation](../security/input-validation.md) — Security-focused input validation
+- [Error Handling Strategy](../error-handling/error-handling-strategy.md) — Consistent error handling patterns
 
 ---
 

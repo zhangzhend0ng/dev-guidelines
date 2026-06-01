@@ -106,12 +106,22 @@ Coverage trend [7]
 ### 1. 100% Coverage Target
 
 - **Appearance:** CI fails if coverage <90%. Teams write weak tests to pass.
-- **Fix:** Track trend. Review uncovered paths, not just percentage.
+- **Trap:** Coverage as a metric feels objective and measurable.
+- **Consequence:** False confidence. High coverage with weak assertions is worse than moderate coverage with strong assertions.
+- **Fix:** Track trend. Review uncovered paths in PR, not just percentage.
 
 ### 2. Mock Everything
 
-- **Appearance:** Every dependency mocked, including value objects.
+- **Appearance:** Every dependency mocked, including value objects and stdlib types.
+- **Trap:** "Isolation" = mock literally everything except the method under test.
+- **Consequence:** Tests verify mock behavior, not real behavior. Refactoring breaks dozens of tests that should not care about internal changes.
 - **Fix:** Mock architectural boundaries only. Use real objects for in-process deps.
+
+---
+
+## See Also
+
+- [Code Review Checklist](../code-review/review-checklist.md) — Test coverage as a review dimension
 
 ---
 
