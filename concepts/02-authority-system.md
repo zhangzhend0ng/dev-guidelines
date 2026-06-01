@@ -57,3 +57,7 @@ We deliberately separate source authority from rule severity. MISRA uses Mandato
 ## Why Three Tiers?
 
 Two tiers (standard vs. everything else) lumps expert literature with blog posts. Four tiers adds complexity without discrimination power. Three tiers cleanly separate: standards bodies → professional consensus → individual expertise.
+
+## See Also
+
+- [Harness Evolution and Lifecycle Governance](../common/meta/harness-evolution.md) — tier challenge resolution process and lifecycle governance

@@ -17,8 +17,7 @@ based_on:
   - "[C] NIST SP 800-64"
   - "[A] Release It! (Michael Nygard)"
   - "[A] The Pragmatic Programmer (Hunt & Thomas)"
-related:
-  - "cpp/correctness/exception-safety.md"
+related: []
 supersedes: []
 changelog:
   - "2026.05: Initial draft"

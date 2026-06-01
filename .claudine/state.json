@@ -5,8 +5,8 @@
       "title": "把仓库推到远端github分支",
       "description": "Let me check the current state of the repository first.",
       "category": "task",
-      "status": "in-review",
-      "lastMessage": "| 5 | Docs as Code | `version: \"1.0.0\"` 应改为日期版本或序号 |\n等待两个 reviewer 完成...",
+      "status": "in-progress",
+      "lastMessage": "全部 3 个完成。提交推送。",
       "agents": [
         {
           "id": "claude-main",
@@ -21,19 +21,54 @@
       "hasQuestion": false,
       "isRateLimited": false,
       "lastActivity": {
-        "toolName": "Write",
-        "summary": "c:\\Users\\75186\\dev-guidelines\\docs\\specs\\2026-05-31-repo-structure-design.md",
-        "outputHint": "File created successfully at: c:\\Users\\75186\\dev-guidelines\\docs\\specs\\2026-05-31-repo-structure-des...",
-        "status": "completed"
+        "toolName": "Bash",
+        "summary": "rm -f cpp/build/.gitkeep && git add -A && git commit -m \"$(cat <<'EOF'\nfeat: ...",
+        "status": "running"
       },
       "createdAt": "2026-05-31T13:13:34.977Z",
-      "updatedAt": "2026-05-31T13:38:26.808Z",
+      "updatedAt": "2026-06-01T07:19:35.492Z",
       "filePath": "c:\\Users\\75186\\.claude\\projects\\c--Users-75186-dev-guidelines\\565a7650-60ed-433c-a98c-2ffbd6e85259.jsonl",
       "workspacePath": "C:\\Users\\75186\\dev-guidelines",
       "provider": "claude-code",
+      "icon": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20fill%3D%22%236b7280%22%20opacity%3D%220.1%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2234%22%20y%3D%2218%22%20width%3D%228%22%20height%3D%228%22%20fill%3D%22hsl(304%2C%2060%25%2C%2050%25)%22%20opacity%3D%220.7%22%2F%3E%0A%3Cpolygon%20points%3D%2222%2C44%2028%2C56%2016%2C56%22%20fill%3D%22hsl(304%2C%2060%25%2C%2050%25)%22%20opacity%3D%220.7%22%2F%3E%0A%3Ccircle%20cx%3D%2250%22%20cy%3D%2234%22%20r%3D%228%22%20fill%3D%22hsl(304%2C%2060%25%2C%2050%25)%22%20opacity%3D%220.7%22%2F%3E%0A%3Crect%20x%3D%2230%22%20y%3D%2214%22%20width%3D%228%22%20height%3D%228%22%20fill%3D%22hsl(304%2C%2060%25%2C%2050%25)%22%20opacity%3D%220.7%22%2F%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E",
       "shortId": "T-356",
       "previousStatus": "in-review"
+    },
+    {
+      "id": "eef3b58a-e388-49be-9f4d-08043fe90ea5",
+      "title": "看看github最热门的记忆和自我净化有关的开源库",
+      "description": "Now let me get the star counts and check a few more projects.",
+      "category": "task",
+      "status": "in-review",
+      "lastMessage": "[...] ** — daily-work-report skill 自动触发\n以后加新的 harness 只需要在 `dev-guidelines` 里写好、跑 `generate_index.py`，全局 CLAUDE.md 不需要改。",
+      "agents": [
+        {
+          "id": "claude-main",
+          "name": "Claude",
+          "avatar": "",
+          "isActive": false
+        }
+      ],
+      "gitBranch": "feature/harness-setup",
+      "hasError": false,
+      "isInterrupted": false,
+      "hasQuestion": false,
+      "isRateLimited": false,
+      "lastActivity": {
+        "toolName": "Bash",
+        "summary": "git status",
+        "outputHint": "14 lines of output",
+        "status": "completed"
+      },
+      "createdAt": "2026-05-31T16:00:06.436Z",
+      "updatedAt": "2026-05-31T17:58:34.145Z",
+      "filePath": "C:\\Users\\75186\\.claude\\projects\\c--users-75186-dev-guidelines\\eef3b58a-e388-49be-9f4d-08043fe90ea5.jsonl",
+      "workspacePath": "C:\\Users\\75186\\dev-guidelines",
+      "provider": "claude-code",
+      "previousStatus": "in-review",
+      "icon": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20fill%3D%22%236b7280%22%20opacity%3D%220.1%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Crect%20x%3D%2233%22%20y%3D%2219%22%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22hsl(238%2C%2060%25%2C%2050%25)%22%20opacity%3D%220.7%22%2F%3E%0A%3Cpolygon%20points%3D%2226%2C6%2032%2C18%2020%2C18%22%20fill%3D%22hsl(238%2C%2060%25%2C%2050%25)%22%20opacity%3D%220.7%22%2F%3E%0A%3Ccircle%20cx%3D%2212%22%20cy%3D%2242%22%20r%3D%225%22%20fill%3D%22hsl(238%2C%2060%25%2C%2050%25)%22%20opacity%3D%220.7%22%2F%3E%0A%3Crect%20x%3D%2238%22%20y%3D%2224%22%20width%3D%228%22%20height%3D%228%22%20fill%3D%22hsl(238%2C%2060%25%2C%2050%25)%22%20opacity%3D%220.7%22%2F%3E%0A%20%20%20%20%20%20%3C%2Fsvg%3E",
+      "shortId": "T-357"
     }
   ],
-  "lastUpdated": "2026-05-31T13:38:27.356Z"
+  "lastUpdated": "2026-06-01T07:19:35.944Z"
 }

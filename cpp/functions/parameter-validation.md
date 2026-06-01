@@ -18,8 +18,8 @@ tags:
   - security
 based_on:
   - "[C] C++ Core Guidelines I.6, I.12, I.13"
-  - "[C] SEI/CERT API00-C (v2025)"
-  - "[C] P1743R0 (Bloomberg BDE)"
+  - "[C] SEI/CERT C Coding Standard API00-C"
+  - "[A] Bloomberg BDE — Contracts and Defensive Programming"
 related:
   - "common/security/input-validation.md"
 supersedes: []
@@ -148,9 +148,9 @@ All branches: [Item 6] No silent pass-through + [Item 7] Style consistency
 
 | Label | Tier | Source | Clause | Timeliness | Last Verified |
 |-------|------|--------|--------|------------|---------------|
-| R1 | C | SEI/CERT C++ Coding Standard | API00-C (v2025) | verified-2026 | 2026-05 |
+| R1 | C | SEI/CERT C Coding Standard | API00-C | verified-2026 | 2026-06 |
 | R2 | C | C++ Core Guidelines | I.6, I.12, I.13 | verified-2026 | 2026-05 |
-| R3 | C | Bloomberg BDE White Paper | P1743R0 | verified-2026 | 2026-05 |
+| R3 | A | Bloomberg BDE | Contracts and Defensive Programming | verified-2026 | 2026-06 |
 
 ---
 
