@@ -1,0 +1,8 @@
+{
+  "name": "daily-work-report",
+  "version": "0.1.0",
+  "description": "工作日报生成器，自动从多数据源采集上下文，生成结构化工作日记",
+  "author": {
+    "name": "opc-workspace"
+  }
+}

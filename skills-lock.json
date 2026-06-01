@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "Daily Work Report": {
+      "source": "kyd-w/daily-work-report",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "7cb26321b1779b2b298e9cc9eabf21cbc4b6b904a8931aa54cb5fa2e556e85dd"
+    }
+  }
+}
