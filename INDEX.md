@@ -13,11 +13,24 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 ## All Harnesses by Category
 
 <!-- INDEX_START -->
+### build
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| cpp-build-system | [C++ Build System and Include Hygiene Checklist](cpp\build\cmake-include-hygiene.md) | cpp | C | draft | 2026.06 |
+
 ### code-review
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
+| common-code-review-checklist | [Code Review Checklist](common\code-review\review-checklist.md) | common | N | draft | 2026.06 |
 | common-harness-driven-review | [Harness-Driven Development Protocol](common\code-review\harness-driven-review.md) | common | A | draft | 2026.06 |
+
+### commits
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| common-conventional-commits | [Commit Message Conventions Checklist](common\commits\conventional-commits.md) | common | C | draft | 2026.06 |
 
 ### correctness
 
@@ -27,13 +40,27 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | cpp-const-correctness | [Const Correctness Checklist](cpp\correctness\const-correctness.md) | cpp | N | draft | 2026.05 |
 | cpp-exception-safety | [Exception Safety Guarantees Checklist](cpp\correctness\exception-safety.md) | cpp | N | draft | 2026.06 |
 | cpp-lifetime | [Object Lifetime and Dangling References Checklist](cpp\lifetime\dangling-references.md) | cpp | N | draft | 2026.06 |
+| cpp-type-safety | [Type Safety and Implicit Conversions Checklist](cpp\correctness\type-safety.md) | cpp | N | draft | 2026.06 |
 | cpp-undefined-behavior | [Undefined Behavior Prevention Checklist](cpp\correctness\undefined-behavior.md) | cpp | N | draft | 2026.06 |
+
+### dependencies
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| common-dependency-management | [Dependency Management Checklist](common\dependencies\dependency-management.md) | common | N | draft | 2026.06 |
 
 ### design
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
+| common-api-design | [API Design Principles Checklist](common\api-design\restful-api-design.md) | common | N | draft | 2026.06 |
 | common-error-handling | [Error Handling Strategy Checklist](common\error-handling\error-handling-strategy.md) | common | C | draft | 2026.05 |
+
+### documentation
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| common-documentation-standards | [Documentation Standards Checklist](common\documentation\documentation-standards.md) | common | C | draft | 2026.06 |
 
 ### functions
 
@@ -41,11 +68,29 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 |----|-------|----------|------|--------|---------|
 | cpp-param-validation | [Parameter Validation Checklist](cpp\functions\parameter-validation.md) | cpp | C | draft | 2026.05 |
 
+### logging
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| common-logging-standards | [Logging Standards Checklist](common\logging\logging-standards.md) | common | N | draft | 2026.06 |
+
 ### meta
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | common-harness-evolution | [Harness Evolution and Lifecycle Governance](common\meta\harness-evolution.md) | common | A | draft | 2026.05 |
+
+### naming
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| common-naming-conventions | [Naming Conventions Checklist](common\naming\naming-conventions.md) | common | C | draft | 2026.06 |
+
+### performance
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| cpp-performance-patterns | [C++ Performance Patterns Checklist](cpp\performance\optimization-patterns.md) | cpp | N | draft | 2026.06 |
 
 ### resource-management
 
@@ -60,6 +105,18 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | common-input-validation | [Input Validation Checklist](common\security\input-validation.md) | common | N | draft | 2026.05 |
+
+### templates
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| cpp-template-best-practices | [Template Best Practices and Concepts Checklist](cpp\templates\template-best-practices.md) | cpp | N | draft | 2026.06 |
+
+### testing
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| common-testing-strategy | [Testing Strategy Checklist](common\testing\testing-strategy.md) | common | C | draft | 2026.06 |
 
 <!-- INDEX_END -->
 
