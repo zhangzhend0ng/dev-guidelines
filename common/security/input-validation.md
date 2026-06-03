@@ -18,6 +18,8 @@ based_on:
   - "[C] CWE Top 25 (CWE-20, CWE-89, CWE-79)"
   - "[C] SEI/CERT API00-C"
 related:
+  - "common/dependencies/dependency-management.md"
+  - "common/logging/logging-standards.md"
   - "cpp/functions/parameter-validation.md"
 supersedes: []
 changelog:

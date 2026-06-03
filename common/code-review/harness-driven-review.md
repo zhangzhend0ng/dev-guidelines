@@ -21,6 +21,7 @@ based_on:
   - "[A] dev-guidelines CLAUDE.md — Harness Usage Protocol"
   - "[A] dev-guidelines Harness Methodology (concepts/01-harness-methodology.md)"
 related:
+  - "common/code-review/review-checklist.md"
   - "common/meta/harness-evolution.md"
 supersedes: []
 changelog:

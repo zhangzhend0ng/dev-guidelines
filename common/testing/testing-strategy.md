@@ -20,6 +20,7 @@ based_on:
   - "[A] Software Engineering at Google Ch.11 (2020)"
 related:
   - "cpp/testing/catch2-patterns.md"
+  - "cpp/testing/googletest-patterns.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

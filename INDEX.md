@@ -23,7 +23,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
-| common-code-review-checklist | [Code Review Checklist](common\code-review\review-checklist.md) | common | N | draft | 2026.06 |
+| common-code-review-checklist | [Code Review Checklist](common\code-review\review-checklist.md) | common | C | draft | 2026.06 |
 | common-harness-driven-review | [Harness-Driven Development Protocol](common\code-review\harness-driven-review.md) | common | A | draft | 2026.06 |
 
 ### commits
@@ -36,6 +36,8 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
+| cpp-class-hierarchies | [Class Hierarchies and Virtual Dispatch Checklist](cpp\correctness\class-hierarchies.md) | cpp | N | draft | 2026.06 |
+| cpp-compile-time | [Compile-Time Programming Checklist](cpp\correctness\compile-time-programming.md) | cpp | N | draft | 2026.06 |
 | cpp-thread-safety | [Concurrency and Thread Safety Checklist](cpp\concurrency\thread-safety.md) | cpp | N | draft | 2026.06 |
 | cpp-const-correctness | [Const Correctness Checklist](cpp\correctness\const-correctness.md) | cpp | N | draft | 2026.05 |
 | cpp-exception-safety | [Exception Safety Guarantees Checklist](cpp\correctness\exception-safety.md) | cpp | N | draft | 2026.06 |
@@ -53,7 +55,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
-| common-api-design | [API Design Principles Checklist](common\api-design\restful-api-design.md) | common | N | draft | 2026.06 |
+| common-api-design | [API Design Principles Checklist](common\api-design\restful-api-design.md) | common | C | draft | 2026.06 |
 | common-error-handling | [Error Handling Strategy Checklist](common\error-handling\error-handling-strategy.md) | common | C | draft | 2026.05 |
 
 ### documentation
@@ -117,6 +119,8 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | cpp-catch2 | [Catch2 Testing Patterns Checklist](cpp\testing\catch2-patterns.md) | cpp | C | draft | 2026.06 |
+| cpp-googletest | [GoogleTest and GMock Patterns Checklist](cpp\testing\googletest-patterns.md) | cpp | C | draft | 2026.06 |
+| cpp-sanitizers | [Sanitizer Integration and Usage Checklist](cpp\testing\sanitizers.md) | cpp | N | draft | 2026.06 |
 | common-testing-strategy | [Testing Strategy Checklist](common\testing\testing-strategy.md) | common | C | draft | 2026.06 |
 
 <!-- INDEX_END -->

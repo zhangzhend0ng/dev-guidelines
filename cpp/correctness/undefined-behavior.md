@@ -18,9 +18,13 @@ based_on:
   - "[C] SEI/CERT INT32-C, EXP34-C, ARR30-C"
   - "[A] Deep C++ series (John Regehr), UB Sanitizer documentation"
 related:
+  - "cpp/concurrency/thread-safety.md"
+  - "cpp/correctness/class-hierarchies.md"
   - "cpp/correctness/const-correctness.md"
+  - "cpp/correctness/type-safety.md"
   - "cpp/memory/raii.md"
   - "cpp/memory/ownership.md"
+  - "cpp/testing/sanitizers.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

@@ -23,6 +23,12 @@ based_on:
   - "[C] SEI/CERT MEM51-CPP, FIO51-CPP"
   - "[A] Effective C++ Items 13-14 (Meyers)"
 related:
+  - "cpp/concurrency/thread-safety.md"
+  - "cpp/correctness/class-hierarchies.md"
+  - "cpp/lifetime/dangling-references.md"
+  - "cpp/correctness/exception-safety.md"
+  - "cpp/correctness/undefined-behavior.md"
+  - "cpp/performance/optimization-patterns.md"
   - "cpp/memory/ownership.md"
 supersedes: []
 changelog:

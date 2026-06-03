@@ -18,6 +18,7 @@ based_on:
   - "[A] SWE at Google Ch.11 — Testing (2020)"
 related:
   - "common/testing/testing-strategy.md"
+  - "cpp/testing/googletest-patterns.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

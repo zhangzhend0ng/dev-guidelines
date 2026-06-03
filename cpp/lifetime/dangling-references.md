@@ -19,6 +19,7 @@ based_on:
   - "[A] Effective Modern C++ (Meyers) Items 31-34"
   - "[A] C++ Best Practices (Jason Turner) on lifetime"
 related:
+  - "cpp/correctness/class-hierarchies.md"
   - "cpp/memory/ownership.md"
   - "cpp/memory/raii.md"
   - "cpp/correctness/const-correctness.md"
