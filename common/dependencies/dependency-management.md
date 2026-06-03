@@ -20,6 +20,8 @@ based_on:
   - "[C] NIST SP 800-218 SSDF — PS.2 Secure Components"
 related:
   - "common/security/input-validation.md"
+  - "cpp/build/package-management.md"
+  - "common/ci-cd/pipeline-patterns.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

@@ -19,6 +19,7 @@ based_on:
   - "[A] Working Effectively with Legacy Code (Feathers, 2004)"
   - "[A] Software Engineering at Google Ch.11 (2020)"
 related:
+  - "common/testing/test-doubles.md"
   - "cpp/testing/catch2-patterns.md"
   - "cpp/testing/googletest-patterns.md"
 supersedes: []

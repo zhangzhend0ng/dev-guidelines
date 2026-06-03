@@ -21,10 +21,13 @@ related:
   - "cpp/concurrency/thread-safety.md"
   - "cpp/correctness/class-hierarchies.md"
   - "cpp/correctness/const-correctness.md"
+  - "cpp/correctness/stl-algorithms-containers.md"
   - "cpp/correctness/type-safety.md"
   - "cpp/memory/raii.md"
   - "cpp/memory/ownership.md"
   - "cpp/testing/sanitizers.md"
+  - "cpp/correctness/compile-time-programming.md"
+  - "cpp/correctness/integer-safety.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

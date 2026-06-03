@@ -17,6 +17,7 @@ based_on:
   - "[A] xUnit Test Patterns (Meszaros, 2007)"
   - "[A] SWE at Google Ch.11 (Winters, 2020)"
 related:
+  - "common/testing/test-doubles.md"
   - "common/testing/testing-strategy.md"
   - "cpp/testing/catch2-patterns.md"
 supersedes: []

@@ -33,6 +33,7 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | C8 | OWASP ASVS | Application security verification | OWASP Foundation | ~3 years |
 | C9 | Google API Design Guide | API design conventions | Google | On demand |
 | C10 | IETF RFC 7807 (Problem Details) | API error response format | IETF | Stable |
+| C11 | GitHub Actions Documentation | CI/CD workflow syntax, caching, matrices | GitHub | Continuous |
 
 ## A-Tier: Advisory (Expert Literature & Org Standards)
 
@@ -49,6 +50,7 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | A9 | Google C++ Style Guide | C++ coding conventions | Google | Continuous | Low |
 | A10 | LLVM Coding Standards | C++ coding conventions | LLVM Project | Continuous | Low |
 | A11 | Abseil C++ Tips of the Week | C++ idioms | Google | Weekly | Low |
+| A12 | Continuous Delivery (Humble/Farley, 2010) | CI/CD build pipeline, fast feedback | Humble & Farley | 2010 | Low |
 
 ## Deprecated Sources
 
