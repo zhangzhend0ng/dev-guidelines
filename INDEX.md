@@ -116,6 +116,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
+| cpp-catch2 | [Catch2 Testing Patterns Checklist](cpp\testing\catch2-patterns.md) | cpp | C | draft | 2026.06 |
 | common-testing-strategy | [Testing Strategy Checklist](common\testing\testing-strategy.md) | common | C | draft | 2026.06 |
 
 <!-- INDEX_END -->

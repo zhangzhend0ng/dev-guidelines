@@ -14,7 +14,6 @@ review_cycle: "12m"
 tags: [catch2, testing, cpp, unit-tests, bdd]
 based_on:
   - "[C] Catch2 Official Documentation v3.x"
-  - "[C] C++ Core Guidelines CP.1-CP.50 — Concurrency rules"
   - "[A] xUnit Test Patterns (Meszaros, 2007)"
   - "[A] SWE at Google Ch.11 — Testing (2020)"
 related:
@@ -48,10 +47,10 @@ changelog:
 
 ## Checklist
 
-### 1. TEST_CASE Naming  **(C)** [R1][R2]
+### 1. TEST_CASE Naming  **(C)** [R1][R3]
 
 - [ ] Name describes behavior, not implementation → **(C)** [R1]
-- [ ] ✅ `"Factorial of 0 returns 1"` — ❌ `"test_factorial_zero"` → **(C)** [R2]
+- [ ] ✅ `"Factorial of 0 returns 1"` — ❌ `"test_factorial_zero"` → **(C)** [R3]
 
 ```cpp
 // Good — behavior-described
@@ -64,7 +63,7 @@ TEST_CASE("test_factorial") { /* ... */ }
 
 - [ ] SECTION tree for shared setup with variant behavior → **(C)** [R1]
 - [ ] Each leaf SECTION re-executes all parent setup → **(C)** [R1]
-- [ ] Never manually call setup before SECTION — use the tree → **(C)** [R3]
+- [ ] Never manually call setup before SECTION — use the tree → **(C)** [R2]
 
 ```cpp
 // Good — every SECTION gets a fresh Stack<int>
@@ -147,11 +146,21 @@ TEMPLATE_TEST_CASE("Clear empties container", "[container]",
 - [ ] Flag regressions >20% from baseline → **(C)** [R1]
 - [ ] Run on dedicated hardware, not shared CI → **(C)** [R1]
 
-### 9. Fixture and Lifecycle  **(C)** [R1][R3]
+### 9. Fixture and Lifecycle  **(C)** [R1][R2]
 
 - [ ] Prefer SECTION tree over setUp/tearDown → **(C)** [R1]
 - [ ] Locals in TEST_CASE body; destructors on scope exit → **(C)** [R1]
-- [ ] Shared expensive setup → Catch2 templated fixture → **(A)** [R3]
+- [ ] Shared expensive setup → Catch2 templated fixture → **(A)** [R2]
+
+```cpp
+// Good — templated fixture for shared expensive setup
+TEMPLATE_TEST_CASE_METHOD(DatabaseFixture,
+                          "Query returns results", "[db]",
+                          SQLite, PostgreSQL) {
+    auto rows = db().query("SELECT * FROM users");
+    REQUIRE(rows.size() > 0);
+}
+```
 
 ---
 
@@ -210,9 +219,8 @@ New Catch2 test?
 | Label | Tier | Source | Clause | Timeliness | Last Verified |
 |-------|------|--------|--------|------------|---------------|
 | R1 | C | Catch2 Official Documentation | v3.x — assertions, sections, generators | verified-2026 | 2026-06 |
-| R2 | C | C++ Core Guidelines | CP.1-CP.50 | verified-2026 | 2026-06 |
-| R3 | A | xUnit Test Patterns (Meszaros) | Test organization, fixtures | verified-2026 | 2026-06 |
-| R4 | A | SWE at Google Ch.11 (Winters) | Testing practices | verified-2026 | 2026-06 |
+| R2 | A | xUnit Test Patterns (Meszaros) | Test organization, fixtures, naming | verified-2026 | 2026-06 |
+| R3 | A | SWE at Google Ch.11 (Winters) | Testing practices | verified-2026 | 2026-06 |
 
 ---
 
