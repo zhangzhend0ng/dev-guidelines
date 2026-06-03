@@ -19,6 +19,7 @@ based_on:
   - "[A] Effective C++ Item 27 (Meyers)"
   - "[A] Effective Modern C++ Items 6-7 (Meyers)"
 related:
+  - "cpp/correctness/stl-algorithms-containers.md"
   - "cpp/correctness/undefined-behavior.md"
 supersedes: []
 changelog:

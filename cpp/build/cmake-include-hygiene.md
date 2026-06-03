@@ -18,7 +18,8 @@ based_on:
   - "[A] Professional CMake (Craig Scott)"
   - "[A] Large-Scale C++ Vol. I (John Lakos, 2019)"
   - "[A] IWYU (Include What You Use)"
-related: []
+related:
+  - "cpp/build/package-management.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

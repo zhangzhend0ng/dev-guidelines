@@ -19,6 +19,7 @@ based_on:
   - "[A] Effective C++ Items 7, 9, 20, 32-40 (Meyers)"
   - "[A] Effective Modern C++ Items 7-9 (Meyers)"
 related:
+  - "cpp/correctness/interface-contracts.md"
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/lifetime/dangling-references.md"
   - "cpp/memory/raii.md"

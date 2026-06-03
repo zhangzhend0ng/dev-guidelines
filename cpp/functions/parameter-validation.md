@@ -22,6 +22,7 @@ based_on:
   - "[A] Bloomberg BDE — Contracts and Defensive Programming"
 related:
   - "common/security/input-validation.md"
+  - "cpp/correctness/interface-contracts.md"
 supersedes: []
 changelog:
   - "2026.05: Migrated from root; added frontmatter per harness template"

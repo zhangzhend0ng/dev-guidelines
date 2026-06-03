@@ -18,6 +18,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | cpp-build-system | [C++ Build System and Include Hygiene Checklist](cpp\build\cmake-include-hygiene.md) | cpp | C | draft | 2026.06 |
+| cpp-package-management | [C++ Package Management Checklist](cpp\build\package-management.md) | cpp | C | draft | 2026.06 |
 
 ### code-review
 
@@ -42,7 +43,9 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | cpp-const-correctness | [Const Correctness Checklist](cpp\correctness\const-correctness.md) | cpp | N | draft | 2026.05 |
 | cpp-exception-safety | [Exception Safety Guarantees Checklist](cpp\correctness\exception-safety.md) | cpp | N | draft | 2026.06 |
 | cpp-integer-safety | [Integer Safety Checklist](cpp\correctness\integer-safety.md) | cpp | N | draft | 2026.06 |
+| cpp-interface-contracts | [Interface Contracts and Design-by-Contract Checklist](cpp\correctness\interface-contracts.md) | cpp | N | draft | 2026.06 |
 | cpp-lifetime | [Object Lifetime and Dangling References Checklist](cpp\lifetime\dangling-references.md) | cpp | N | draft | 2026.06 |
+| cpp-stl-containers | [STL Algorithms and Containers Checklist](cpp\correctness\stl-algorithms-containers.md) | cpp | N | draft | 2026.06 |
 | cpp-type-safety | [Type Safety and Implicit Conversions Checklist](cpp\correctness\type-safety.md) | cpp | N | draft | 2026.06 |
 | cpp-undefined-behavior | [Undefined Behavior Prevention Checklist](cpp\correctness\undefined-behavior.md) | cpp | N | draft | 2026.06 |
 
@@ -122,7 +125,14 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | cpp-catch2 | [Catch2 Testing Patterns Checklist](cpp\testing\catch2-patterns.md) | cpp | C | draft | 2026.06 |
 | cpp-googletest | [GoogleTest and GMock Patterns Checklist](cpp\testing\googletest-patterns.md) | cpp | C | draft | 2026.06 |
 | cpp-sanitizers | [Sanitizer Integration and Usage Checklist](cpp\testing\sanitizers.md) | cpp | N | draft | 2026.06 |
+| common-test-doubles | [Test Doubles Taxonomy and Selection Checklist](common\testing\test-doubles.md) | common | C | draft | 2026.06 |
 | common-testing-strategy | [Testing Strategy Checklist](common\testing\testing-strategy.md) | common | C | draft | 2026.06 |
+
+### tooling-process
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| common-cicd-pipeline | [CI/CD Pipeline Patterns Checklist](common\ci-cd\pipeline-patterns.md) | common | C | draft | 2026.06 |
 
 <!-- INDEX_END -->
 

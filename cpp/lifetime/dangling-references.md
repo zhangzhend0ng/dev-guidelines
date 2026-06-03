@@ -20,6 +20,7 @@ based_on:
   - "[A] C++ Best Practices (Jason Turner) on lifetime"
 related:
   - "cpp/correctness/class-hierarchies.md"
+  - "cpp/correctness/stl-algorithms-containers.md"
   - "cpp/memory/ownership.md"
   - "cpp/memory/raii.md"
   - "cpp/correctness/const-correctness.md"

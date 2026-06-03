@@ -21,6 +21,7 @@ related:
   - "common/dependencies/dependency-management.md"
   - "common/logging/logging-standards.md"
   - "cpp/functions/parameter-validation.md"
+  - "common/ci-cd/pipeline-patterns.md"
 supersedes: []
 changelog:
   - "2026.05: Initial draft"
