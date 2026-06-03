@@ -22,6 +22,7 @@ related:
   - "cpp/memory/ownership.md"
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/memory/raii.md"
+  - "cpp/testing/sanitizers.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

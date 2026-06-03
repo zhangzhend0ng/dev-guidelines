@@ -41,6 +41,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | cpp-thread-safety | [Concurrency and Thread Safety Checklist](cpp\concurrency\thread-safety.md) | cpp | N | draft | 2026.06 |
 | cpp-const-correctness | [Const Correctness Checklist](cpp\correctness\const-correctness.md) | cpp | N | draft | 2026.05 |
 | cpp-exception-safety | [Exception Safety Guarantees Checklist](cpp\correctness\exception-safety.md) | cpp | N | draft | 2026.06 |
+| cpp-integer-safety | [Integer Safety Checklist](cpp\correctness\integer-safety.md) | cpp | N | draft | 2026.06 |
 | cpp-lifetime | [Object Lifetime and Dangling References Checklist](cpp\lifetime\dangling-references.md) | cpp | N | draft | 2026.06 |
 | cpp-type-safety | [Type Safety and Implicit Conversions Checklist](cpp\correctness\type-safety.md) | cpp | N | draft | 2026.06 |
 | cpp-undefined-behavior | [Undefined Behavior Prevention Checklist](cpp\correctness\undefined-behavior.md) | cpp | N | draft | 2026.06 |
