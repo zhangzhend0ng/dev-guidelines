@@ -137,7 +137,7 @@ TEMPLATE_TEST_CASE("Clear empties container", "[container]",
 ### 7. Tag-Based Filtering  **(C)** [R1]
 
 - [ ] Tags on every test: `[unit]`, `[integration]`, `[slow]`, `[component]` → **(C)** [R1]
-- [ ] CI: `[!slow]` for PR, `[slow]` for nightly → **(C)** [R1]
+- [ ] CI: `~[slow]` for PR (negation), `[slow]` for nightly → **(C)** [R1]
 - [ ] Tag conventions documented in project CONTRIBUTING → **(C)** [R1]
 
 ### 8. Benchmarking  **(A)** [R1]

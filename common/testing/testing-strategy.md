@@ -18,7 +18,8 @@ based_on:
   - "[A] xUnit Test Patterns (Meszaros, 2007)"
   - "[A] Working Effectively with Legacy Code (Feathers, 2004)"
   - "[A] Software Engineering at Google Ch.11 (2020)"
-related: []
+related:
+  - "cpp/testing/catch2-patterns.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"
