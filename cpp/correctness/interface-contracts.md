@@ -92,7 +92,7 @@ Decide per function whether the contract is narrow (caller guarantees) or wide (
 - [ ] Wide contract: never `assert()` on user input -- return error or throw → **(C)** [R3]
 - [ ] A function that silently returns "success" for invalid input hides bugs -- prefer a narrow contract → **(C)** [R2]
 - [ ] The contract type (narrow/wide) is stable: changing narrow to wide is backward-compatible; changing wide to narrow is a breaking API change → **(C)** [R2]
-- [ ] For detailed validation mechanism selection (security boundaries, public vs internal), see Parameter Validation → **(A)** Cross-reference to `cpp/functions/parameter-validation.md`
+- [ ] For detailed validation mechanism selection (security boundaries, public vs internal), see [Parameter Validation](../functions/parameter-validation.md) → **(A)** [R2]
 
 ### 5. Liskov Substitution Principle (LSP) in C++ **(N)** [R1][R2][R4]
 

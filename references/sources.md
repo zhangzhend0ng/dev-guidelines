@@ -34,6 +34,10 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | C9 | Google API Design Guide | API design conventions | Google | On demand |
 | C10 | IETF RFC 7807 (Problem Details) | API error response format | IETF | Stable |
 | C11 | GitHub Actions Documentation | CI/CD workflow syntax, caching, matrices | GitHub | Continuous |
+| C12 | Google Testing Blog | Test sizes, best practices, flaky test management | Google | Continuous |
+| C13 | Microsoft vcpkg Documentation | C++ package management via manifest mode | Microsoft | Continuous |
+| C14 | Conan Documentation | Cross-platform C++ package management | JFrog | Continuous |
+| C15 | CMake FetchContent / CPM.cmake | Fetch-based C++ dependency acquisition | Kitware / Community | Continuous |
 
 ## A-Tier: Advisory (Expert Literature & Org Standards)
 
@@ -51,6 +55,9 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | A10 | LLVM Coding Standards | C++ coding conventions | LLVM Project | Continuous | Low |
 | A11 | Abseil C++ Tips of the Week | C++ idioms | Google | Weekly | Low |
 | A12 | Continuous Delivery (Humble/Farley, 2010) | CI/CD build pipeline, fast feedback | Humble & Farley | 2010 | Low |
+| A13 | Effective STL | STL algorithms, containers, iterators best practices | Scott Meyers | 2001 | High — pre-C++11 |
+| A14 | xUnit Test Patterns | Test organization, fixtures, test doubles taxonomy | Gerard Meszaros | 2007 | Medium |
+| A15 | Mocks Aren't Stubs (Fowler) | Test double definitions article | Martin Fowler | 2007 | Low — principles timeless |
 
 ## Deprecated Sources
 
