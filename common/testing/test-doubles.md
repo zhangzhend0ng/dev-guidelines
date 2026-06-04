@@ -271,7 +271,7 @@ Each double type exists on a spectrum of fidelity vs. maintenance cost. Choosing
 
 ---
 
-### 7. Anti-Pattern: Over-Mocking  **(C)** [R1][R2][R3]
+### 7. Over-Mocking Guard  **(C)** [R1][R2][R3]
 
 Over-mocking is the most prevalent test double misuse. It produces a test suite that is tightly coupled to implementation details, brittle under refactoring, and gives false confidence.
 

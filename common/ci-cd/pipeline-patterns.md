@@ -52,6 +52,7 @@ changelog:
 - [ ] Pipeline triggers automatically on every push and PR → **(C)** [R4]
 - [ ] No manual-only trigger for primary build/test pipeline → **(C)** [R4]
 - [ ] Fast feedback: CI completes in under 10 minutes → **(C)** [R4]
+- [ ] 10-30 minute pipelines: have a documented plan to reach <10 min (cache, parallelize, split slow tests) → **(A)** [R4]
 - [ ] Failed builds notify the author immediately → **(C)** [R1]
 
 ### 2. Build Matrix  **(C)** [R3]
