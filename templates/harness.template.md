@@ -4,7 +4,7 @@ id: "<language>-<slug>"
 title: "<Harness Display Title>"
 language: "<cpp|common|python|go|rust>"
 category: "<category-from-INDEX.md>"
-tier: "<N|C|A>"
+tier: "<N|C|A|P>"
 scope: "<action> for <what> in <context>"
 version: "2026.05"
 status: "draft"
@@ -15,7 +15,7 @@ tags:
   - <tag1>
   - <tag2>
 based_on:
-  - "[<N|C|A>] <Source Name> <Clause>"
+  - "[<N|C|A|P>] <Source Name> <Clause>"
 related: []
 supersedes: []
 changelog:
@@ -39,7 +39,7 @@ changelog:
 
 ## Checklist
 
-<!-- 5-10 items. Each: condition → action with (N)/(C)/(A) tag + [Rx] reference key. -->
+<!-- 5-10 items. Each: condition → action with (N)/(C)/(A)/(P) tag + [Rx] reference key. -->
 
 ### 1. <Item Title>
 

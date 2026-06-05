@@ -25,9 +25,10 @@ Every harness file (`common/**/*.md`, `cpp/**/*.md`) has:
 
 ## Authority Tiers
 
-- **(N) Normative** — ISO standards, WG21 adopted papers. Non-negotiable.
-- **(C) Consensus** — C++ Core Guidelines, SEI/CERT, OWASP. Industry consensus.
+- **(N) Normative** — ISO standards, WG21 adopted papers.
+- **(C) Consensus** — C++ Core Guidelines, SEI/CERT, OWASP.
 - **(A) Advisory** — Expert books (Effective C++, etc.), org style guides.
+- **(P) Project** — Team conventions. Mandatory within the project.
 
 ## Key Rules
 

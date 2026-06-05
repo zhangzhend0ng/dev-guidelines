@@ -34,7 +34,7 @@ REQUIRED_FIELDS = [
 ]
 
 VALID_STATUSES = {"draft", "reviewed", "stable", "deprecated"}
-VALID_TIERS = {"N", "C", "A"}
+VALID_TIERS = {"N", "C", "A", "P"}
 VALID_LANGUAGES = {"common", "cpp", "python", "go", "rust"}
 
 
