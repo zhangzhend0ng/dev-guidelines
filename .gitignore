@@ -1,1 +1,19 @@
+# Claude Code session state
+.claudine/
 
+# Agent skill cache
+.agents/
+
+# VSCode workspace settings
+.vscode/
+
+# Auto-generated agent files
+CLAUDINE.AGENTS.md
+skills-lock.json
+
+# Personal work diary
+工作日记/
+
+# Python
+__pycache__/
+*.pyc
