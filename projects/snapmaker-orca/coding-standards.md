@@ -4,7 +4,7 @@ id: "snapmaker-orca-coding-standards"
 title: "SnapmakerOrca C++ Coding Standards"
 language: "cpp"
 category: "project-specific"
-tier: "C"
+tier: "P"
 scope: "Enforce SnapmakerOrca C++ coding standards — superset of dev-guidelines C++ harnesses with additional restrictions"
 version: "2026.06"
 status: "draft"
@@ -69,11 +69,11 @@ changelog:
 - [ ] `nullptr` over `NULL` → **(C)** [R1]
 - [ ] Explicit types; avoid `auto` where it obscures intent → **(C)** [R1]
 
-### 4. Syntax — Forbidden  **(N)** [R1][R2]
+### 4. Syntax — Forbidden  **(P)** [R1][R2]
 
-- [ ] No C-style casts `(Type)value`; use `static_cast<>` → **(N)** [R1]
+- [ ] No C-style casts `(Type)value`; use `static_cast<>` → **(P)** [R1]
 - [ ] No macros for constants/functions; use `const`/`constexpr`/`inline` → **(C)** [R1]
-- [ ] No `goto` → **(N)** [R1]
+- [ ] No `goto` → **(P)** [R1]
 - [ ] No multiple inheritance / virtual inheritance (except sanctioned) → **(C)** [R1]
 - [ ] No C-style varargs (`printf` family) → **(C)** [R1]
 
@@ -93,7 +93,7 @@ if (x = 10) {}    // assignment-as-condition
 ### 6. Memory & Resource Safety  **(C)** [R1][R2]
 
 - [ ] No raw `new`/`delete`; use `std::make_unique`/`std::make_shared` → **(C)** [R1]
-- [ ] No `malloc`/`free` in application code → **(N)** [R1]
+- [ ] No `malloc`/`free` in application code → **(P)** [R1]
 - [ ] `std::vector` over fixed-length C arrays → **(C)** [R1]
 - [ ] All resources (handles, locks, sockets, files) RAII-managed → **(C)** [R1]
 - [ ] Pointer null check before dereference → **(C)** [R1]
@@ -120,12 +120,12 @@ if (x = 10) {}    // assignment-as-condition
 - [ ] Consistent global lock ordering → **(C)** [R1]
 - [ ] No heavy ops (I/O, compute, sleep) inside locked sections → **(C)** [R1]
 
-### 10. Security Development  **(N)** [R1][R2]
+### 10. Security Development  **(P)** [R1][R2]
 
 - [ ] All external input (network, file, user) validated → **(C)** [R1]
-- [ ] No `strcpy`/`sprintf`/`memcpy` without length checks → **(N)** [R1]
+- [ ] No `strcpy`/`sprintf`/`memcpy` without length checks → **(P)** [R1]
 - [ ] Prefer `strcpy_s`/`sprintf_s`/`memcpy_s` → **(C)** [R1]
-- [ ] No credentials/keys/sensitive data in plaintext or logs → **(N)** [R1]
+- [ ] No credentials/keys/sensitive data in plaintext or logs → **(P)** [R1]
 
 ### 11. Comments & Documentation  **(C)** [R1]
 
