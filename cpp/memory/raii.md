@@ -30,6 +30,7 @@ related:
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/performance/optimization-patterns.md"
   - "cpp/memory/ownership.md"
+  - "projects/snapmaker-orca/coding-standards.md"
 supersedes: []
 changelog:
   - "2026.05: Initial draft"

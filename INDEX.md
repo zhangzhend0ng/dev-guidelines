@@ -98,6 +98,13 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 |----|-------|----------|------|--------|---------|
 | cpp-performance-patterns | [C++ Performance Patterns Checklist](cpp\performance\optimization-patterns.md) | cpp | N | draft | 2026.06 |
 
+### project-specific
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| snapmaker-orca-coding-standards | [SnapmakerOrca C++ Coding Standards](projects\snapmaker-orca\coding-standards.md) | cpp | P | draft | 2026.06 |
+| snapmaker-orca-workflow | [SnapmakerOrca PR and Workflow Standards](projects\snapmaker-orca\workflow-standards.md) | common | P | draft | 2026.06 |
+
 ### resource-management
 
 | ID | Title | Language | Tier | Status | Version |

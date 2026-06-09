@@ -25,6 +25,7 @@ related:
   - "cpp/concurrency/thread-safety.md"
   - "cpp/functions/parameter-validation.md"
   - "common/security/input-validation.md"
+  - "projects/snapmaker-orca/workflow-standards.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft from 切片部门代码规范文档 v1.0"

@@ -16,8 +16,9 @@ based_on:
   - "[C] SnapmakerOrca 切片部门PR规范 v2.0 (2026-06-04)"
   - "[C] Conventional Commits 1.0.0"
 related:
-  - "../../common/commits/conventional-commits.md"
-  - "../../common/code-review/review-checklist.md"
+  - "common/commits/conventional-commits.md"
+  - "common/code-review/review-checklist.md"
+  - "projects/snapmaker-orca/coding-standards.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft from 切片部门PR规范 v2.0"

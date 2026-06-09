@@ -23,6 +23,7 @@ related:
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/memory/raii.md"
   - "cpp/testing/sanitizers.md"
+  - "projects/snapmaker-orca/coding-standards.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"
