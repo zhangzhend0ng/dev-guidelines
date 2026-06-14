@@ -21,6 +21,7 @@ based_on:
 related:
   - "common/ai/prompt-injection-and-llm-security.md"
   - "common/ai/tool-calling-and-agent-control.md"
+  - "cpp/runtime/observability-and-diagnostics.md"
   - "common/security/input-validation.md"
 supersedes: []
 changelog:

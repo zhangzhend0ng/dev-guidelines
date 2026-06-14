@@ -19,6 +19,8 @@ based_on:
   - "[A] Deep C++ series (John Regehr), UB Sanitizer documentation"
 related:
   - "common/ai/ai-assisted-cpp-development.md"
+  - "cpp/security/secure-coding.md"
+  - "cpp/testing/static-analysis.md"
   - "cpp/concurrency/thread-safety.md"
   - "cpp/correctness/class-hierarchies.md"
   - "cpp/correctness/const-correctness.md"

@@ -1,0 +1,25 @@
+id: cpp-core
+title: C++ Core Harness Pack
+version: "2026.06"
+requires:
+  - common-core
+includes:
+  - cpp/build/cmake-include-hygiene.md
+  - cpp/build/package-management.md
+  - cpp/build/toolchain-and-compiler-flags.md
+  - cpp/debugging/crash-dump-analysis.md
+  - cpp/debugging/flaky-test-triage.md
+  - cpp/debugging/sanitizer-triage.md
+  - cpp/correctness/class-hierarchies.md
+  - cpp/correctness/compile-time-programming.md
+  - cpp/correctness/const-correctness.md
+  - cpp/correctness/exception-safety.md
+  - cpp/correctness/interface-contracts.md
+  - cpp/correctness/type-safety.md
+  - cpp/correctness/undefined-behavior.md
+  - cpp/functions/parameter-validation.md
+  - cpp/lifetime/dangling-references.md
+  - cpp/memory/move-semantics.md
+  - cpp/memory/ownership.md
+  - cpp/memory/raii.md
+  - cpp/templates/template-best-practices.md

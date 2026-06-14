@@ -24,6 +24,8 @@ based_on:
   - "[A] Effective Modern C++ Items 18-22 (Meyers)"
 related:
   - "common/ai/ai-assisted-cpp-development.md"
+  - "cpp/api/abi-compatibility.md"
+  - "cpp/security/secure-coding.md"
   - "cpp/concurrency/thread-safety.md"
   - "cpp/lifetime/dangling-references.md"
   - "cpp/correctness/undefined-behavior.md"

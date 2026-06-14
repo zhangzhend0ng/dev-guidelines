@@ -23,6 +23,7 @@ based_on:
   - "[C] SEI/CERT MEM51-CPP, FIO51-CPP"
   - "[A] Effective C++ Items 13-14 (Meyers)"
 related:
+  - "cpp/error-handling/result-vs-exception.md"
   - "cpp/concurrency/thread-safety.md"
   - "cpp/correctness/class-hierarchies.md"
   - "cpp/lifetime/dangling-references.md"

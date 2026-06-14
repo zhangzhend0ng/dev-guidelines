@@ -19,6 +19,7 @@ based_on:
   - "[A] Effective Modern C++ (Meyers) Items 31-34"
   - "[A] C++ Best Practices (Jason Turner) on lifetime"
 related:
+  - "cpp/security/secure-coding.md"
   - "cpp/correctness/class-hierarchies.md"
   - "cpp/correctness/stl-algorithms-containers.md"
   - "cpp/memory/ownership.md"

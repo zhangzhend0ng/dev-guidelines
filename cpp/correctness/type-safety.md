@@ -19,6 +19,9 @@ based_on:
   - "[A] Effective C++ Item 27 (Meyers)"
   - "[A] Effective Modern C++ Items 6-7 (Meyers)"
 related:
+  - "cpp/serialization/parsing-and-validation.md"
+  - "cpp/security/secure-coding.md"
+  - "cpp/testing/static-analysis.md"
   - "cpp/correctness/stl-algorithms-containers.md"
   - "cpp/correctness/undefined-behavior.md"
 supersedes: []

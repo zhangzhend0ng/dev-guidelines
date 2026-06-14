@@ -17,7 +17,8 @@ based_on:
   - "[C] Google API Design Guide"
   - "[C] Microsoft REST API Guidelines"
   - "[A] API Design Patterns (Geewax, 2021)"
-related: []
+related:
+  - "cpp/architecture/module-boundaries.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

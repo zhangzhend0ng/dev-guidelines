@@ -23,14 +23,20 @@ based_on:
   - "[C] NIST SP 800-218 SSDF"
   - "[A] dev-guidelines Harness-Driven Development Protocol"
 related:
+  - "common/ai/model-capability-and-instruction-adherence.md"
   - "common/ai/tool-calling-and-agent-control.md"
   - "common/ai/prompt-injection-and-llm-security.md"
   - "common/ai/ai-evaluation-and-regression-strategy.md"
+  - "docs/ai/conversation-distillation.md"
   - "common/code-review/harness-driven-review.md"
+  - "common/planning/task-decomposition.md"
+  - "common/debugging/fix-verification.md"
   - "common/testing/testing-strategy.md"
   - "common/ci-cd/pipeline-patterns.md"
+  - "cpp/testing/static-analysis.md"
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/memory/ownership.md"
+  - "cpp/debugging/sanitizer-triage.md"
   - "cpp/testing/sanitizers.md"
 supersedes: []
 changelog:

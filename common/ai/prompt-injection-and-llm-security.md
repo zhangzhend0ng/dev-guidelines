@@ -23,6 +23,7 @@ based_on:
   - "[C] OWASP ASVS"
   - "[C] NIST SP 800-218 SSDF"
 related:
+  - "common/ai/model-capability-and-instruction-adherence.md"
   - "common/ai/tool-calling-and-agent-control.md"
   - "common/ai/ai-assisted-cpp-development.md"
   - "common/ai/ai-evaluation-and-regression-strategy.md"

@@ -19,9 +19,11 @@ based_on:
   - "[A] C++ Concurrency in Action 2/e (Williams)"
   - "[A] Effective Modern C++ Items 35-40 (Meyers)"
 related:
+  - "cpp/security/secure-coding.md"
   - "cpp/memory/ownership.md"
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/memory/raii.md"
+  - "cpp/debugging/flaky-test-triage.md"
   - "cpp/testing/sanitizers.md"
 supersedes: []
 changelog:

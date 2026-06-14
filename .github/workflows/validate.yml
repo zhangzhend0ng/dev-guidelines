@@ -6,7 +6,19 @@ on:
     paths:
       - "common/**"
       - "cpp/**"
+      - "docs/ai/**"
+      - "docs/protocols/**"
+      - "docs/specs/**"
+      - "docs/strategy/**"
+      - "packs/**"
+      - "prompts/**"
+      - "references/**"
+      - "scripts/**"
       - "templates/**"
+      - "AGENTS.md"
+      - "INDEX.md"
+      - "README.md"
+      - "ROADMAP.md"
   schedule:
     - cron: "0 9 * * 1"
 
@@ -27,6 +39,22 @@ jobs:
         continue-on-error: true
       - name: Index sync check
         run: python scripts/generate_index.py --check
+      - name: AI protocol smoke checks
+        run: python scripts/test_ai_protocol.py
+      - name: AI protocol evaluation smoke check
+        run: |
+          python scripts/evaluate_ai_protocol.py docs/ai/evals/weak-model/good-runs --json
+          python scripts/evaluate_ai_protocol.py docs/ai/evals/weak-model/good-runs --output /tmp/ai-eval-report.md
+          test -s /tmp/ai-eval-report.md
+      - name: Planning and debugging protocol smoke checks
+        run: python scripts/test_plan_debug_protocol.py
+      - name: Harness pack smoke checks
+        run: |
+          python scripts/list_packs.py
+          python scripts/install_pack.py cpp-testing ai-dev
+          python scripts/validate.py --installed --json
+          python scripts/generate_index.py --pack cpp-testing --output /tmp/cpp-testing-index.md
+          test -s /tmp/cpp-testing-index.md
 
   dead-links:
     runs-on: ubuntu-latest

@@ -19,6 +19,7 @@ based_on:
   - "[A] Exceptional C++ (Sutter) Items 8-19"
   - "[A] Effective C++ (Meyers) Item 29"
 related:
+  - "cpp/error-handling/result-vs-exception.md"
   - "cpp/memory/raii.md"
   - "common/error-handling/error-handling-strategy.md"
 supersedes: []
