@@ -38,6 +38,10 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | C13 | Microsoft vcpkg Documentation | C++ package management via manifest mode | Microsoft | Continuous |
 | C14 | Conan Documentation | Cross-platform C++ package management | JFrog | Continuous |
 | C15 | CMake FetchContent / CPM.cmake | Fetch-based C++ dependency acquisition | Kitware / Community | Continuous |
+| C16 | OWASP Top 10 for LLM Applications | LLM application security risks | OWASP Foundation | Annual / periodic |
+| C17 | Model Context Protocol Specification | Agent context, tools, resources, and protocol contracts | Model Context Protocol project | Continuous |
+| C18 | NIST AI Risk Management Framework 1.0 | AI risk governance, mapping, measurement, and management | NIST | Periodic |
+| C19 | NIST AI 600-1 Generative AI Profile | Generative AI risk management profile for AI RMF | NIST | Periodic |
 
 ## A-Tier: Advisory (Expert Literature & Org Standards)
 

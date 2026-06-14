@@ -23,6 +23,7 @@ based_on:
   - "[C] SEI/CERT MEM50-CPP"
   - "[A] Effective Modern C++ Items 18-22 (Meyers)"
 related:
+  - "common/ai/ai-assisted-cpp-development.md"
   - "cpp/concurrency/thread-safety.md"
   - "cpp/lifetime/dangling-references.md"
   - "cpp/correctness/undefined-behavior.md"

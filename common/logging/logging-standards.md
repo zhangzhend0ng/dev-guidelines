@@ -19,6 +19,8 @@ based_on:
   - "[A] 12-Factor App — Logs as Event Streams"
   - "[A] Google SRE Book Ch.16"
 related:
+  - "common/ai/prompt-injection-and-llm-security.md"
+  - "common/ai/tool-calling-and-agent-control.md"
   - "common/security/input-validation.md"
 supersedes: []
 changelog:

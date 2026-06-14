@@ -18,6 +18,8 @@ based_on:
   - "[C] GitHub Actions Documentation"
   - "[A] Continuous Delivery (Humble/Farley, 2010)"
 related:
+  - "common/ai/ai-evaluation-and-regression-strategy.md"
+  - "common/ai/ai-assisted-cpp-development.md"
   - "common/dependencies/dependency-management.md"
   - "common/security/input-validation.md"
 supersedes: []

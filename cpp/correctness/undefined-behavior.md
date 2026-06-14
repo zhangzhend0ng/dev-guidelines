@@ -18,6 +18,7 @@ based_on:
   - "[C] SEI/CERT INT32-C, EXP34-C, ARR30-C"
   - "[A] Deep C++ series (John Regehr), UB Sanitizer documentation"
 related:
+  - "common/ai/ai-assisted-cpp-development.md"
   - "cpp/concurrency/thread-safety.md"
   - "cpp/correctness/class-hierarchies.md"
   - "cpp/correctness/const-correctness.md"

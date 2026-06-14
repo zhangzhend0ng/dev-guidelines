@@ -17,6 +17,7 @@ based_on:
   - "[C] LLVM Compiler-RT Sanitizer Documentation"
   - "[A] Google Sanitizers Wiki (GitHub: google/sanitizers)"
 related:
+  - "common/ai/ai-assisted-cpp-development.md"
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/concurrency/thread-safety.md"
 supersedes: []

@@ -19,6 +19,8 @@ based_on:
   - "[C] SLSA Framework — Supply-chain Levels"
   - "[C] NIST SP 800-218 SSDF — PS.2 Secure Components"
 related:
+  - "common/ai/prompt-injection-and-llm-security.md"
+  - "common/ai/tool-calling-and-agent-control.md"
   - "common/security/input-validation.md"
   - "cpp/build/package-management.md"
   - "common/ci-cd/pipeline-patterns.md"

@@ -21,6 +21,8 @@ based_on:
   - "[A] dev-guidelines CLAUDE.md — Harness Usage Protocol"
   - "[A] dev-guidelines Harness Methodology (concepts/01-harness-methodology.md)"
 related:
+  - "common/ai/ai-assisted-cpp-development.md"
+  - "common/ai/tool-calling-and-agent-control.md"
   - "common/code-review/review-checklist.md"
   - "common/meta/harness-evolution.md"
 supersedes: []

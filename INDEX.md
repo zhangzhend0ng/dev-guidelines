@@ -7,12 +7,23 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | I need to... | See |
 |-------------|------|
 | Validate function parameters | Parameter Validation (cpp/functions/) |
+| Use AI to write or review C++ code | [AI-Assisted C++ Development](common\ai\ai-assisted-cpp-development.md) |
+| Control AI tool calls or agent actions | [Tool Calling and Agent Control](common\ai\tool-calling-and-agent-control.md) |
 | Propose a new harness | [Contributing Guide](CONTRIBUTING.md) |
 | Understand the authority system | [Design Spec](docs/specs/2026-05-31-repo-structure-design.md) |
 
 ## All Harnesses by Category
 
 <!-- INDEX_START -->
+### ai
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| common-ai-evaluation-regression | [AI Evaluation and Regression Strategy Checklist](common\ai\ai-evaluation-and-regression-strategy.md) | common | C | draft | 2026.06 |
+| common-ai-assisted-cpp-development | [AI-Assisted C++ Development Checklist](common\ai\ai-assisted-cpp-development.md) | common | C | draft | 2026.06 |
+| common-prompt-injection-llm-security | [Prompt Injection and LLM Application Security Checklist](common\ai\prompt-injection-and-llm-security.md) | common | C | draft | 2026.06 |
+| common-tool-calling-agent-control | [Tool Calling and Agent Control Checklist](common\ai\tool-calling-and-agent-control.md) | common | C | draft | 2026.06 |
+
 ### build
 
 | ID | Title | Language | Tier | Status | Version |
@@ -140,6 +151,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | Category | Description |
 |----------|-------------|
+| AI | AI-assisted development, agent tools, prompt/tool injection, model evaluation |
 | Security | Input validation, access control, encryption, threat modeling |
 | Design | API design, architecture patterns, interface contracts, type usage |
 | Correctness | Undefined behavior, const correctness, exception safety, lifetime |
