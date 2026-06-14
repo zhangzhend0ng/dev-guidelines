@@ -6,6 +6,7 @@ on:
     paths:
       - "common/**"
       - "cpp/**"
+      - "python/**"
       - "docs/ai/**"
       - "docs/protocols/**"
       - "docs/specs/**"
@@ -55,6 +56,23 @@ jobs:
           python scripts/validate.py --installed --json
           python scripts/generate_index.py --pack cpp-testing --output /tmp/cpp-testing-index.md
           test -s /tmp/cpp-testing-index.md
+          python scripts/validate.py --pack python-core --json
+          python scripts/generate_index.py --pack python-core --output /tmp/python-core-index.md
+          test -s /tmp/python-core-index.md
+          python scripts/export_pack.py cpp-testing --out /tmp/dev-guidelines-dist --zip
+          test -s /tmp/dev-guidelines-dist/cpp-testing.zip
+          test -s /tmp/dev-guidelines-dist/cpp-testing.zip.sha256
+          python scripts/export_pack.py python-core --out /tmp/dev-guidelines-dist --zip
+          test -s /tmp/dev-guidelines-dist/python-core.zip
+          test -s /tmp/dev-guidelines-dist/python-core.zip.sha256
+          cd /tmp/dev-guidelines-dist/cpp-testing
+          python scripts/validate.py --installed --json
+          python scripts/generate_index.py --installed --output /tmp/exported-cpp-testing-index.md
+          test -s /tmp/exported-cpp-testing-index.md
+          cd /tmp/dev-guidelines-dist/python-core
+          python scripts/validate.py --installed --json
+          python scripts/generate_index.py --installed --output /tmp/exported-python-core-index.md
+          test -s /tmp/exported-python-core-index.md
 
   dead-links:
     runs-on: ubuntu-latest

@@ -41,5 +41,24 @@ installed_paths:
 
 ## Distribution
 
-Initial distribution is monorepo + manifest + install script. Release zip artifacts can be added later without changing the manifest schema.
+Packs can be exported as a repository slice or zip artifact:
 
+```bash
+python scripts/export_pack.py cpp-testing --out dist --zip
+```
+
+The export contains a repository slice with:
+
+- selected pack manifests and dependency manifests
+- every included harness path
+- required validation/index scripts
+- `.dev-guidelines-installed.yml`
+- `packs/index.yml`
+- optional `<pack>.zip` and `<pack>.zip.sha256`
+
+Consumers can validate an exported pack from the export root:
+
+```bash
+python scripts/validate.py --installed --json
+python scripts/generate_index.py --installed --output /tmp/index.md
+```

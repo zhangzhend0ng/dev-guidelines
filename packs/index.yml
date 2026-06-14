@@ -1,0 +1,39 @@
+packs:
+  - id: ai-dev
+    title: AI-Assisted Development Harness Pack
+    version: "2026.06"
+    requires:
+      - common-core
+    manifest: packs/ai-dev/pack.yml
+  - id: common-core
+    title: Common Core Harness Pack
+    version: "2026.06"
+    requires: []
+    manifest: packs/common-core/pack.yml
+  - id: cpp-core
+    title: C++ Core Harness Pack
+    version: "2026.06"
+    requires:
+      - common-core
+    manifest: packs/cpp-core/pack.yml
+  - id: cpp-security
+    title: C++ Security Harness Pack
+    version: "2026.06"
+    requires:
+      - common-core
+      - cpp-core
+      - cpp-testing
+    manifest: packs/cpp-security/pack.yml
+  - id: cpp-testing
+    title: C++ Testing Harness Pack
+    version: "2026.06"
+    requires:
+      - common-core
+      - cpp-core
+    manifest: packs/cpp-testing/pack.yml
+  - id: python-core
+    title: Python Core Harness Pack
+    version: "2026.06"
+    requires:
+      - common-core
+    manifest: packs/python-core/pack.yml

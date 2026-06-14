@@ -117,7 +117,12 @@ python scripts/test_ai_protocol.py
 # List and install modular harness packs
 python scripts/list_packs.py
 python scripts/install_pack.py cpp-core cpp-testing ai-dev
+python scripts/install_pack.py python-core
 python scripts/validate.py --installed
+
+# Export a distributable pack bundle
+python scripts/export_pack.py cpp-testing --out dist --zip
+python scripts/export_pack.py python-core --out dist --zip
 ```
 
 Validation runs in CI on every PR. Requires Python 3.10+.
@@ -132,5 +137,8 @@ Common examples:
 python scripts/install_pack.py cpp-core
 python scripts/install_pack.py cpp-core cpp-security
 python scripts/install_pack.py ai-dev
+python scripts/install_pack.py python-core
 python scripts/generate_index.py --pack cpp-testing
+python scripts/generate_index.py --pack python-core
+python scripts/export_pack.py cpp-testing --out dist --zip
 ```

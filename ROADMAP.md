@@ -49,6 +49,6 @@ Future AI modules: RAG and context management, model selection and change manage
 
 | Language | Status |
 |----------|--------|
-| python | planned |
+| python | seed pack |
 | go | planned |
 | rust | planned |

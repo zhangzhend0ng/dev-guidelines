@@ -1,0 +1,14 @@
+id: python-core
+title: Python Core Harness Pack
+version: "2026.06"
+requires:
+  - common-core
+includes:
+  - common/dependencies/dependency-management.md
+  - common/security/input-validation.md
+  - common/testing/testing-strategy.md
+  - python/packaging/dependency-management.md
+  - python/correctness/type-hints-and-mypy.md
+  - python/testing/pytest-patterns.md
+  - python/security/input-deserialization.md
+  - python/concurrency/asyncio-cancellation.md

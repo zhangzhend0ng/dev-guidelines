@@ -46,6 +46,10 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | C21 | LLVM libFuzzer Documentation | In-process coverage-guided fuzzing | LLVM Project | Continuous |
 | C22 | Google OSS-Fuzz / Fuzzing Guidance | Continuous fuzzing practice | Google / OSS-Fuzz | Continuous |
 | C23 | OpenTelemetry Logging Specification | Structured telemetry and log data model | OpenTelemetry | Continuous |
+| C24 | Python Documentation | Python language, standard library, typing, asyncio, pickle security warnings | Python Software Foundation | Continuous |
+| C25 | Python Packaging User Guide | pyproject.toml, packaging, dependency metadata, distribution guidance | PyPA | Continuous |
+| C26 | pytest Documentation | pytest fixtures, assertions, parametrization, test discovery | pytest-dev | Continuous |
+| C27 | mypy Documentation | static type checking, configuration, gradual typing | mypy project | Continuous |
 
 ## A-Tier: Advisory (Expert Literature & Org Standards)
 

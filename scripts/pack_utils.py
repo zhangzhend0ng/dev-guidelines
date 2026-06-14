@@ -64,3 +64,17 @@ def read_installed():
         return None
     return yaml.safe_load(INSTALLED_PATH.read_text(encoding="utf-8"))
 
+
+def pack_index():
+    items = []
+    for pack in list_packs():
+        items.append(
+            {
+                "id": pack["id"],
+                "title": pack["title"],
+                "version": pack["version"],
+                "requires": pack.get("requires", []) or [],
+                "manifest": pack["_path"],
+            }
+        )
+    return {"packs": items}

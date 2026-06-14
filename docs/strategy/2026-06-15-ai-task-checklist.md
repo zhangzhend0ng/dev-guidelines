@@ -50,8 +50,8 @@ Exit criteria:
 
 - [x] Add pack manifests and install scripts.
 - [x] Make validate/index scripts pack-aware.
-- [ ] Add pack export and packaging workflow.
-- [ ] Add pack manifest index and checksums.
+- [x] Add pack export script.
+- [x] Add pack manifest index and checksums.
 - [ ] Add sparse-checkout / download instructions for consumers.
 - [ ] Make pack validation part of release gating.
 
@@ -61,16 +61,16 @@ Exit criteria:
 
 ## Phase 4: Python Core Pack
 
-- [ ] Create `packs/python-core/pack.yml`.
-- [ ] Add first five Python harnesses:
+- [x] Create `packs/python-core/pack.yml`.
+- [x] Add first five Python harnesses:
   - dependency management
   - typing and mypy
   - pytest patterns
   - input deserialization
   - asyncio cancellation
-- [ ] Add Python source registry entries.
-- [ ] Add Python-specific validation and index coverage.
-- [ ] Add pack smoke tests for `python-core`.
+- [x] Add Python source registry entries.
+- [x] Add Python-specific validation and index coverage.
+- [x] Add pack smoke tests for `python-core`.
 
 Exit criteria:
 - Python is available as a first-class installable pack
