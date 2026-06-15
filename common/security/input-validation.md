@@ -27,6 +27,7 @@ related:
   - "cpp/serialization/parsing-and-validation.md"
   - "cpp/testing/fuzzing.md"
   - "common/ci-cd/pipeline-patterns.md"
+  - "projects/snapmaker-orca/coding-standards.md"
 supersedes: []
 changelog:
   - "2026.05: Initial draft"

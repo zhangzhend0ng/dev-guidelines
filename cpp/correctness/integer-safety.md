@@ -23,6 +23,7 @@ related:
   - "cpp/security/secure-coding.md"
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/correctness/type-safety.md"
+  - "projects/snapmaker-orca/coding-standards.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

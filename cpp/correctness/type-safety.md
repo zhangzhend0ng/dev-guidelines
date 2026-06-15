@@ -24,6 +24,7 @@ related:
   - "cpp/testing/static-analysis.md"
   - "cpp/correctness/stl-algorithms-containers.md"
   - "cpp/correctness/undefined-behavior.md"
+  - "projects/snapmaker-orca/coding-standards.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

@@ -47,6 +47,8 @@ Three tiers based on origin, maintenance model, and adoption breadth.
 | N vs. N | Newer edition |
 | C vs. C | Broader adoption; if tied, file issue |
 | A vs. A | More recent publication; cross-check against N/C |
+| P vs. N/C/A | P never overrides N/C/A externally; within project, P is enforced regardless |
+| P vs. P | Project owner decides; file an issue, discuss, document |
 
 ## Tier ≠ Enforcement
 
@@ -54,9 +56,21 @@ The authority tier describes the **source**, not the rule's severity. A C-tier s
 
 We deliberately separate source authority from rule severity. MISRA uses Mandatory/Required/Advisory for rule enforcement; we use N/C/A for source authority. A rule can be both "from an expert book" and "security-critical."
 
-## Why Three Tiers?
+### Project (P) — "The team rule"
 
-Two tiers (standard vs. everything else) lumps expert literature with blog posts. Four tiers adds complexity without discrimination power. Three tiers cleanly separate: standards bodies → professional consensus → individual expertise.
+**Definition:** Project-internal conventions established by the team. No external authority required. Enforcement is mandatory within the project.
+
+**Examples:** "No exceptions in our codebase," "Allman brace style only," "No Chinese in source," "UTF-8 BOM encoding."
+
+**Key property:** As strictly enforced as N-tier within the project, but carries no weight outside it. Does not override N/C/A assessments in other contexts.
+
+**Review cycle:** 12 months (team review).
+
+**P vs. A distinction:** (A) describes "Meyers says prefer X" — an external voice worth listening to. (P) describes "our team decided X is mandatory" — an internal rule. Both are "non-standard" but (P) is enforced.
+
+## Why Four Tiers?
+
+N/C/A covers source authority across standards, industry consensus, and expert literature. P handles the real case where a team has mandatory conventions with no external standard to cite — the codebase must be consistent, but we don't want to over-claim "this is industry consensus" for something internal.
 
 ## See Also
 

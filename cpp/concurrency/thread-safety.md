@@ -25,6 +25,7 @@ related:
   - "cpp/memory/raii.md"
   - "cpp/debugging/flaky-test-triage.md"
   - "cpp/testing/sanitizers.md"
+  - "projects/snapmaker-orca/coding-standards.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

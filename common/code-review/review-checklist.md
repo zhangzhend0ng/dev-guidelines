@@ -19,6 +19,7 @@ based_on:
   - "[A] Best Kept Secrets of Peer Code Review (SmartBear)"
 related:
   - "common/code-review/harness-driven-review.md"
+  - "projects/snapmaker-orca/workflow-standards.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"
