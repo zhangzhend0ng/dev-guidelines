@@ -13,6 +13,8 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+from pack_utils import installed_paths_for, read_installed
+
 ROOT = Path(__file__).resolve().parent.parent
 INDEX_PATH = ROOT / "INDEX.md"
 START_MARKER = "<!-- INDEX_START -->"
@@ -48,6 +50,18 @@ def find_harnesses():
         if fm and fm.get("type") == "harness":
             harnesses.append((str(md_path.relative_to(ROOT)), fm))
     return harnesses
+
+
+def selected_paths_from_args(args):
+    if args.installed:
+        installed = read_installed()
+        if not installed:
+            print("ERROR: .dev-guidelines-installed.yml not found", file=sys.stderr)
+            sys.exit(1)
+        return set(installed.get("installed_paths", []) or [])
+    if args.pack:
+        return set(installed_paths_for(args.pack))
+    return None
 
 
 def build_index_table(harnesses):
@@ -91,9 +105,17 @@ def read_index():
 def main():
     parser = argparse.ArgumentParser(description="Generate INDEX.md")
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--pack", action="append", help="Generate index for pack and dependencies")
+    parser.add_argument("--installed", action="store_true", help="Generate index for installed pack set")
+    parser.add_argument("--output", help="Write generated index to another file")
     args = parser.parse_args()
 
     harnesses = find_harnesses()
+    selected_paths = selected_paths_from_args(args)
+    if selected_paths is not None:
+        harnesses = [
+            (path, fm) for path, fm in harnesses if path in selected_paths
+        ]
     new_table = build_index_table(harnesses)
     index_content = read_index()
 
@@ -117,7 +139,10 @@ def main():
             + index_content[end_pos:]
         )
 
-    if args.check:
+    if args.output:
+        Path(args.output).write_text(updated, encoding="utf-8")
+        print(f"Written {args.output}")
+    elif args.check:
         current = read_index()
         if current != updated:
             print("ERROR: INDEX.md is out of sync. Run scripts/generate_index.py")

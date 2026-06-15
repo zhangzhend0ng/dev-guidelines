@@ -7,18 +7,44 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | I need to... | See |
 |-------------|------|
 | Validate function parameters | Parameter Validation (cpp/functions/) |
+| Use AI to write or review C++ code | [AI-Assisted C++ Development](common\ai\ai-assisted-cpp-development.md) |
+| Make weaker AI models follow instructions | [Model Capability and Instruction Adherence](common\ai\model-capability-and-instruction-adherence.md) |
+| Control AI tool calls or agent actions | [Tool Calling and Agent Control](common\ai\tool-calling-and-agent-control.md) |
 | Propose a new harness | [Contributing Guide](CONTRIBUTING.md) |
 | Understand the authority system | [Design Spec](docs/specs/2026-05-31-repo-structure-design.md) |
 
 ## All Harnesses by Category
 
 <!-- INDEX_START -->
+### ai
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| common-ai-evaluation-regression | [AI Evaluation and Regression Strategy Checklist](common\ai\ai-evaluation-and-regression-strategy.md) | common | C | draft | 2026.06 |
+| common-ai-assisted-cpp-development | [AI-Assisted C++ Development Checklist](common\ai\ai-assisted-cpp-development.md) | common | C | draft | 2026.06 |
+| common-model-capability-instruction-adherence | [Model Capability and Instruction Adherence Checklist](common\ai\model-capability-and-instruction-adherence.md) | common | C | draft | 2026.06 |
+| common-prompt-injection-llm-security | [Prompt Injection and LLM Application Security Checklist](common\ai\prompt-injection-and-llm-security.md) | common | C | draft | 2026.06 |
+| common-tool-calling-agent-control | [Tool Calling and Agent Control Checklist](common\ai\tool-calling-and-agent-control.md) | common | C | draft | 2026.06 |
+
+### api
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| cpp-abi-compatibility | [C++ ABI Compatibility Checklist](cpp\api\abi-compatibility.md) | cpp | C | draft | 2026.06 |
+
+### architecture
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| cpp-module-boundaries | [C++ Module Boundaries Checklist](cpp\architecture\module-boundaries.md) | cpp | C | draft | 2026.06 |
+
 ### build
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | cpp-build-system | [C++ Build System and Include Hygiene Checklist](cpp\build\cmake-include-hygiene.md) | cpp | C | draft | 2026.06 |
 | cpp-package-management | [C++ Package Management Checklist](cpp\build\package-management.md) | cpp | C | draft | 2026.06 |
+| cpp-toolchain-compiler-flags | [C++ Toolchain and Compiler Flags Checklist](cpp\build\toolchain-and-compiler-flags.md) | cpp | C | draft | 2026.06 |
 
 ### code-review
 
@@ -33,6 +59,12 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 |----|-------|----------|------|--------|---------|
 | common-conventional-commits | [Commit Message Conventions Checklist](common\commits\conventional-commits.md) | common | C | draft | 2026.06 |
 
+### concurrency
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| python-asyncio-cancellation | [Python asyncio Cancellation Checklist](python\concurrency\asyncio-cancellation.md) | python | C | draft | 2026.06 |
+
 ### correctness
 
 | ID | Title | Language | Tier | Status | Version |
@@ -45,21 +77,36 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | cpp-integer-safety | [Integer Safety Checklist](cpp\correctness\integer-safety.md) | cpp | N | draft | 2026.06 |
 | cpp-interface-contracts | [Interface Contracts and Design-by-Contract Checklist](cpp\correctness\interface-contracts.md) | cpp | N | draft | 2026.06 |
 | cpp-lifetime | [Object Lifetime and Dangling References Checklist](cpp\lifetime\dangling-references.md) | cpp | N | draft | 2026.06 |
+| python-type-hints-mypy | [Python Type Hints and mypy Checklist](python\correctness\type-hints-and-mypy.md) | python | C | draft | 2026.06 |
 | cpp-stl-containers | [STL Algorithms and Containers Checklist](cpp\correctness\stl-algorithms-containers.md) | cpp | N | draft | 2026.06 |
 | cpp-type-safety | [Type Safety and Implicit Conversions Checklist](cpp\correctness\type-safety.md) | cpp | N | draft | 2026.06 |
 | cpp-undefined-behavior | [Undefined Behavior Prevention Checklist](cpp\correctness\undefined-behavior.md) | cpp | N | draft | 2026.06 |
+
+### debugging
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| common-bug-report-triage | [Bug Report Triage Checklist](common\debugging\bug-report-triage.md) | common | A | draft | 2026.06 |
+| cpp-debugging-crash-dump-analysis | [C++ Crash Dump Analysis Checklist](cpp\debugging\crash-dump-analysis.md) | cpp | C | draft | 2026.06 |
+| cpp-debugging-flaky-test-triage | [C++ Flaky Test Triage Checklist](cpp\debugging\flaky-test-triage.md) | cpp | C | draft | 2026.06 |
+| cpp-debugging-sanitizer-triage | [C++ Sanitizer Report Triage Checklist](cpp\debugging\sanitizer-triage.md) | cpp | C | draft | 2026.06 |
+| common-fix-verification | [Fix Verification Checklist](common\debugging\fix-verification.md) | common | C | draft | 2026.06 |
+| common-reproduction-minimization | [Reproduction and Minimization Checklist](common\debugging\reproduction-and-minimization.md) | common | A | draft | 2026.06 |
+| common-root-cause-analysis | [Root Cause Analysis Checklist](common\debugging\root-cause-analysis.md) | common | A | draft | 2026.06 |
 
 ### dependencies
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | common-dependency-management | [Dependency Management Checklist](common\dependencies\dependency-management.md) | common | N | draft | 2026.06 |
+| python-packaging-dependency-management | [Python Packaging and Dependency Management Checklist](python\packaging\dependency-management.md) | python | C | draft | 2026.06 |
 
 ### design
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | common-api-design | [API Design Principles Checklist](common\api-design\restful-api-design.md) | common | C | draft | 2026.06 |
+| cpp-result-vs-exception | [C++ Result vs Exception Checklist](cpp\error-handling\result-vs-exception.md) | cpp | C | draft | 2026.06 |
 | common-error-handling | [Error Handling Strategy Checklist](common\error-handling\error-handling-strategy.md) | common | C | draft | 2026.05 |
 
 ### documentation
@@ -98,6 +145,14 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 |----|-------|----------|------|--------|---------|
 | cpp-performance-patterns | [C++ Performance Patterns Checklist](cpp\performance\optimization-patterns.md) | cpp | N | draft | 2026.06 |
 
+### planning
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| common-change-scope-control | [Change Scope Control Checklist](common\planning\change-scope-control.md) | common | A | draft | 2026.06 |
+| common-risk-verification-plan | [Risk and Verification Plan Checklist](common\planning\risk-and-verification-plan.md) | common | C | draft | 2026.06 |
+| common-rollback-migration-plan | [Rollback and Migration Plan Checklist](common\planning\rollback-and-migration-plan.md) | common | C | draft | 2026.06 |
+| common-task-decomposition | [Task Decomposition Checklist](common\planning\task-decomposition.md) | common | A | draft | 2026.06 |
 ### project-specific
 
 | ID | Title | Language | Tier | Status | Version |
@@ -113,11 +168,25 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | cpp-raii | [RAII and Resource Management Checklist](cpp\memory\raii.md) | cpp | N | draft | 2026.05 |
 | cpp-ownership | [Smart Pointer and Ownership Semantics Checklist](cpp\memory\ownership.md) | cpp | N | draft | 2026.05 |
 
+### runtime
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| cpp-runtime-observability | [C++ Runtime Observability and Diagnostics Checklist](cpp\runtime\observability-and-diagnostics.md) | cpp | C | draft | 2026.06 |
+
 ### security
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
+| cpp-secure-coding | [C++ Secure Coding Checklist](cpp\security\secure-coding.md) | cpp | N | draft | 2026.06 |
 | common-input-validation | [Input Validation Checklist](common\security\input-validation.md) | common | N | draft | 2026.05 |
+| python-input-deserialization | [Python Input Deserialization Checklist](python\security\input-deserialization.md) | python | N | draft | 2026.06 |
+
+### serialization
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| cpp-parsing-validation | [C++ Parsing and Validation Checklist](cpp\serialization\parsing-and-validation.md) | cpp | C | draft | 2026.06 |
 
 ### templates
 
@@ -129,11 +198,16 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
+| cpp-fuzzing | [C++ Fuzzing Checklist](cpp\testing\fuzzing.md) | cpp | C | draft | 2026.06 |
+| cpp-mutation-testing | [C++ Mutation Testing Checklist](cpp\testing\mutation-testing.md) | cpp | A | draft | 2026.06 |
+| cpp-property-based-testing | [C++ Property-Based Testing Checklist](cpp\testing\property-based-testing.md) | cpp | C | draft | 2026.06 |
+| cpp-static-analysis | [C++ Static Analysis Checklist](cpp\testing\static-analysis.md) | cpp | C | draft | 2026.06 |
 | cpp-catch2 | [Catch2 Testing Patterns Checklist](cpp\testing\catch2-patterns.md) | cpp | C | draft | 2026.06 |
 | cpp-googletest | [GoogleTest and GMock Patterns Checklist](cpp\testing\googletest-patterns.md) | cpp | C | draft | 2026.06 |
 | cpp-sanitizers | [Sanitizer Integration and Usage Checklist](cpp\testing\sanitizers.md) | cpp | N | draft | 2026.06 |
 | common-test-doubles | [Test Doubles Taxonomy and Selection Checklist](common\testing\test-doubles.md) | common | C | draft | 2026.06 |
 | common-testing-strategy | [Testing Strategy Checklist](common\testing\testing-strategy.md) | common | C | draft | 2026.06 |
+| python-pytest-patterns | [pytest Patterns Checklist](python\testing\pytest-patterns.md) | python | C | draft | 2026.06 |
 
 ### tooling-process
 
@@ -147,6 +221,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | Category | Description |
 |----------|-------------|
+| AI | AI-assisted development, agent tools, prompt/tool injection, model evaluation |
 | Security | Input validation, access control, encryption, threat modeling |
 | Design | API design, architecture patterns, interface contracts, type usage |
 | Correctness | Undefined behavior, const correctness, exception safety, lifetime |

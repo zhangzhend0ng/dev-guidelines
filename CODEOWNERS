@@ -3,6 +3,7 @@
 
 # C++ domain
 cpp/    @zhangzhend0ng
+python/ @zhangzhend0ng
 
 # Language-agnostic guidelines
 common/ @zhangzhend0ng

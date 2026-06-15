@@ -18,6 +18,8 @@ based_on:
   - "[A] Release It! (Michael Nygard)"
   - "[A] The Pragmatic Programmer (Hunt & Thomas)"
 related:
+  - "cpp/runtime/observability-and-diagnostics.md"
+  - "cpp/error-handling/result-vs-exception.md"
   - "cpp/correctness/exception-safety.md"
 supersedes: []
 changelog:

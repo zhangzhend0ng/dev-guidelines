@@ -1,0 +1,16 @@
+id: cpp-security
+title: C++ Security Harness Pack
+version: "2026.06"
+requires:
+  - common-core
+  - cpp-core
+  - cpp-testing
+includes:
+  - common/security/input-validation.md
+  - common/dependencies/dependency-management.md
+  - common/logging/logging-standards.md
+  - cpp/security/secure-coding.md
+  - cpp/serialization/parsing-and-validation.md
+  - cpp/correctness/integer-safety.md
+  - cpp/testing/fuzzing.md
+  - cpp/testing/sanitizers.md

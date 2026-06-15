@@ -19,7 +19,10 @@ based_on:
   - "[A] Large-Scale C++ Vol. I (John Lakos, 2019)"
   - "[A] IWYU (Include What You Use)"
 related:
+  - "cpp/architecture/module-boundaries.md"
+  - "cpp/build/toolchain-and-compiler-flags.md"
   - "cpp/build/package-management.md"
+  - "cpp/testing/static-analysis.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

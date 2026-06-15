@@ -18,6 +18,9 @@ based_on:
   - "[C] Bloomberg BDE — Contracts and Defensive Programming"
   - "[A] Effective C++ Items 32-36 (Meyers)"
 related:
+  - "cpp/api/abi-compatibility.md"
+  - "cpp/architecture/module-boundaries.md"
+  - "cpp/error-handling/result-vs-exception.md"
   - "cpp/correctness/class-hierarchies.md"
   - "cpp/functions/parameter-validation.md"
 supersedes: []

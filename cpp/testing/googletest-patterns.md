@@ -19,7 +19,10 @@ based_on:
 related:
   - "common/testing/test-doubles.md"
   - "common/testing/testing-strategy.md"
+  - "cpp/testing/property-based-testing.md"
   - "cpp/testing/catch2-patterns.md"
+  - "cpp/debugging/flaky-test-triage.md"
+  - "cpp/debugging/sanitizer-triage.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

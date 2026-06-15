@@ -18,9 +18,14 @@ based_on:
   - "[C] CWE Top 25 (CWE-20, CWE-89, CWE-79)"
   - "[C] SEI/CERT API00-C"
 related:
+  - "common/ai/prompt-injection-and-llm-security.md"
+  - "common/ai/tool-calling-and-agent-control.md"
   - "common/dependencies/dependency-management.md"
   - "common/logging/logging-standards.md"
   - "cpp/functions/parameter-validation.md"
+  - "cpp/security/secure-coding.md"
+  - "cpp/serialization/parsing-and-validation.md"
+  - "cpp/testing/fuzzing.md"
   - "common/ci-cd/pipeline-patterns.md"
   - "projects/snapmaker-orca/coding-standards.md"
 supersedes: []

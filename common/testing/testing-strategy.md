@@ -19,7 +19,16 @@ based_on:
   - "[A] Working Effectively with Legacy Code (Feathers, 2004)"
   - "[A] Software Engineering at Google Ch.11 (2020)"
 related:
+  - "common/ai/model-capability-and-instruction-adherence.md"
+  - "common/ai/ai-evaluation-and-regression-strategy.md"
+  - "common/ai/ai-assisted-cpp-development.md"
+  - "common/debugging/fix-verification.md"
+  - "common/planning/risk-and-verification-plan.md"
   - "common/testing/test-doubles.md"
+  - "cpp/testing/property-based-testing.md"
+  - "cpp/testing/mutation-testing.md"
+  - "cpp/testing/fuzzing.md"
+  - "cpp/testing/static-analysis.md"
   - "cpp/testing/catch2-patterns.md"
   - "cpp/testing/googletest-patterns.md"
 supersedes: []

@@ -18,8 +18,15 @@ based_on:
   - "[C] GitHub Actions Documentation"
   - "[A] Continuous Delivery (Humble/Farley, 2010)"
 related:
+  - "common/ai/model-capability-and-instruction-adherence.md"
+  - "common/ai/ai-evaluation-and-regression-strategy.md"
+  - "common/ai/ai-assisted-cpp-development.md"
+  - "common/planning/risk-and-verification-plan.md"
+  - "common/planning/rollback-and-migration-plan.md"
   - "common/dependencies/dependency-management.md"
   - "common/security/input-validation.md"
+  - "cpp/build/toolchain-and-compiler-flags.md"
+  - "cpp/testing/static-analysis.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

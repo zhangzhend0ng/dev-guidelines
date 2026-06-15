@@ -18,6 +18,7 @@ based_on:
   - "[C] CMake FetchContent / CPM.cmake Documentation — script-based dependency retrieval"
   - "[C] OpenSSF Scorecard — Dependency Update Tooling, CVE scanning"
 related:
+  - "cpp/build/toolchain-and-compiler-flags.md"
   - "cpp/build/cmake-include-hygiene.md"
   - "common/dependencies/dependency-management.md"
 supersedes: []

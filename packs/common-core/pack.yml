@@ -1,0 +1,27 @@
+id: common-core
+title: Common Core Harness Pack
+version: "2026.06"
+requires: []
+includes:
+  - common/code-review/harness-driven-review.md
+  - common/code-review/review-checklist.md
+  - common/debugging/bug-report-triage.md
+  - common/debugging/fix-verification.md
+  - common/debugging/reproduction-and-minimization.md
+  - common/debugging/root-cause-analysis.md
+  - common/planning/change-scope-control.md
+  - common/planning/risk-and-verification-plan.md
+  - common/planning/rollback-and-migration-plan.md
+  - common/planning/task-decomposition.md
+  - common/meta/harness-evolution.md
+  - common/documentation/documentation-standards.md
+  - common/commits/conventional-commits.md
+  - references/sources.md
+  - concepts/01-harness-methodology.md
+  - concepts/02-authority-system.md
+  - templates/harness.template.md
+  - scripts/validate.py
+  - scripts/generate_index.py
+  - scripts/check_plan_protocol.py
+  - scripts/check_debug_report.py
+  - scripts/test_plan_debug_protocol.py

@@ -38,6 +38,18 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | C13 | Microsoft vcpkg Documentation | C++ package management via manifest mode | Microsoft | Continuous |
 | C14 | Conan Documentation | Cross-platform C++ package management | JFrog | Continuous |
 | C15 | CMake FetchContent / CPM.cmake | Fetch-based C++ dependency acquisition | Kitware / Community | Continuous |
+| C16 | OWASP Top 10 for LLM Applications | LLM application security risks | OWASP Foundation | Annual / periodic |
+| C17 | Model Context Protocol Specification | Agent context, tools, resources, and protocol contracts | Model Context Protocol project | Continuous |
+| C18 | NIST AI Risk Management Framework 1.0 | AI risk governance, mapping, measurement, and management | NIST | Periodic |
+| C19 | NIST AI 600-1 Generative AI Profile | Generative AI risk management profile for AI RMF | NIST | Periodic |
+| C20 | Itanium C++ ABI | C++ ABI object layout, vtables, name mangling | Itanium C++ ABI maintainers | Stable / periodic |
+| C21 | LLVM libFuzzer Documentation | In-process coverage-guided fuzzing | LLVM Project | Continuous |
+| C22 | Google OSS-Fuzz / Fuzzing Guidance | Continuous fuzzing practice | Google / OSS-Fuzz | Continuous |
+| C23 | OpenTelemetry Logging Specification | Structured telemetry and log data model | OpenTelemetry | Continuous |
+| C24 | Python Documentation | Python language, standard library, typing, asyncio, pickle security warnings | Python Software Foundation | Continuous |
+| C25 | Python Packaging User Guide | pyproject.toml, packaging, dependency metadata, distribution guidance | PyPA | Continuous |
+| C26 | pytest Documentation | pytest fixtures, assertions, parametrization, test discovery | pytest-dev | Continuous |
+| C27 | mypy Documentation | static type checking, configuration, gradual typing | mypy project | Continuous |
 
 ## A-Tier: Advisory (Expert Literature & Org Standards)
 
@@ -58,6 +70,9 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | A13 | Effective STL | STL algorithms, containers, iterators best practices | Scott Meyers | 2001 | High — pre-C++11 |
 | A14 | xUnit Test Patterns | Test organization, fixtures, test doubles taxonomy | Gerard Meszaros | 2007 | Medium |
 | A15 | Mocks Aren't Stubs (Fowler) | Test double definitions article | Martin Fowler | 2007 | Low — principles timeless |
+| A16 | AFL++ Documentation | Coverage-guided fuzzing strategy | AFL++ Project | Continuous | Low |
+| A17 | Mull Mutation Testing Documentation | C++ mutation testing | Mull Project | Continuous | Low |
+| A18 | PIT Mutation Testing Concepts | Mutation testing concepts | PIT Project | Continuous | Low |
 
 ## Deprecated Sources
 

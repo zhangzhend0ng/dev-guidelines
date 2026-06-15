@@ -13,8 +13,11 @@ You are in the `dev-guidelines` repository. Cross-project shared development gui
 | Govern harness lifecycle & evolution | [common/meta/harness-evolution.md](common/meta/harness-evolution.md) — when to promote, deprecate, split, or challenge |
 | Look up an authoritative source | [references/sources.md](references/sources.md) — N/C/A registry (29 entries) |
 | Use a prompt template | [prompts/](prompts/code-review-with-harness.md) — AI code review + harness creation |
+| Use a weak/local/domestic model | [Weak Model Workflow](prompts/weak-model-workflow.md) + [Model Capability](common/ai/model-capability-and-instruction-adherence.md) |
 | Validate all harnesses | `python scripts/validate.py --json` |
 | Regenerate index | `python scripts/generate_index.py` |
+| Check weak-model output | `python scripts/run_ai_protocol_check.py <output.*.md>` |
+| Use modular harness packs | `python scripts/list_packs.py` and `python scripts/install_pack.py <pack>` |
 
 ## Harness Format
 
@@ -42,3 +45,5 @@ Every harness file (`common/**/*.md`, `cpp/**/*.md`) has:
 5. **Cross-references must be bidirectional.** If A links to B, B's `related` field lists A.
 6. **Source references include timeliness tags.** Check Reference Sources table format.
 7. **Directory structure:** `common/` for language-agnostic, `cpp/` for C++ specific.
+8. **Weak/local/domestic models must use the weak-model workflow.** Load [common/ai/model-capability-and-instruction-adherence.md](common/ai/model-capability-and-instruction-adherence.md), use [prompts/weak-model-workflow.md](prompts/weak-model-workflow.md), and run `python scripts/run_ai_protocol_check.py <output.*.md>` before human review.
+9. **Modular packs are supported.** Use `packs/<id>/pack.yml` manifests, `python scripts/install_pack.py <pack>`, and validate subsets with `python scripts/validate.py --installed` or `--pack <id>`.

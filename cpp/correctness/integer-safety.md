@@ -19,6 +19,8 @@ based_on:
   - "[A] Boost.SafeNumerics documentation"
   - "[A] GCC/Clang -fsanitize=signed-integer-overflow, -ftrapv, -Wconversion documentation"
 related:
+  - "cpp/serialization/parsing-and-validation.md"
+  - "cpp/security/secure-coding.md"
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/correctness/type-safety.md"
   - "projects/snapmaker-orca/coding-standards.md"

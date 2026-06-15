@@ -18,7 +18,8 @@ based_on:
   - "[C] OpenAPI 3.1 Specification"
   - "[A] ADR Pattern (Michael Nygard, 2011)"
   - "[A] Keep a Changelog (keepachangelog.com)"
-related: []
+related:
+  - "common/ai/ai-evaluation-and-regression-strategy.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

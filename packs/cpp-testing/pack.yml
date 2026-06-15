@@ -1,0 +1,16 @@
+id: cpp-testing
+title: C++ Testing Harness Pack
+version: "2026.06"
+requires:
+  - common-core
+  - cpp-core
+includes:
+  - common/testing/test-doubles.md
+  - common/testing/testing-strategy.md
+  - cpp/testing/catch2-patterns.md
+  - cpp/testing/fuzzing.md
+  - cpp/testing/googletest-patterns.md
+  - cpp/testing/mutation-testing.md
+  - cpp/testing/property-based-testing.md
+  - cpp/testing/sanitizers.md
+  - cpp/testing/static-analysis.md
