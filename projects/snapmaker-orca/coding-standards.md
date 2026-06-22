@@ -11,7 +11,7 @@ status: "draft"
 stable_since: ""
 last_validated: "2026-06-04"
 review_cycle: "12m"
-tags: [snapmaker-orca, coding-standards, cpp11, cpp14]
+tags: [snapmaker-orca, coding-standards, cpp17]
 based_on:
   - "[C] SnapmakerOrca 切片部门代码规范文档 v1.0 (2026-06-04)"
   - "[C] C++ Core Guidelines"
@@ -29,6 +29,7 @@ related:
 supersedes: []
 changelog:
   - "2026.06: Initial draft from 切片部门代码规范文档 v1.0"
+  - "2026.06.22: Language baseline updated from C++11/14 to C++17. Prohibited C++17 features retained: structured bindings, CTAD, if-init, constexpr new. All other C++17 features allowed."
 ---
 
 # SnapmakerOrca C++ Coding Standards
@@ -40,7 +41,7 @@ changelog:
 
 ## Prerequisites
 
-**Language baseline:** C++11/14. C++17+ features prohibited unless explicitly approved.
+**Language baseline:** C++17 (build sets `CMAKE_CXX_STANDARD 17`). Prohibited C++17 features: structured bindings (`auto [a,b] = …`), CTAD (class template argument deduction without `<T>`), if-init (`if (init; cond)`), and `constexpr new`. All other C++17 features (`std::optional`, `std::variant`, `std::string_view`, `if constexpr`, `[[nodiscard]]`/`[[fallthrough]]`/`[[maybe_unused]]`, inline variables) are allowed.
 **Exception policy:** Exceptions (throw/try/catch) disabled. All error handling uses return codes.
 **Encoding:** UTF-8 with BOM. No Chinese in source code.
 
@@ -50,7 +51,7 @@ changelog:
 
 ### 1. Language Baseline  **(C)** [R1]
 
-- [ ] C++11/14 only; no C++17+ features (structured bindings, CTAD, if-init, constexpr new) → **(C)** [R1]
+- [ ] C++17 baseline; prohibited C++17 features: structured bindings (`auto [a,b]`), CTAD, if-init (`if (init; cond)`), `constexpr new` → **(C)** [R1]
 - [ ] No exceptions (throw/try/catch); error handling via bool/int return codes → **(C)** [R1]
 - [ ] No Chinese in source code; UTF-8 BOM encoding → **(C)** [R1]
 
@@ -140,7 +141,7 @@ if (x = 10) {}    // assignment-as-condition
 
 ```
 SnapmakerOrca C++ code?
-  → C++11/14, no exceptions? [1]
+  → C++17 baseline, no exceptions, no prohibited C++17 features (structured bindings/CTAD/if-init/constexpr new)? [1]
   → 4-space, Allman, 80-120? [2]
   → vector, unique_ptr, const, enum class? [3]
   → No C casts, macros, goto? [4]
@@ -204,3 +205,4 @@ SnapmakerOrca C++ code?
 ## Changelog
 
 - 2026.06: Initial draft from 切片部门代码规范文档 v1.0
+- 2026.06.22: Language baseline updated from C++11/14 to C++17 (build already sets `CMAKE_CXX_STANDARD 17`). Prohibited C++17 features retained: structured bindings, CTAD, if-init, constexpr new. All other C++17 features (std::optional/variant/string_view, if constexpr, [[attributes]], inline variables) are allowed.
