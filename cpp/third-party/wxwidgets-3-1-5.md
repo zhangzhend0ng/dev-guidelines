@@ -1752,7 +1752,7 @@ macOS App Nap pauses background/occluded windows' timers, animations, and idle e
 
 - [ ] Do NOT rely on `wxTimer` for time-critical background processing on macOS — App Nap may pause it → **(P)** [R22]
 
-- [ ] If timers must continue in background, disable App Nap via `wxApp::SetAppNapEnabled(false)` or `NSProcessInfo` API → **(P)** [R22]
+- [ ] If timers must continue in background, disable App Nap via the `LSAppNapDisabled` (`Info.plist`) key or `NSProcessInfo` (`beginActivityWithOptions:reason:`) — wxWidgets 3.1.5 exposes NO API for this → **(P)** [R22]
 
 - [ ] Use `wxEVT_IDLE` for background work that should resume when the app becomes active — App Nap resumes idle processing on activation → **(P)** [R22]
 
@@ -1760,16 +1760,13 @@ macOS App Nap pauses background/occluded windows' timers, animations, and idle e
 
 ```cpp
 // Good — disable App Nap for time-critical apps
+// wxWidgets 3.1.5 has no built-in API; use Info.plist or NSProcessInfo directly
+// (1) Info.plist:  <key>LSAppNapDisabled</key>  <true/>
+// (2) Runtime (Objective-C++ source), or via wxOSXObjcCType bridge:
+//     [[NSProcessInfo processInfo]
+//         beginActivityWithOptions:NSActivityUserInitiatedAllowingIdleSystemSleep
+//                          reason:@"time-critical work"];
 ```
-#ifdef __WXOSX__
-```cpp
-    // Option 1: wxWidgets API (if available)
-    // wxApp::SetAppNapEnabled(false);
-    // Option 2: direct NSProcessInfo
-    extern "C" void* objc_msgSend(void*, void*, ...);
-    // Or use wxWidgets' built-in support if version supports it
-```
-#endif
 
 - **Consequence:** UI appears frozen, animations stop, timers miss deadlines when app is in background on macOS
 
@@ -1853,11 +1850,11 @@ wxWidgets provides multiple DPI query APIs with platform-specific value ranges. 
 
 - [ ] On wxOSX/wxGTK, `GetContentScaleFactor()` typically returns integer values (1.0 or 2.0) → **(P)** [R22]
 
-- [ ] `wxWindow::GetDPIScaleFactor()` returns DPI as an integer percentage (e.g. 150 for 150%) — prefer this for font/metrics calculations on wxMSW → **(P)** [R31]
+- [ ] `wxWindow::GetDPIScaleFactor()` returns a **`double` ratio** (1.0 for 100%, 2.0 for 200%) — same scale as `GetContentScaleFactor()`, not an integer percentage → **(P)** [R31]
 
-- [ ] `wxDisplay::GetPPI()` and `wxDisplay::GetScaleFactor()` query per-monitor DPI — use for multi-monitor DPI heterogeneity → **(P)** [R31]
+- [ ] `wxDisplay::GetPPI()` (returns `wxSize`) and `wxDisplay::GetScaleFactor()` (returns `double` ratio) query per-monitor DPI — use for multi-monitor DPI heterogeneity → **(P)** [R31]
 
-- [ ] `MSWGetContentScaleFactor()` is wxMSW-specific and may differ from `GetContentScaleFactor()` for per-monitor-DPI-v2 — verify behavior on your target Windows version → **(P)** [R26]
+- [ ] There is NO `MSWGetContentScaleFactor()` in 3.1.5 — use `GetContentScaleFactor()` (or `wxDisplay::GetScaleFactor()` for per-monitor DPI) → **(P)** [R26]
 
 - [ ] Under X11 (non-Wayland wxGTK), `GDK_SCALE` and `GDK_DPI_SCALE` environment variables control HiDPI — test with both set and unset → **(P)** [R25]
 
@@ -1868,8 +1865,8 @@ double scale = GetContentScaleFactor();
 glViewport(0, 0, static_cast<int>(size.x * scale + 0.5),
                     static_cast<int>(size.y * scale + 0.5));
 // Good — per-monitor DPI query
-int dpi = wxDisplay::GetFromWindow(this).GetPPI().x;
-int dpi_pct = wxDisplay::GetFromWindow(this).GetScaleFactor();
+int dpi = wxDisplay::GetFromWindow(this).GetPPI().x;       // wxSize::x (px/inch)
+double scale = wxDisplay::GetFromWindow(this).GetScaleFactor(); // ratio (1.0/2.0)
 ```
 
 ### 55. wxOSX: Pasteboard Formats and DataObject Translation  **(P)** [R22]
@@ -2005,8 +2002,8 @@ wxWidgets maps controls to native widgets on each platform: `wxButton` becomes `
 // Good — DPI-aware, native sizing
 wxButton* btn = new wxButton(parent, wxID_OK, "OK");
 ```
-// Let sizer handle sizing, or use FromDIP
-btn->SetMinSize(wxSize::FromDIP(wxSize(80, 24)));
+// Let sizer handle sizing, or use FromDIP (member on wxWindow, NOT a static on wxSize)
+btn->SetMinSize(btn->FromDIP(wxSize(80, 24)));
 
 - **Consequence:** UI looks broken, controls truncated or oversized on non-development platforms
 
@@ -2026,7 +2023,9 @@ btn->SetMinSize(wxSize::FromDIP(wxSize(80, 24)));
 
 ```cpp
 // Good — DPI-aware sizer spacing
-wxSizerFlags flags = wxSizerFlags().Expand().Border(wxALL, wxWindow::FromDIP(5));
+// FromDIP is a wxWindow member (or static needing a window pointer); there is no
+// static wxWindow::FromDIP(int) overload, so call it on a concrete window:
+wxSizerFlags flags = wxSizerFlags().Expand().Border(wxALL, parent->FromDIP(5));
 ```
 sizer->Add(control, flags);
 
@@ -2619,15 +2618,15 @@ On wxMSW, wxWidgets uses native Win32 controls. Visual styles (XP, Vista, Win10/
 
 - [ ] Embed `Microsoft.Windows.Common-Controls` v6 manifest in the application — otherwise controls appear in classic style -> **(P)** [R26]
 
-- [ ] Use `wxApp::MSWEnableDarkMode()` (3.1.5 experimental) for Windows dark mode support -> **(P)** [R13]
+- [ ] NOTE: `wxApp::MSWEnableDarkMode()` does NOT exist in 3.1.5 (added only in unreleased 3.3/master, with `wxDarkModeSettings`). For 3.1.5 dark mode on Windows, use undocumented Win32 `SetPreferredAppMode`/`AllowDarkModeForWindow` or wait for 3.3+ -> **(P)** [R13]
 
 - [ ] Test with visual styles enabled and disabled — appearance differs significantly -> **(P)** [R26]
 
 - [ ] Do NOT call `EnableVisualStyles()` (Win32 API) directly — let the manifest handle it -> **(P)** [R26]
 
-- **Consequence:** Controls in classic style, no dark mode, inconsistent appearance
+- **Consequence:** Controls in classic style, no native dark mode in 3.1.5, inconsistent appearance
 
-- **Fix:** Embed common-controls v6 manifest, use `MSWEnableDarkMode()` for dark mode
+- **Fix:** Embed common-controls v6 manifest; for Windows dark mode use Win32 APIs directly (no wxWidgets API in 3.1.5) or upgrade to 3.3+
 
 ### 93. wxMSW: wxMSW Header Column Click and Sort Indicator  **(P)** [R26]
 
@@ -2707,13 +2706,13 @@ On Windows Vista+, the modern file dialog (`IFileDialog`) is used by wxWidgets 3
 
 - [ ] Test `SetFilterIndex()` on Windows 10/11 — may not select the correct filter in modern dialog -> **(P)** [R26]
 
-- [ ] For legacy dialog behavior, use `wxFileDialog::SetWindowStyleFlag()` with `wxFD_USE_LEGACY_DIALOG` (if available) -> **(P)** [R26]
+- [ ] NOTE: there is NO `wxFD_USE_LEGACY_DIALOG` style flag in wxWidgets. In 3.1.5 the modern `IFileDialog` is always used on Vista+; to force the legacy `GetOpenFileName` dialog you must build wxWidgets with `wxUSE_IFILEOPENDIALOG=0` or call the Win32 API directly -> **(P)** [R26]
 
 - [ ] Do NOT assume the file dialog is modal — on some Windows versions, it may appear in taskbar -> **(P)** [R26]
 
 - **Consequence:** Filter index wrong, working directory not changed, dialog in taskbar (looks non-modal)
 
-- **Fix:** Test modern dialog features, use legacy dialog if needed, don't assume strict modality
+- **Fix:** Test modern dialog features, disable `IFileDialog` at wxWidgets build time if the legacy dialog is required, don't assume strict modality
 
 ### 97. wxMSW: wxMSW Task Dialog and Modern Message Box  **(P)** [R26]
 
