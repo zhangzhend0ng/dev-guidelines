@@ -1497,7 +1497,7 @@ wxMenuItem bitmap handling has historical issues: disabled item with bitmap look
 
 - [ ] Submenu label update: `SetItemLabel()` may not work for submenu items (#16246) → **(P)** [R20]
 
-- [ ] Menu item bitmap disappears on Windows (#11595) — use `wxBitmapBundle` (3.1.5+) for multi-resolution → **(P)** [R20]
+- [ ] Menu item bitmap disappears on Windows (#11595) — use `wxBitmapBundle` (3.1.6+) for multi-resolution → **(P)** [R20]
 
 - [ ] `wxMenuBar::SetLabelTop()`/`GetLabelTop()`: deprecated, use `SetMenuLabel()`/`GetMenuLabel()` → **(P)** [R20]
 
@@ -1654,7 +1654,7 @@ wxStatusBar fields and wxToolBar tool management have platform-specific behavior
 
 - [ ] wxMSW: `wxToolBar` height adapts to embedded controls (since 3.1) — may make toolbar taller → **(P)** [R1]
 
-- [ ] `wxToolBar::AddTool()`: use `wxBitmapBundle` (3.1.5+) for multi-resolution/HiDPI → **(P)** [R20]
+- [ ] `wxToolBar::AddTool()`: use `wxBitmapBundle` (3.1.6+) for multi-resolution/HiDPI → **(P)** [R20]
 
 - [ ] `wxToolBar::Realize()`: must call after adding all tools → **(P)** [R20]
 
@@ -1665,8 +1665,10 @@ wxStatusBar fields and wxToolBar tool management have platform-specific behavior
 ### 50. wxBitmapBundle (Multi-Resolution Bitmaps)  **(P)** [R1]
 
 ```cpp
-wxBitmapBundle (introduced in 3.1.5) provides multi-resolution bitmap support for HiDPI displays. It replaces single wxBitmap for icons/toolbars/menus.
+wxBitmapBundle provides multi-resolution bitmap support for HiDPI displays. It replaces single wxBitmap for icons/toolbars/menus.
 ```
+
+> **Version note:** `wxBitmapBundle` was introduced in **3.1.6**, NOT 3.1.5 (`include/wx/bmpbndl.h` does not exist at the v3.1.5 tag). On 3.1.5 use a single `wxBitmap` and accept the HiDPI blurriness, or require 3.1.6+.
 
 - [ ] Use `wxBitmapBundle` for all UI bitmaps — provides automatic multi-resolution bitmap selection for the current DPI → **(P)** [R1]
 
@@ -2363,9 +2365,9 @@ Bind(wxEVT_TIMER, [this, timer](wxTimerEvent&) {
 
 ### 78. wxActivityIndicator: Availability and Cross-Platform Behavior  **(P)** [R24]
 
-`wxActivityIndicator` (added in 3.1.5) is a spinning indicator for indeterminate progress. On wxOSX it uses `NSProgressIndicator` (native spinner), on wxMSW it uses a generic animation, on wxGTK it uses `GtkSpinner`. Known limitation: the spinner only animates when the window is visible and focused — it may stop in background.
+`wxActivityIndicator` (added in **3.1.0**, available in 3.1.5) is a spinning indicator for indeterminate progress. On wxOSX it uses `NSProgressIndicator` (native spinner), on wxMSW it uses a generic animation, on wxGTK it uses `GtkSpinner`. Known limitation: the spinner only animates when the window is visible and focused — it may stop in background.
 
-- [ ] `wxActivityIndicator` requires 3.1.5+ — do NOT use in projects targeting 3.0 → **(P)** [R24]
+- [ ] `wxActivityIndicator` requires 3.1.0+ — do NOT use in projects targeting 3.0.x → **(P)** [R24]
 
 - [ ] Call `Start()`/`Stop()` explicitly — the spinner does NOT auto-start → **(P)** [R24]
 
@@ -2590,27 +2592,27 @@ On GTK, drag-and-drop uses `GtkDragSource`/`GtkDropTarget` (GTK 4) or `gtk_drag_
 
 ### 91. wxMSW: High DPI and Per-Monitor DPI Awareness  **(P)** [R26]
 
-On Windows 10 1703+, per-monitor DPI awareness allows each monitor to have its own DPI. wxWidgets 3.1.5 supports per-monitor DPI via `wxFrame::DPIChanged()` event and `wxWindow::GetDPI()`. Known issues: not all controls correctly handle DPI changes at runtime (move window to different monitor), and `wxBitmap` loaded from resources may not scale automatically.
+On Windows 10 1703+, per-monitor DPI awareness allows each monitor to have its own DPI. wxWidgets 3.1.5 exposes `wxWindow::GetDPI()` and `FromDIP()/ToDIP()` for per-monitor DPI queries. NOTE: the `wxEVT_DPI_CHANGED` event / `wxDPIChangedEvent` class and `wxBitmapBundle` were added in **3.1.6** — they do NOT exist in 3.1.5. Known issues: not all controls correctly handle DPI changes at runtime (move window to different monitor), and `wxBitmap` loaded from resources may not scale automatically.
 
-- [ ] Use `wxBitmapBundle` (3.1.5+) for multi-resolution bitmaps that auto-scale on DPI change -> **(P)** [R26]
+- [ ] Use `wxBitmapBundle` (3.1.6+, NOT 3.1.5) for multi-resolution bitmaps that auto-scale on DPI change -> **(P)** [R26]
 
-- [ ] Handle `wxEVT_DPI_CHANGED` to re-layout and rescale custom-drawn content -> **(P)** [R26]
+- [ ] Handle `wxEVT_DPI_CHANGED` (3.1.6+ only; on 3.1.5 you must handle `wxEVT_SIZE`/`wxEVT_DISPLAY_CHANGED` and re-query DPI manually) to re-layout and rescale custom-drawn content -> **(P)** [R26]
 
-- [ ] Use `wxWindow::FromDIP()`/`ToDIP()` for all pixel-to-logical conversions -> **(P)** [R26]
+- [ ] Use `wxWindow::FromDIP()`/`ToDIP()` for all pixel-to-logical conversions (available in 3.1.5) -> **(P)** [R26]
 
 - [ ] Test by dragging window between monitors with different DPI (100% and 200%) -> **(P)** [R26]
 
 ```cpp
-// Good — handle DPI change
+// Good — handle DPI change (requires 3.1.6+ for wxEVT_DPI_CHANGED / wxDPIChangedEvent)
 Bind(wxEVT_DPI_CHANGED, [this](wxDPIChangedEvent& event) {
     GetSizer()->Fit(this); // Re-layout on DPI change
     Refresh(); // Redraw with new scaling
-```
 });
+```
 
 - **Consequence:** Blurry UI, controls wrong size after monitor move, pixel-perfect drawing broken
 
-- **Fix:** Use `wxBitmapBundle`, handle `wxEVT_DPI_CHANGED`, `FromDIP()`/`ToDIP()` for conversions
+- **Fix:** Use `wxBitmapBundle` (3.1.6+), handle `wxEVT_DPI_CHANGED` (3.1.6+), `FromDIP()`/`ToDIP()` (3.1.5+) for conversions
 
 ### 92. wxMSW: wxMSW-specific Control Styles and Visual Themes  **(P)** [R26]
 
