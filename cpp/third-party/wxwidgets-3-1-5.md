@@ -48,7 +48,7 @@ based_on:
 
   - "[P] wxWidgets 3.1.5 docs — overviews (sizer.h, roughguide.h, customwidgets.h, exceptions.h, html.h)"
 
-  - "[P] Stack Overflow [wxwidgets] tag — cross-platform UI/UX best practices"
+  - "[P] wxWidgets 3.1.5 docs/doxygen/overviews/string.h, cmake.h, unicode.h — cross-platform UI/UX best practices"
 
   - "[P] wxWidgets 3.1.5 interface/wx/string.h — utf8_str/ToUTF8/mb_str/wc_str buffer lifetime documentation"
 
@@ -218,7 +218,7 @@ auto* canvas2 = new wxGLCanvas(this, attrs, wxID_ANY);
 
 Since 3.1.x, wxGLCanvas uses physical pixels on high-DPI displays under wxGTK3 and wxOSX. Logical coordinates from `wxWindow::GetSize()` must be multiplied by `GetContentScaleFactor()` before passing to OpenGL functions.
 
-- [ ] All OpenGL viewport/glx size calls use `GetSize() * GetContentScaleFactor()`, not raw `GetSize()` → **(P)** [R1]
+- [ ] All OpenGL viewport/glx size calls use `GetClientSize() * GetContentScaleFactor()`, not raw `GetClientSize()` → **(P)** [R1]
 
 - [ ] Mouse coordinates in GL handlers: convert from logical to physical pixels → **(P)** [R1]
 
@@ -457,7 +457,7 @@ Several behavioral changes from 3.0→3.1 are silent (compile fine, different ru
 
 ### 10. Build System: setup.h, wx-config, CMake Targets  **(P)** [R1][R7][R8]
 
-"setup.h no such file" is the #1 Stack Overflow wxWidgets question (17 votes). CMake targets were renamed in 3.1.4 to `wx::*` namespace.
+"setup.h no such file" is a commonly reported build issue. CMake targets were renamed in 3.1.4 to `wx::*` namespace.
 
 - [ ] Use `wx-config --cxxflags --libs` (Unix) or `setup.h` via `wxWidgets_USE_FILE` (CMake) — never hardcode `include "wx/setup.h"` paths → **(P)** [R7]
 
@@ -1993,13 +1993,13 @@ public:
 wxWidgets maps controls to native widgets on each platform: `wxButton` becomes `HWND` + button on Windows, `GtkButton` on GTK, `NSButton` on macOS. This means visual appearance, default sizes, padding, and font metrics differ per platform. Hardcoded sizes or pixel-perfect layouts that look right on one platform will look wrong on another.
 ```
 
-- [ ] Do NOT hardcode control dimensions in pixels — use `wxSize::Defaults` or `FromDIP()` for DPI-aware sizing -> **(P)** [R23]
+- [ ] Do NOT hardcode control dimensions in pixels — use `wxSize::Defaults` or `FromDIP()` for DPI-aware sizing → **(P)** [R23]
 
-- [ ] Use `wxWindow::GetBestSize()` for natural control sizing — it returns the platform's native best size -> **(P)** [R23]
+- [ ] Use `wxWindow::GetBestSize()` for natural control sizing — it returns the platform's native best size → **(P)** [R23]
 
-- [ ] Avoid absolute positioning (`Move()`/`SetSize()`) for general UI — use sizers for responsive layout -> **(P)** [R11]
+- [ ] Avoid absolute positioning (`Move()`/`SetSize()`) for general UI — use sizers for responsive layout → **(P)** [R11]
 
-- [ ] Test on all target platforms — a 80x24 button looks different on wxMSW vs wxGTK vs wxOSX -> **(P)** [R23]
+- [ ] Test on all target platforms — a 80x24 button looks different on wxMSW vs wxGTK vs wxOSX → **(P)** [R23]
 
 ```cpp
 // Good — DPI-aware, native sizing
@@ -2016,13 +2016,13 @@ btn->SetMinSize(btn->FromDIP(wxSize(80, 24)));
 
 `wxSizer` border values are in device-independent pixels (DIP) on 3.1.5, but `wxSizer::Add()` border parameter interpretation can vary. `wxALL` adds border on all sides, but forgetting it or using `wxLEFT|wxRIGHT` for uniform spacing is less readable. The `wxBORDER` flags on sizer items affect visual appearance differently per platform (GTK adds visible borders, macOS may not).
 
-- [ ] Use `wxSizerFlags().Border(wxALL, FromDIP(5))` for consistent spacing across DPI scales -> **(P)** [R23]
+- [ ] Use `wxSizerFlags().Border(wxALL, FromDIP(5))` for consistent spacing across DPI scales → **(P)** [R23]
 
-- [ ] Do NOT use raw integer border values like `sizer->Add(control, 0, wxALL, 5)` — use `FromDIP(5)` for DPI awareness -> **(P)** [R23]
+- [ ] Do NOT use raw integer border values like `sizer->Add(control, 0, wxALL, 5)` — use `FromDIP(5)` for DPI awareness → **(P)** [R23]
 
-- [ ] Use `wxSizer::SetMinSize()` + `Layout()` after dynamic content changes — sizers do not auto-layout on content change -> **(P)** [R11]
+- [ ] Use `wxSizer::SetMinSize()` + `Layout()` after dynamic content changes — sizers do not auto-layout on content change → **(P)** [R11]
 
-- [ ] Call `Fit()` on the parent window after adding/removing sizer items dynamically -> **(P)** [R23]
+- [ ] Call `Fit()` on the parent window after adding/removing sizer items dynamically → **(P)** [R23]
 
 ```cpp
 // Good — DPI-aware sizer spacing
@@ -2040,13 +2040,13 @@ sizer->Add(control, flags);
 
 `wxNotebook` tab order is determined by insertion order. On macOS, the tab control uses `NSTabView` which may reorder tabs visually based on overflow handling. Page deletion during event handlers (`wxEVT_NOTEBOOK_PAGE_CHANGED`) can crash on macOS. Also, `wxNotebook::GetSelection()` may return stale values during `wxEVT_PAGE_CHANGING` on some platforms.
 
-- [ ] Do NOT delete notebook pages during `wxEVT_NOTEBOOK_PAGE_CHANGED` — defer deletion via `CallAfter()` -> **(P)** [R23]
+- [ ] Do NOT delete notebook pages during `wxEVT_NOTEBOOK_PAGE_CHANGED` — defer deletion via `CallAfter()` → **(P)** [R23]
 
-- [ ] Use `wxEVT_NOTEBOOK_PAGE_CHANGING` (veto-able) vs `PAGE_CHANGED` (post-change) correctly — veto only in CHANGING -> **(P)** [R23]
+- [ ] Use `wxEVT_NOTEBOOK_PAGE_CHANGING` (veto-able) vs `PAGE_CHANGED` (post-change) correctly — veto only in CHANGING → **(P)** [R23]
 
-- [ ] Call `wxNotebook::InsertPage()` with correct image list index — image indices are not validated, wrong index = no icon -> **(P)** [R23]
+- [ ] Call `wxNotebook::InsertPage()` with correct image list index — image indices are not validated, wrong index = no icon → **(P)** [R23]
 
-- [ ] Test tab overflow behavior — macOS and GTK handle overflow differently (scroll vs squeeze) -> **(P)** [R23]
+- [ ] Test tab overflow behavior — macOS and GTK handle overflow differently (scroll vs squeeze) → **(P)** [R23]
 
 - **Consequence:** Crash on page deletion during event, stale selection value, missing tab icons, inconsistent overflow
 
@@ -2056,13 +2056,13 @@ sizer->Add(control, flags);
 
 `wxToolTip` behavior differs across platforms: on macOS, tooltips appear after a delay and use the system tooltip service (which may clip long text); on Windows, `wxToolTip::SetDelay()` affects all tooltips globally; on GTK, tooltips use `GtkTooltip` which supports markup but has different auto-hide timing. Long tooltips may be truncated on macOS.
 
-- [ ] Do NOT rely on tooltips for critical information — they may be truncated on macOS and have platform-specific delays -> **(P)** [R23]
+- [ ] Do NOT rely on tooltips for critical information — they may be truncated on macOS and have platform-specific delays → **(P)** [R23]
 
-- [ ] Keep tooltip text short (under 80 characters) — macOS clips long tooltips -> **(P)** [R23]
+- [ ] Keep tooltip text short (under 80 characters) — macOS clips long tooltips → **(P)** [R23]
 
-- [ ] Use `wxToolTip::Enable(false)` to temporarily disable tooltips during drag operations -> **(P)** [R23]
+- [ ] Use `wxToolTip::Enable(false)` to temporarily disable tooltips during drag operations → **(P)** [R23]
 
-- [ ] For rich tooltip content, consider `wxSimpleHelpProvider` or custom help instead of `wxToolTip` -> **(P)** [R17]
+- [ ] For rich tooltip content, consider `wxSimpleHelpProvider` or custom help instead of `wxToolTip` → **(P)** [R17]
 
 - **Consequence:** Important info truncated or delayed, tooltips interfere with drag operations, inconsistent UX
 
@@ -2072,13 +2072,13 @@ sizer->Add(control, flags);
 
 `wxStaticBox` (group box) label positioning differs across platforms: on Windows, the label is in the top-left border; on macOS, it may be bold or in a different position; on GTK, it uses `GtkFrame` which positions the label in the top border. Children must be added to `wxStaticBoxSizer`, not the `wxStaticBox` directly, or layout breaks.
 
-- [ ] Always use `wxStaticBoxSizer` for children inside a `wxStaticBox` — adding children directly to `wxStaticBox` breaks layout -> **(P)** [R23]
+- [ ] Always use `wxStaticBoxSizer` for children inside a `wxStaticBox` — adding children directly to `wxStaticBox` breaks layout → **(P)** [R23]
 
-- [ ] Do NOT rely on label position being consistent — test on all platforms -> **(P)** [R23]
+- [ ] Do NOT rely on label position being consistent — test on all platforms → **(P)** [R23]
 
-- [ ] For empty label `wxStaticBox`, use `wxStaticBoxSizer(wxT(""))` — empty string works on all platforms -> **(P)** [R23]
+- [ ] For empty label `wxStaticBox`, use `wxStaticBoxSizer(wxT(""))` — empty string works on all platforms → **(P)** [R23]
 
-- [ ] Verify `wxStaticBox` border visibility in dark mode — GTK frame border may be invisible -> **(P)** [R13]
+- [ ] Verify `wxStaticBox` border visibility in dark mode — GTK frame border may be invisible → **(P)** [R13]
 
 ```cpp
 // Good — children in StaticBoxSizer
@@ -2096,13 +2096,13 @@ sizer->Add(new wxStaticText(box, wxID_ANY, "Label")); // parent = box
 
 `wxStatusBar::SetStatusWidths()` uses field widths in pixels, but text rendering width varies by platform and DPI. Negative widths mean "stretch to fill remaining space." Using fixed positive widths for text fields can cause truncation on different platforms or DPI scales. `GetFieldRect()` should be used to get actual rendered field dimensions.
 
-- [ ] Use negative widths for flexible/stretchable status bar fields -> **(P)** [R23]
+- [ ] Use negative widths for flexible/stretchable status bar fields → **(P)** [R23]
 
-- [ ] Call `wxStatusBar::GetFieldRect()` to get actual field dimensions before drawing custom content -> **(P)** [R23]
+- [ ] Call `wxStatusBar::GetFieldRect()` to get actual field dimensions before drawing custom content → **(P)** [R23]
 
-- [ ] Do NOT assume field width = `SetStatusWidths()` value — DPI scaling and text metrics change it -> **(P)** [R23]
+- [ ] Do NOT assume field width = `SetStatusWidths()` value — DPI scaling and text metrics change it → **(P)** [R23]
 
-- [ ] Use `wxStatusBar::PushStatusText()`/`PopStatusText()` for temporary messages -> **(P)** [R23]
+- [ ] Use `wxStatusBar::PushStatusText()`/`PopStatusText()` for temporary messages → **(P)** [R23]
 
 ```cpp
 // Good — flexible last field, fixed first field
@@ -2118,13 +2118,13 @@ statusBar->SetStatusWidths(2, widths);
 
 `wxStaticText` wrapping behavior differs across platforms. `SetLabel()` with newlines is respected on all platforms, but automatic word wrapping (`wxST_ELLIPSIZE_END`, `wxST_NO_AUTORESIZE`) has different behaviors: wxMSW wraps at window width, wxGTK may not wrap without explicit `Wrap()`, and wxOSX wraps differently. `Wrap()` is the cross-platform way to set wrap width.
 
-- [ ] Use `wxStaticText::Wrap(width)` for explicit wrapping — it works cross-platform, unlike relying on window width -> **(P)** [R23]
+- [ ] Use `wxStaticText::Wrap(width)` for explicit wrapping — it works cross-platform, unlike relying on window width → **(P)** [R23]
 
-- [ ] Use `wxST_ELLIPSIZE_END` for single-line labels that may need truncation -> **(P)** [R23]
+- [ ] Use `wxST_ELLIPSIZE_END` for single-line labels that may need truncation → **(P)** [R23]
 
-- [ ] Do NOT use `wxST_NO_AUTORESIZE` with dynamic labels — the label may be clipped if text grows -> **(P)** [R23]
+- [ ] Do NOT use `wxST_NO_AUTORESIZE` with dynamic labels — the label may be clipped if text grows → **(P)** [R23]
 
-- [ ] Test multi-line `wxStaticText` on all platforms — wrapping behavior and line height differ -> **(P)** [R23]
+- [ ] Test multi-line `wxStaticText` on all platforms — wrapping behavior and line height differ → **(P)** [R23]
 
 ```cpp
 // Good — explicit wrap width
@@ -2140,13 +2140,13 @@ label->Wrap(300); // wrap at 300 pixels
 
 `wxChoice` (dropdown list, read-only) and `wxComboBox` (dropdown with editable text) have different event semantics: `wxChoice` fires `wxEVT_CHOICE`, `wxComboBox` fires both `wxEVT_TEXT` (on text edit) and `wxEVT_COMBOBOX` (on dropdown selection). On macOS, `wxComboBox` may fire `wxEVT_TEXT` during programmatic selection, causing unexpected handlers.
 
-- [ ] Use `wxChoice` for read-only selection, `wxComboBox` for editable — do NOT use `wxComboBox` with `wxCB_READONLY` if you don't need text editing -> **(P)** [R23]
+- [ ] Use `wxChoice` for read-only selection, `wxComboBox` for editable — do NOT use `wxComboBox` with `wxCB_READONLY` if you don't need text editing → **(P)** [R23]
 
-- [ ] Guard `wxEVT_TEXT` handlers in `wxComboBox` against programmatic `SetSelection()` — macOS fires `wxEVT_TEXT` on programmatic change -> **(P)** [R16]
+- [ ] Guard `wxEVT_TEXT` handlers in `wxComboBox` against programmatic `SetSelection()` — macOS fires `wxEVT_TEXT` on programmatic change → **(P)** [R16]
 
-- [ ] Use `wxEVT_COMBOBOX` for selection-changed logic, not `wxEVT_TEXT` — `TEXT` fires on every keystroke -> **(P)** [R23]
+- [ ] Use `wxEVT_COMBOBOX` for selection-changed logic, not `wxEVT_TEXT` — `TEXT` fires on every keystroke → **(P)** [R23]
 
-- [ ] Do NOT assume `wxChoice::GetSelection()` returns `wxNOT_FOUND` when empty — verify on all platforms -> **(P)** [R23]
+- [ ] Do NOT assume `wxChoice::GetSelection()` returns `wxNOT_FOUND` when empty — verify on all platforms → **(P)** [R23]
 
 - **Consequence:** Event handlers fire unexpectedly, duplicate processing, wrong control for the use case
 
@@ -2156,13 +2156,13 @@ label->Wrap(300); // wrap at 300 pixels
 
 `wxFileDialog` on 3.1.5 uses native file dialogs on each platform. On macOS, it uses `NSOpenPanel`/`NSSavePanel` which may not support all wildcard patterns. On Windows, the dialog can be modern (Vista+) or legacy depending on style flags. `wxFD_MULTIPLE` behavior differs: macOS returns paths via `GetPaths()`, Windows via `GetPath()` for the first and `GetFilenames()`.
 
-- [ ] Use `wxFD_FILE_MUST_EXIST` for open dialogs to enforce file existence -> **(P)** [R23]
+- [ ] Use `wxFD_FILE_MUST_EXIST` for open dialogs to enforce file existence → **(P)** [R23]
 
-- [ ] On macOS, wildcard patterns (`*.*`) may not work as expected — use `SetWildcard()` with specific extensions -> **(P)** [R23]
+- [ ] On macOS, wildcard patterns (`*.*`) may not work as expected — use `SetWildcard()` with specific extensions → **(P)** [R23]
 
-- [ ] For multi-file selection, use `GetPaths()` (not `GetPath()`) to get all selected files -> **(P)** [R23]
+- [ ] For multi-file selection, use `GetPaths()` (not `GetPath()`) to get all selected files → **(P)** [R23]
 
-- [ ] Use `wxFD_OVERWRITE_PROMPT` for save dialogs to prompt before overwriting -> **(P)** [R23]
+- [ ] Use `wxFD_OVERWRITE_PROMPT` for save dialogs to prompt before overwriting → **(P)** [R23]
 
 ```cpp
 // Good — proper file dialog usage
@@ -2182,13 +2182,13 @@ if (dlg.ShowModal() == wxID_OK) {
 
 `wxProgressDialog` with `wxPD_CAN_SKIP` and `wxPD_CAN_ABORT` flags has platform-specific behavior: the skip/abort buttons may have different labels and positions on macOS vs Windows. The `Update()` return value indicates skip/abort status, but the timing of when these become true differs. On macOS, the progress dialog may not support `wxPD_APP_MODAL` correctly.
 
-- [ ] Check the return value of `wxProgressDialog::Update()` — it returns `true` if the dialog was not skipped/aborted -> **(P)** [R23]
+- [ ] Check the return value of `wxProgressDialog::Update()` — it returns `true` if the dialog was not skipped/aborted → **(P)** [R23]
 
-- [ ] Do NOT assume `wxPD_APP_MODAL` blocks all windows on macOS — test modal behavior -> **(P)** [R23]
+- [ ] Do NOT assume `wxPD_APP_MODAL` blocks all windows on macOS — test modal behavior → **(P)** [R23]
 
-- [ ] Call `Update()` regularly (not too frequently) to keep UI responsive — too infrequent causes frozen UI, too frequent causes flicker -> **(P)** [R23]
+- [ ] Call `Update()` regularly (not too frequently) to keep UI responsive — too infrequent causes frozen UI, too frequent causes flicker → **(P)** [R23]
 
-- [ ] Use `Pulse()` for indeterminate progress (busy mode) -> **(P)** [R23]
+- [ ] Use `Pulse()` for indeterminate progress (busy mode) → **(P)** [R23]
 
 ```cpp
 // Good — check Update return value
@@ -2418,13 +2418,13 @@ Bind(wxEVT_TIMER, [this, timer](wxTimerEvent&) {
 wxGTK maps wxWidgets controls to GTK widgets, which are styled by GTK CSS themes. wxWidgets 3.1.5 does NOT provide direct CSS manipulation — colors set via `wxWindow::SetBackgroundColour()` may be overridden by the GTK theme. Using `SetForegroundColour()` on some widgets (buttons, labels) may not work because GTK theme has priority.
 ```
 
-- [ ] Do NOT rely on `SetBackgroundColour()`/`SetForegroundColour()` on wxGTK — GTK CSS themes may override -> **(P)** [R25]
+- [ ] Do NOT rely on `SetBackgroundColour()`/`SetForegroundColour()` on wxGTK — GTK CSS themes may override → **(P)** [R25]
 
-- [ ] For custom colors on GTK, use `wxPanel` with `wxBG_STYLE_PAINT` and custom painting -> **(P)** [R25]
+- [ ] For custom colors on GTK, use `wxPanel` with `wxBG_STYLE_PAINT` and custom painting → **(P)** [R25]
 
-- [ ] Test with multiple GTK themes (Adwaita, Adwaita-dark, custom) — appearance varies significantly -> **(P)** [R25]
+- [ ] Test with multiple GTK themes (Adwaita, Adwaita-dark, custom) — appearance varies significantly → **(P)** [R25]
 
-- [ ] Use `wxSystemSettings::GetColour()` for theme-adaptive colors instead of hardcoded values -> **(P)** [R13]
+- [ ] Use `wxSystemSettings::GetColour()` for theme-adaptive colors instead of hardcoded values → **(P)** [R13]
 
 - **Consequence:** Colors not applied, inconsistent appearance across GTK themes, custom styling overridden
 
@@ -2434,13 +2434,13 @@ wxGTK maps wxWidgets controls to GTK widgets, which are styled by GTK CSS themes
 
 GTK dark mode is controlled by the `gtk-application-prefer-dark` setting or `color-scheme` (GTK 4). wxWidgets 3.1.5 does NOT provide a native API to detect GTK dark mode. `wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)` may return dark values, but this is not reliable for dark mode detection. GTK 3.12+ added `GtkSettings:gtk-application-prefer-dark`.
 
-- [ ] Do NOT use `wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)` to reliably detect dark mode on GTK — it is unreliable -> **(P)** [R25]
+- [ ] Do NOT use `wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)` to reliably detect dark mode on GTK — it is unreliable → **(P)** [R25]
 
-- [ ] For GTK dark mode detection, use `wxSystemSettings::GetAppearance().IsDark()` (3.1.5+) or parse `GtkSettings` directly -> **(P)** [R25]
+- [ ] For GTK dark mode detection, use `wxSystemSettings::GetAppearance().IsDark()` (3.1.5+) or parse `GtkSettings` directly → **(P)** [R25]
 
-- [ ] Test color scheme switching at runtime — GTK may not fire events to wxWidgets when user toggles dark mode -> **(P)** [R25]
+- [ ] Test color scheme switching at runtime — GTK may not fire events to wxWidgets when user toggles dark mode → **(P)** [R25]
 
-- [ ] Use `wxSystemSettings::GetAppearance().IsDark()` (3.1.5+) for cross-platform dark mode detection -> **(P)** [R25]
+- [ ] Use `wxSystemSettings::GetAppearance().IsDark()` (3.1.5+) for cross-platform dark mode detection → **(P)** [R25]
 
 ```cpp
 // Good — cross-platform dark mode detection (3.1.5+)
@@ -2455,13 +2455,13 @@ bool isDark = wxSystemSettings::GetAppearance().IsDark();
 
 On GTK, window resize behavior depends on the window manager (Mutter, KWin, Xfwm, etc.). `wxRESIZE_BORDER` is the only reliable way to enable resize on GTK. The resize grip (bottom-right corner) is controlled by `wxRESIZE_BOX` on some WMs but not others. Some WMs (GNOME/Mutter) remove the resize grip entirely.
 
-- [ ] Use `wxRESIZE_BORDER` for resize on GTK — do NOT rely on resize grip (`wxRESIZE_BOX`) -> **(P)** [R25]
+- [ ] Use `wxRESIZE_BORDER` for resize on GTK — do NOT rely on resize grip (`wxRESIZE_BOX`) → **(P)** [R25]
 
-- [ ] Test window resizing on multiple WMs (Mutter, KWin, Xfwm) — behavior differs -> **(P)** [R25]
+- [ ] Test window resizing on multiple WMs (Mutter, KWin, Xfwm) — behavior differs → **(P)** [R25]
 
-- [ ] Do NOT set `wxMINIMIZE_BOX`/`wxMAXIMIZE_BOX` on child windows — these are top-level window only on GTK -> **(P)** [R25]
+- [ ] Do NOT set `wxMINIMIZE_BOX`/`wxMAXIMIZE_BOX` on child windows — these are top-level window only on GTK → **(P)** [R25]
 
-- [ ] Handle `wxEVT_SIZE` for custom resize behavior — do NOT assume WM will size the window correctly -> **(P)** [R25]
+- [ ] Handle `wxEVT_SIZE` for custom resize behavior — do NOT assume WM will size the window correctly → **(P)** [R25]
 
 - **Consequence:** Can't resize window, resize grip missing, min/max box ignored on child windows
 
@@ -2471,13 +2471,13 @@ On GTK, window resize behavior depends on the window manager (Mutter, KWin, Xfwm
 
 GTK compositing (visual transparency, blur) requires a compositing WM (like Mutter with compositing enabled). wxWidgets 3.1.5 does NOT guarantee transparency support on GTK — `SetBackgroundStyle(wxBG_STYLE_TRANSPARENT)` may not work on non-compositing WMs. Result: black background instead of transparency.
 
-- [ ] Verify the WM supports compositing before using transparent backgrounds on GTK -> **(P)** [R25]
+- [ ] Verify the WM supports compositing before using transparent backgrounds on GTK → **(P)** [R25]
 
-- [ ] Use `wxWindow::IsTransparentBackgroundSupported()` to check support before applying transparency -> **(P)** [R25]
+- [ ] Use `wxWindow::IsTransparentBackgroundSupported()` to check support before applying transparency → **(P)** [R25]
 
-- [ ] For overlay windows, use `wxPopupWindow` (not `wxFrame`) — popup windows are transient and may have different compositing rules -> **(P)** [R25]
+- [ ] For overlay windows, use `wxPopupWindow` (not `wxFrame`) — popup windows are transient and may have different compositing rules → **(P)** [R25]
 
-- [ ] Test transparency on X11 without compositor (e.g., no compton/picom running) — fall back to opaque background -> **(P)** [R25]
+- [ ] Test transparency on X11 without compositor (e.g., no compton/picom running) — fall back to opaque background → **(P)** [R25]
 
 - **Consequence:** Black background instead of transparent, overlay looks wrong, compositing not available
 
@@ -2487,13 +2487,13 @@ GTK compositing (visual transparency, blur) requires a compositing WM (like Mutt
 
 On GTK/Linux, input methods (ibus, fcitx, fcitx5) are integrated via GTK's `GtkIMContext`. wxWidgets 3.1.5 delegates to GTK for IME support. Known issues: pre-edit text may not display correctly in `wxTextCtrl`, and some IME configurations may cause double input or missing characters.
 
-- [ ] Test with ibus and fcitx input methods on GTK — IME pre-edit and commit behavior may vary -> **(P)** [R25]
+- [ ] Test with ibus and fcitx input methods on GTK — IME pre-edit and commit behavior may vary → **(P)** [R25]
 
-- [ ] Use `wxTextEntry::IMContextInit()` if available (3.1.5) for explicit IME context setup -> **(P)** [R25]
+- [ ] Use `wxTextEntry::IMContextInit()` if available (3.1.5) for explicit IME context setup → **(P)** [R25]
 
-- [ ] Do NOT swallow `wxEVT_CHAR` during IME pre-edit — let the text go through the IME -> **(P)** [R25]
+- [ ] Do NOT swallow `wxEVT_CHAR` during IME pre-edit — let the text go through the IME → **(P)** [R25]
 
-- [ ] Handle `wxEVT_KEY_DOWN` and `wxEVT_CHAR` correctly — on GTK, IME may intercept key events -> **(P)** [R25]
+- [ ] Handle `wxEVT_KEY_DOWN` and `wxEVT_CHAR` correctly — on GTK, IME may intercept key events → **(P)** [R25]
 
 - **Consequence:** Double input, missing characters, pre-edit not displayed, IME not working
 
@@ -2503,13 +2503,13 @@ On GTK/Linux, input methods (ibus, fcitx, fcitx5) are integrated via GTK's `GtkI
 
 On GTK, `wxFileDialog` uses `GtkFileChooserDialog`. In 3.1.5, the default dialog uses the `GTK_FILE_CHOOSER_ACTION_OPEN` or `SAVE` action. Known issues: the dialog may not respect the initial directory on some GTK versions, and the wildcard filter may not work correctly (GTK uses MIME-type filters, not glob patterns).
 
-- [ ] Use `SetWildcard()` with specific file extensions, not `*.*` — GTK uses MIME-type filters -> **(P)** [R25]
+- [ ] Use `SetWildcard()` with specific file extensions, not `*.*` — GTK uses MIME-type filters → **(P)** [R25]
 
-- [ ] Use `SetDirectory()` explicitly — do NOT rely on GTK to remember the last directory -> **(P)** [R25]
+- [ ] Use `SetDirectory()` explicitly — do NOT rely on GTK to remember the last directory → **(P)** [R25]
 
-- [ ] For multi-file selection, use `wxFD_MULTIPLE` and `GetPaths()` — `GetFilenames()` does NOT include directory -> **(P)** [R25]
+- [ ] For multi-file selection, use `wxFD_MULTIPLE` and `GetPaths()` — `GetFilenames()` does NOT include directory → **(P)** [R25]
 
-- [ ] Test file dialog on different GTK versions (3.22, 3.24) — filter behavior differs -> **(P)** [R25]
+- [ ] Test file dialog on different GTK versions (3.22, 3.24) — filter behavior differs → **(P)** [R25]
 
 - **Consequence:** Wildcard doesn't work, wrong initial directory, multi-file missing paths, filter issues
 
@@ -2519,13 +2519,13 @@ On GTK, `wxFileDialog` uses `GtkFileChooserDialog`. In 3.1.5, the default dialog
 
 On GTK, mouse wheel events (`wxEVT_MOUSEWHEEL`) use `GdkScrollDirection` which may be `GDK_SCROLL_SMOOTH` on modern GTK (3.4+). wxWidgets 3.1.5 maps smooth scroll to `wxEVT_MOUSEWHEEL` but the `GetWheelRotation()` value may be fractional. On touchpads, smooth scrolling produces many small-delta events.
 
-- [ ] Accumulate `GetWheelRotation()` values for smooth scrolling — do NOT scroll by fixed amount per event -> **(P)** [R25]
+- [ ] Accumulate `GetWheelRotation()` values for smooth scrolling — do NOT scroll by fixed amount per event → **(P)** [R25]
 
-- [ ] Check `GetWheelAxis()` — touchpad horizontal scrolling uses a different axis -> **(P)** [R25]
+- [ ] Check `GetWheelAxis()` — touchpad horizontal scrolling uses a different axis → **(P)** [R25]
 
-- [ ] Use `wxMouseEvent::GetLinesPerAction()` for line-based scrolling, `GetWheelRotation()` for pixel-based -> **(P)** [R25]
+- [ ] Use `wxMouseEvent::GetLinesPerAction()` for line-based scrolling, `GetWheelRotation()` for pixel-based → **(P)** [R25]
 
-- [ ] Test scroll behavior with touchpad (smooth) and mouse wheel (discrete) on GTK -> **(P)** [R25]
+- [ ] Test scroll behavior with touchpad (smooth) and mouse wheel (discrete) on GTK → **(P)** [R25]
 
 ```cpp
 // Good — accumulate smooth scroll deltas
@@ -2547,13 +2547,13 @@ void OnMouseWheel(wxMouseEvent& event) {
 
 On GTK, `wxApp::MainLoop()` integrates with the GTK main loop (`gtk_main()`/`g_main_context_iteration()`). This means GTK-internal events (idle, timeout, I/O) are processed in the same loop as wxWidgets events. Known issue: calling `gtk_main_quit()` or `g_main_context_iteration()` manually can desync the wxWidgets event loop.
 
-- [ ] Do NOT call `gtk_main()`/`gtk_main_quit()` directly — let wxWidgets manage the GTK main loop -> **(P)** [R25]
+- [ ] Do NOT call `gtk_main()`/`gtk_main_quit()` directly — let wxWidgets manage the GTK main loop → **(P)** [R25]
 
-- [ ] Use `wxEventLoopBase` for custom event loop behavior — do NOT use `g_main_context_iteration()` -> **(P)** [R25]
+- [ ] Use `wxEventLoopBase` for custom event loop behavior — do NOT use `g_main_context_iteration()` → **(P)** [R25]
 
-- [ ] For idle work, use `wxIdleEvent` or `wxTimer` — do NOT use `g_timeout_add()` -> **(P)** [R25]
+- [ ] For idle work, use `wxIdleEvent` or `wxTimer` — do NOT use `g_timeout_add()` → **(P)** [R25]
 
-- [ ] Test that `wxApp::Yield()` works correctly with GTK idle sources -> **(P)** [R25]
+- [ ] Test that `wxApp::Yield()` works correctly with GTK idle sources → **(P)** [R25]
 
 - **Consequence:** Event loop desync, missed events, crash on quit, deadlock
 
@@ -2563,13 +2563,13 @@ On GTK, `wxApp::MainLoop()` integrates with the GTK main loop (`gtk_main()`/`g_m
 
 On GTK/Wayland, clipboard behavior differs from X11. The clipboard is per-seat, not global. `wxClipboard::GetData()` may fail if the clipboard owner is a different Wayland client. The primary selection (middle-click paste) may not work the same on Wayland.
 
-- [ ] Test clipboard operations on both X11 and Wayland — clipboard behavior differs -> **(P)** [R25]
+- [ ] Test clipboard operations on both X11 and Wayland — clipboard behavior differs → **(P)** [R25]
 
-- [ ] Use `wxClipboard::Flush()` to retain clipboard content after the window closes (X11 only; Wayland may not support) -> **(P)** [R25]
+- [ ] Use `wxClipboard::Flush()` to retain clipboard content after the window closes (X11 only; Wayland may not support) → **(P)** [R25]
 
-- [ ] Do NOT rely on primary selection (middle-click paste) on Wayland — it may not work -> **(P)** [R25]
+- [ ] Do NOT rely on primary selection (middle-click paste) on Wayland — it may not work → **(P)** [R25]
 
-- [ ] Handle clipboard failure gracefully on Wayland — `GetData()` may return false -> **(P)** [R25]
+- [ ] Handle clipboard failure gracefully on Wayland — `GetData()` may return false → **(P)** [R25]
 
 - **Consequence:** Clipboard doesn't work on Wayland, primary selection missing, data lost after window close
 
@@ -2579,13 +2579,13 @@ On GTK/Wayland, clipboard behavior differs from X11. The clipboard is per-seat, 
 
 On GTK, drag-and-drop uses `GtkDragSource`/`GtkDropTarget` (GTK 4) or `gtk_drag_begin` (GTK 3). wxWidgets 3.1.5 uses the GTK 3 API. The drag icon (shown during drag) defaults to the source widget's snapshot. Customizing it requires `wxDropSource::SetIcon()` which maps to `gtk_drag_source_set_icon_`. On Wayland, the drag icon may not appear.
 
-- [ ] Use `wxDropSource::SetIcon()` to customize the drag icon on GTK -> **(P)** [R25]
+- [ ] Use `wxDropSource::SetIcon()` to customize the drag icon on GTK → **(P)** [R25]
 
-- [ ] Test DnD on Wayland — drag icon may not appear -> **(P)** [R25]
+- [ ] Test DnD on Wayland — drag icon may not appear → **(P)** [R25]
 
-- [ ] Do NOT start DnD during `wxEVT_LEFT_DOWN` without checking drag threshold — GTK may not fire `wxEVT_LEFT_UP` -> **(P)** [R25]
+- [ ] Do NOT start DnD during `wxEVT_LEFT_DOWN` without checking drag threshold — GTK may not fire `wxEVT_LEFT_UP` → **(P)** [R25]
 
-- [ ] Use `wxDragImage` as alternative for custom drag visuals -> **(P)** [R25]
+- [ ] Use `wxDragImage` as alternative for custom drag visuals → **(P)** [R25]
 
 - **Consequence:** Wrong drag icon, no icon on Wayland, DnD stuck, missing mouse-up event
 
@@ -2595,13 +2595,13 @@ On GTK, drag-and-drop uses `GtkDragSource`/`GtkDropTarget` (GTK 4) or `gtk_drag_
 
 On Windows 10 1703+, per-monitor DPI awareness allows each monitor to have its own DPI. wxWidgets 3.1.5 exposes `wxWindow::GetDPI()` and `FromDIP()/ToDIP()` for per-monitor DPI queries. NOTE: the `wxEVT_DPI_CHANGED` event / `wxDPIChangedEvent` class and `wxBitmapBundle` were added in **3.1.6** — they do NOT exist in 3.1.5. Known issues: not all controls correctly handle DPI changes at runtime (move window to different monitor), and `wxBitmap` loaded from resources may not scale automatically.
 
-- [ ] Use `wxBitmapBundle` (3.1.6+, NOT 3.1.5) for multi-resolution bitmaps that auto-scale on DPI change -> **(P)** [R26]
+- [ ] Use `wxBitmapBundle` (3.1.6+, NOT 3.1.5) for multi-resolution bitmaps that auto-scale on DPI change → **(P)** [R26]
 
-- [ ] Handle `wxEVT_DPI_CHANGED` (3.1.6+ only; on 3.1.5 you must handle `wxEVT_SIZE`/`wxEVT_DISPLAY_CHANGED` and re-query DPI manually) to re-layout and rescale custom-drawn content -> **(P)** [R26]
+- [ ] Handle `wxEVT_DPI_CHANGED` (3.1.6+ only; on 3.1.5 you must handle `wxEVT_SIZE`/`wxEVT_DISPLAY_CHANGED` and re-query DPI manually) to re-layout and rescale custom-drawn content → **(P)** [R26]
 
-- [ ] Use `wxWindow::FromDIP()`/`ToDIP()` for all pixel-to-logical conversions (available in 3.1.5) -> **(P)** [R26]
+- [ ] Use `wxWindow::FromDIP()`/`ToDIP()` for all pixel-to-logical conversions (available in 3.1.5) → **(P)** [R26]
 
-- [ ] Test by dragging window between monitors with different DPI (100% and 200%) -> **(P)** [R26]
+- [ ] Test by dragging window between monitors with different DPI (100% and 200%) → **(P)** [R26]
 
 ```cpp
 // Good — handle DPI change (requires 3.1.6+ for wxEVT_DPI_CHANGED / wxDPIChangedEvent)
@@ -2619,13 +2619,13 @@ Bind(wxEVT_DPI_CHANGED, [this](wxDPIChangedEvent& event) {
 
 On wxMSW, wxWidgets uses native Win32 controls. Visual styles (XP, Vista, Win10/11) are applied automatically, but only if the manifest enables `Microsoft.Windows.Common-Controls`. Without the manifest, controls render in classic (pre-XP) style. wxWidgets 3.1.5 does not automatically embed the manifest.
 
-- [ ] Embed `Microsoft.Windows.Common-Controls` v6 manifest in the application — otherwise controls appear in classic style -> **(P)** [R26]
+- [ ] Embed `Microsoft.Windows.Common-Controls` v6 manifest in the application — otherwise controls appear in classic style → **(P)** [R26]
 
-- [ ] NOTE: `wxApp::MSWEnableDarkMode()` does NOT exist in 3.1.5 (added only in unreleased 3.3/master, with `wxDarkModeSettings`). For 3.1.5 dark mode on Windows, use undocumented Win32 `SetPreferredAppMode`/`AllowDarkModeForWindow` or wait for 3.3+ -> **(P)** [R13]
+- [ ] NOTE: `wxApp::MSWEnableDarkMode()` does NOT exist in 3.1.5 (added only in unreleased 3.3/master, with `wxDarkModeSettings`). For 3.1.5 dark mode on Windows, use undocumented Win32 `SetPreferredAppMode`/`AllowDarkModeForWindow` or wait for 3.3+ → **(P)** [R13]
 
-- [ ] Test with visual styles enabled and disabled — appearance differs significantly -> **(P)** [R26]
+- [ ] Test with visual styles enabled and disabled — appearance differs significantly → **(P)** [R26]
 
-- [ ] Do NOT call `EnableVisualStyles()` (Win32 API) directly — let the manifest handle it -> **(P)** [R26]
+- [ ] Do NOT call `EnableVisualStyles()` (Win32 API) directly — let the manifest handle it → **(P)** [R26]
 
 - **Consequence:** Controls in classic style, no native dark mode in 3.1.5, inconsistent appearance
 
@@ -2635,13 +2635,13 @@ On wxMSW, wxWidgets uses native Win32 controls. Visual styles (XP, Vista, Win10/
 
 On wxMSW, `wxListCtrl` in report mode uses `LVM_SETCOLUMN` for header. Setting sort indicator (up/down arrow) requires `LVM_SETCOLUMN` with `fmt` flags (`LVCFMT_IMAGE`). wxWidgets 3.1.5 does not expose this directly — you must use `wxListCtrl::GetHandle()` and send raw Win32 messages.
 
-- [ ] Use `wxListCtrl::GetHandle()` + `ListView_SetColumn()` for sort indicator on wxMSW -> **(P)** [R26]
+- [ ] Use `wxListCtrl::GetHandle()` + `ListView_SetColumn()` for sort indicator on wxMSW → **(P)** [R26]
 
-- [ ] Consider `wxDataViewCtrl` for built-in sort indicator support -> **(P)** [R4]
+- [ ] Consider `wxDataViewCtrl` for built-in sort indicator support → **(P)** [R4]
 
-- [ ] Do NOT rely on `wxListCtrl::SetColumnWidth()` auto-sizing on wxMSW — use `SetColumnWidth(col, wxLIST_AUTOSIZE)` or `wxLIST_AUTOSIZE_USEHEADER` -> **(P)** [R26]
+- [ ] Do NOT rely on `wxListCtrl::SetColumnWidth()` auto-sizing on wxMSW — use `SetColumnWidth(col, wxLIST_AUTOSIZE)` or `wxLIST_AUTOSIZE_USEHEADER` → **(P)** [R26]
 
-- [ ] Test header click behavior on all platforms — wxMSW, wxGTK, wxOSX differ -> **(P)** [R26]
+- [ ] Test header click behavior on all platforms — wxMSW, wxGTK, wxOSX differ → **(P)** [R26]
 
 ```cpp
 // Good — set sort indicator via Win32 API on wxMSW
@@ -2664,13 +2664,13 @@ On wxMSW, `wxListCtrl` in report mode uses `LVM_SETCOLUMN` for header. Setting s
 
 On wxMSW, `wxTextCtrl` with `wxTE_RICH` or `wxTE_RICH2` uses the Win32 Rich Edit control (`RICHEDIT_CLASS`). `wxTE_RICH2` uses Rich Edit 2.0/3.0 (msftedit.dll). Known issues: `wxTE_RICH` text is limited to 64KB in some configurations, and `GetRange()` on large text in rich mode may be slow. Also, `wxTE_RICH` controls may not handle Unicode correctly in all Windows versions.
 
-- [ ] Use `wxTE_RICH2` (not `wxTE_RICH`) for large text — `wxTE_RICH` has 64KB limit -> **(P)** [R26]
+- [ ] Use `wxTE_RICH2` (not `wxTE_RICH`) for large text — `wxTE_RICH` has 64KB limit → **(P)** [R26]
 
-- [ ] For Unicode support on wxMSW, use `wxTE_RICH2` — `wxTE_RICH` may corrupt Unicode -> **(P)** [R26]
+- [ ] For Unicode support on wxMSW, use `wxTE_RICH2` — `wxTE_RICH` may corrupt Unicode → **(P)** [R26]
 
-- [ ] Do NOT use `wxTextCtrl::GetRange()` for large text — use `GetValue()` which is optimized -> **(P)** [R26]
+- [ ] Do NOT use `wxTextCtrl::GetRange()` for large text — use `GetValue()` which is optimized → **(P)** [R26]
 
-- [ ] Test with text > 1MB — performance may degrade significantly in rich mode -> **(P)** [R26]
+- [ ] Test with text > 1MB — performance may degrade significantly in rich mode → **(P)** [R26]
 
 - **Consequence:** Text truncated at 64KB, Unicode corruption, performance lag with large text
 
@@ -2680,13 +2680,13 @@ On wxMSW, `wxTextCtrl` with `wxTE_RICH` or `wxTE_RICH2` uses the Win32 Rich Edit
 
 `wxRegKey` provides Windows registry access. In 3.1.5, `wxRegKey` uses `RegCreateKeyEx`/`RegOpenKeyEx`. Known issues: 32-bit applications on 64-bit Windows need `KEY_WOW64_64KEY` flag to access the 64-bit registry view. `wxRegKey` does NOT set this flag by default.
 
-- [ ] For 32-bit app accessing 64-bit registry, use `wxRegKey::SetNativeAccess(WOW64_64KEY)` or open with `KEY_WOW64_64KEY` -> **(P)** [R26]
+- [ ] For 32-bit app accessing 64-bit registry, use `wxRegKey::SetNativeAccess(WOW64_64KEY)` or open with `KEY_WOW64_64KEY` → **(P)** [R26]
 
-- [ ] Do NOT hardcode registry paths — use `wxStandardPaths` for known paths -> **(P)** [R26]
+- [ ] Do NOT hardcode registry paths — use `wxStandardPaths` for known paths → **(P)** [R26]
 
-- [ ] Handle `wxRegKey` open failure gracefully — registry access may be denied by UAC -> **(P)** [R26]
+- [ ] Handle `wxRegKey` open failure gracefully — registry access may be denied by UAC → **(P)** [R26]
 
-- [ ] For settings storage, prefer `wxConfig`/`wxFileConfig` over direct registry access for portability -> **(P)** [R18]
+- [ ] For settings storage, prefer `wxConfig`/`wxFileConfig` over direct registry access for portability → **(P)** [R18]
 
 ```cpp
 // Good — access 64-bit registry from 32-bit app
@@ -2705,13 +2705,13 @@ if (key.Exists()) { /* ... */ }
 
 On Windows Vista+, the modern file dialog (`IFileDialog`) is used by wxWidgets 3.1.5 by default. Known issues: the modern dialog may not support all `wxFileDialog` features (e.g., `wxFileDialog::SetFilterIndex()` may not work), and the dialog may appear in the taskbar (unexpected for modal dialogs).
 
-- [ ] Use `wxFD_CHANGE_DIR` to change the app working directory on file selection — may not work with IFileDialog -> **(P)** [R26]
+- [ ] Use `wxFD_CHANGE_DIR` to change the app working directory on file selection — may not work with IFileDialog → **(P)** [R26]
 
-- [ ] Test `SetFilterIndex()` on Windows 10/11 — may not select the correct filter in modern dialog -> **(P)** [R26]
+- [ ] Test `SetFilterIndex()` on Windows 10/11 — may not select the correct filter in modern dialog → **(P)** [R26]
 
-- [ ] NOTE: there is NO `wxFD_USE_LEGACY_DIALOG` style flag in wxWidgets. In 3.1.5 the modern `IFileDialog` is always used on Vista+; to force the legacy `GetOpenFileName` dialog you must build wxWidgets with `wxUSE_IFILEOPENDIALOG=0` or call the Win32 API directly -> **(P)** [R26]
+- [ ] NOTE: there is NO `wxFD_USE_LEGACY_DIALOG` style flag in wxWidgets. In 3.1.5 the modern `IFileDialog` is always used on Vista+; to force the legacy `GetOpenFileName` dialog you must build wxWidgets with `wxUSE_IFILEOPENDIALOG=0` or call the Win32 API directly → **(P)** [R26]
 
-- [ ] Do NOT assume the file dialog is modal — on some Windows versions, it may appear in taskbar -> **(P)** [R26]
+- [ ] Do NOT assume the file dialog is modal — on some Windows versions, it may appear in taskbar → **(P)** [R26]
 
 - **Consequence:** Filter index wrong, working directory not changed, dialog in taskbar (looks non-modal)
 
@@ -2721,13 +2721,13 @@ On Windows Vista+, the modern file dialog (`IFileDialog`) is used by wxWidgets 3
 
 `wxMessageDialog` on Windows uses `MessageBox()` by default. On Vista+, `TaskDialog()` or `TaskDialogIndirect()` provides richer UI (icons, command links, progress bar). wxWidgets 3.1.5 does NOT automatically use `TaskDialog` — it falls back to `MessageBox()` which has limited functionality.
 
-- [ ] Use `wxRichMessageDialog` (3.1.5+) for enhanced message boxes with checkboxes and expandable text -> **(P)** [R26]
+- [ ] Use `wxRichMessageDialog` (3.1.5+) for enhanced message boxes with checkboxes and expandable text → **(P)** [R26]
 
-- [ ] For command-link buttons in dialogs, use `wxRichMessageDialog` with custom buttons -> **(P)** [R26]
+- [ ] For command-link buttons in dialogs, use `wxRichMessageDialog` with custom buttons → **(P)** [R26]
 
-- [ ] Do NOT expect `wxYES_DEFAULT`/`wxNO_DEFAULT` to work identically across platforms — wxMSW and wxGTK differ -> **(P)** [R26]
+- [ ] Do NOT expect `wxYES_DEFAULT`/`wxNO_DEFAULT` to work identically across platforms — wxMSW and wxGTK differ → **(P)** [R26]
 
-- [ ] Test message dialog icons on all platforms — some icons may not appear on wxGTK -> **(P)** [R26]
+- [ ] Test message dialog icons on all platforms — some icons may not appear on wxGTK → **(P)** [R26]
 
 - **Consequence:** Limited message box UI, no command links, inconsistent default button behavior
 
@@ -2737,13 +2737,13 @@ On Windows Vista+, the modern file dialog (`IFileDialog`) is used by wxWidgets 3
 
 On Windows Vista+, Desktop Window Manager (DWM) provides glass effect (`DwmExtendFrameIntoClientArea`). wxWidgets 3.1.5 does NOT provide a built-in API for DWM glass. Using `SetBackgroundStyle(wxBG_STYLE_PAINT)` and custom painting on the glass area is the workaround, but it requires DWM API calls.
 
-- [ ] For DWM glass effect, call `DwmExtendFrameIntoClientArea()` via `wxDynamicLibrary` -> **(P)** [R26]
+- [ ] For DWM glass effect, call `DwmExtendFrameIntoClientArea()` via `wxDynamicLibrary` → **(P)** [R26]
 
-- [ ] Use `wxBG_STYLE_PAINT` for the glass area — default background erases the glass -> **(P)** [R26]
+- [ ] Use `wxBG_STYLE_PAINT` for the glass area — default background erases the glass → **(P)** [R26]
 
-- [ ] Test on Windows 7 (full DWM glass), Windows 10/11 (glass may not work the same) -> **(P)** [R26]
+- [ ] Test on Windows 7 (full DWM glass), Windows 10/11 (glass may not work the same) → **(P)** [R26]
 
-- [ ] Do NOT assume glass is available — check `DwmIsCompositionEnabled()` first -> **(P)** [R26]
+- [ ] Do NOT assume glass is available — check `DwmIsCompositionEnabled()` first → **(P)** [R26]
 
 ```cpp
 // Good — enable DWM glass
@@ -2766,13 +2766,13 @@ if (pfn) {
 
 On Windows, custom clipboard formats must be registered with `RegisterClipboardFormat()`. wxWidgets 3.1.5 wraps this via `wxCustomDataObject` which auto-registers the format name. However, the format ID may differ between sessions and must be re-registered each time.
 
-- [ ] Use `wxCustomDataObject("MyFormat")` — the format name is persistent, the ID is not -> **(P)** [R26]
+- [ ] Use `wxCustomDataObject("MyFormat")` — the format name is persistent, the ID is not → **(P)** [R26]
 
-- [ ] Do NOT cache clipboard format IDs across sessions — re-register each time -> **(P)** [R26]
+- [ ] Do NOT cache clipboard format IDs across sessions — re-register each time → **(P)** [R26]
 
-- [ ] Use `wxDataObjectComposite` to provide multiple formats (custom + standard) for maximum compatibility -> **(P)** [R16]
+- [ ] Use `wxDataObjectComposite` to provide multiple formats (custom + standard) for maximum compatibility → **(P)** [R16]
 
-- [ ] Test clipboard with apps that use the same format name — format matching is by name, not ID -> **(P)** [R26]
+- [ ] Test clipboard with apps that use the same format name — format matching is by name, not ID → **(P)** [R26]
 
 - **Consequence:** Clipboard data not recognized, format ID mismatch, DnD fails with external apps
 
@@ -2782,13 +2782,13 @@ On Windows, custom clipboard formats must be registered with `RegisterClipboardF
 
 `wxAccessible` on wxMSW provides limited UI Automation support via `IAccessible` (legacy). wxWidgets 3.1.5 does NOT support modern UI Automation (UIA) — it uses the older MSAA (`IAccessible`). Modern screen readers (Narrator, NVDA) prefer UIA and may not fully interact with wxWidgets controls.
 
-- [ ] Do NOT rely on `wxAccessible` for modern screen reader support — it uses legacy MSAA -> **(P)** [R26]
+- [ ] Do NOT rely on `wxAccessible` for modern screen reader support — it uses legacy MSAA → **(P)** [R26]
 
-- [ ] Test with NVDA and Narrator on Windows — some controls may not be announced correctly -> **(P)** [R26]
+- [ ] Test with NVDA and Narrator on Windows — some controls may not be announced correctly → **(P)** [R26]
 
-- [ ] Use native control semantics where possible — `wxButton`, `wxTextCtrl` have better default accessibility than custom controls -> **(P)** [R26]
+- [ ] Use native control semantics where possible — `wxButton`, `wxTextCtrl` have better default accessibility than custom controls → **(P)** [R26]
 
-- [ ] For custom-drawn controls, implement `wxAccessible` to provide at least name and role -> **(P)** [R26]
+- [ ] For custom-drawn controls, implement `wxAccessible` to provide at least name and role → **(P)** [R26]
 
 - **Consequence:** Screen readers don't announce controls, accessibility non-compliant, custom controls invisible to assistive tech
 
@@ -2798,13 +2798,13 @@ On Windows, custom clipboard formats must be registered with `RegisterClipboardF
 
 `wxThreadHelper` simplifies worker threads by managing thread lifecycle. Known issue in 3.1.5: `wxThreadHelper::Wait()` may block forever if the thread does not check for `TestDestroy()`. The `wxThread::Delete()` method (graceful shutdown) relies on `TestDestroy()` returning true, which the thread must check.
 
-- [ ] Check `TestDestroy()` in the thread loop and exit promptly when true -> **(P)** [R27]
+- [ ] Check `TestDestroy()` in the thread loop and exit promptly when true → **(P)** [R27]
 
-- [ ] Use `wxThreadHelper::Wait()` with a timeout — do NOT wait forever -> **(P)** [R27]
+- [ ] Use `wxThreadHelper::Wait()` with a timeout — do NOT wait forever → **(P)** [R27]
 
-- [ ] Do NOT call `wxThread::Kill()` to terminate threads — it leaks resources and may corrupt state -> **(P)** [R27]
+- [ ] Do NOT call `wxThread::Kill()` to terminate threads — it leaks resources and may corrupt state → **(P)** [R27]
 
-- [ ] Use `wxQueueEvent`/`wxPostEvent` (not direct GUI calls) from worker threads to communicate results -> **(P)** [R5]
+- [ ] Use `wxQueueEvent`/`wxPostEvent` (not direct GUI calls) from worker threads to communicate results → **(P)** [R5]
 
 ```cpp
 // Good — check TestDestroy in thread loop
@@ -2827,13 +2827,13 @@ void* MyThread::Entry() {
 
 `wxCriticalLocker` (RAII wrapper for `wxCriticalSection`) is the recommended way to use critical sections. Known issues: `wxCriticalSection::Enter()` without matching `Leave()` causes deadlock, and nested `Enter()` on the same critical section from the same thread is NOT supported (wxCriticalSection is not recursive by default).
 
-- [ ] Use `wxCriticalLocker` (RAII) for critical section — never manual `Enter()`/`Leave()` -> **(P)** [R27]
+- [ ] Use `wxCriticalLocker` (RAII) for critical section — never manual `Enter()`/`Leave()` → **(P)** [R27]
 
-- [ ] Use `wxCriticalSection` with `wxCRIT_RECURSIVE` flag if the same thread needs to re-enter -> **(P)** [R27]
+- [ ] Use `wxCriticalSection` with `wxCRIT_RECURSIVE` flag if the same thread needs to re-enter → **(P)** [R27]
 
-- [ ] Do NOT hold `wxCriticalSection` across `wxPostEvent` — the event handler may try to acquire the same lock -> **(P)** [R27]
+- [ ] Do NOT hold `wxCriticalSection` across `wxPostEvent` — the event handler may try to acquire the same lock → **(P)** [R27]
 
-- [ ] Use `wxMutex` for cross-process locking (named mutex), `wxCriticalSection` for single-process -> **(P)** [R27]
+- [ ] Use `wxMutex` for cross-process locking (named mutex), `wxCriticalSection` for single-process → **(P)** [R27]
 
 ```cpp
 // Good — RAII critical section
@@ -2849,13 +2849,13 @@ wxCriticalLocker locker(m_cs); // Auto-released at scope end
 
 `wxCondition` (condition variable) may have spurious wakeups on some platforms — `Wait()` may return even if no signal was sent. Always use `Wait()` with a predicate loop (check condition after waking). `wxSemaphore` has similar behavior on some platforms.
 
-- [ ] Use `wxCondition::Wait()` with a predicate loop — never assume condition is met after wake -> **(P)** [R27]
+- [ ] Use `wxCondition::Wait()` with a predicate loop — never assume condition is met after wake → **(P)** [R27]
 
-- [ ] Use `wxCriticalSection` + `wxCondition` together — condition variable requires an associated critical section -> **(P)** [R27]
+- [ ] Use `wxCriticalSection` + `wxCondition` together — condition variable requires an associated critical section → **(P)** [R27]
 
-- [ ] Use `wxSemaphore` for resource counting, `wxCondition` for event signaling -> **(P)** [R27]
+- [ ] Use `wxSemaphore` for resource counting, `wxCondition` for event signaling → **(P)** [R27]
 
-- [ ] Test for spurious wakeups by adding intentional delays — robust code handles them -> **(P)** [R27]
+- [ ] Test for spurious wakeups by adding intentional delays — robust code handles them → **(P)** [R27]
 
 ```cpp
 // Good — predicate loop with condition variable
@@ -2874,13 +2874,13 @@ while (!m_dataReady) {
 
 `wxSingleInstanceChecker` prevents multiple app instances. On wxMSW it uses a named kernel object (mutex), on wxGTK/wxOSX it uses a lock file. Known issues: the lock file may not be cleaned up on crash, and named mutex on Windows may conflict with other apps using the same name.
 
-- [ ] Use a unique name for `wxSingleInstanceChecker` — include app name and user to avoid conflicts -> **(P)** [R27]
+- [ ] Use a unique name for `wxSingleInstanceChecker` — include app name and user to avoid conflicts → **(P)** [R27]
 
-- [ ] Handle stale lock files — check process existence before declaring single instance -> **(P)** [R27]
+- [ ] Handle stale lock files — check process existence before declaring single instance → **(P)** [R27]
 
-- [ ] Create the `wxSingleInstanceChecker` early in `wxApp::OnInit()` and keep it alive for the app lifetime -> **(P)** [R27]
+- [ ] Create the `wxSingleInstanceChecker` early in `wxApp::OnInit()` and keep it alive for the app lifetime → **(P)** [R27]
 
-- [ ] Test on all platforms — file-based (GTK/macOS) vs kernel-object (Windows) behavior differs -> **(P)** [R27]
+- [ ] Test on all platforms — file-based (GTK/macOS) vs kernel-object (Windows) behavior differs → **(P)** [R27]
 
 ```cpp
 // Good — create early, unique name
@@ -2903,13 +2903,13 @@ bool MyApp::OnInit() {
 
 `wxStopWatch` provides millisecond-resolution timing. On 3.1.5, `wxGetLocalTimeMillis()` returns `wxLongLong` (millis since epoch). Known issue: on Windows, the resolution may be 10-16ms (timer tick), not true millisecond. For higher precision, use `wxGetUTCTimeMillis()` or platform-specific `QueryPerformanceCounter()`.
 
-- [ ] Do NOT rely on `wxStopWatch` for sub-millisecond timing — resolution is platform-dependent -> **(P)** [R27]
+- [ ] Do NOT rely on `wxStopWatch` for sub-millisecond timing — resolution is platform-dependent → **(P)** [R27]
 
-- [ ] Use `wxGetLocalTimeMillis()` for millisecond-precision epoch time -> **(P)** [R27]
+- [ ] Use `wxGetLocalTimeMillis()` for millisecond-precision epoch time → **(P)** [R27]
 
-- [ ] For high-resolution profiling, use platform-specific timers (e.g., `QueryPerformanceCounter` on Windows) -> **(P)** [R27]
+- [ ] For high-resolution profiling, use platform-specific timers (e.g., `QueryPerformanceCounter` on Windows) → **(P)** [R27]
 
-- [ ] Test timing precision on all target platforms — resolution varies (10ms on Windows, ~1ms on Linux) -> **(P)** [R27]
+- [ ] Test timing precision on all target platforms — resolution varies (10ms on Windows, ~1ms on Linux) → **(P)** [R27]
 
 - **Consequence:** Timing too coarse for performance-sensitive code, inconsistent resolution across platforms
 
@@ -2919,13 +2919,13 @@ bool MyApp::OnInit() {
 
 `wxInputStream`/`wxOutputStream` and `wxArchiveInputStream`/`wxArchiveOutputStream` (zip, tar) have limited error reporting. `GetLastError()` returns the last error, but it may be cleared by subsequent operations. Known issue: `wxZipInputStream` may not detect corrupted archives until `Read()` fails.
 
-- [ ] Check `wxStream::GetLastError()` after every `Read()`/`Write()` — it may be cleared by subsequent ops -> **(P)** [R27]
+- [ ] Check `wxStream::GetLastError()` after every `Read()`/`Write()` — it may be cleared by subsequent ops → **(P)** [R27]
 
-- [ ] For `wxZipInputStream`, check the return value of `Read()` — 0 bytes read may indicate corruption -> **(P)** [R27]
+- [ ] For `wxZipInputStream`, check the return value of `Read()` — 0 bytes read may indicate corruption → **(P)** [R27]
 
-- [ ] Do NOT assume `wxInputStream::IsOk()` guarantees data integrity — it only checks stream state -> **(P)** [R27]
+- [ ] Do NOT assume `wxInputStream::IsOk()` guarantees data integrity — it only checks stream state → **(P)** [R27]
 
-- [ ] Use `wxStreamBuffer` for buffered I/O — reduces error-checking overhead -> **(P)** [R27]
+- [ ] Use `wxStreamBuffer` for buffered I/O — reduces error-checking overhead → **(P)** [R27]
 
 - **Consequence:** Corrupt archive not detected, silent data loss, error state cleared before check
 
@@ -2935,13 +2935,13 @@ bool MyApp::OnInit() {
 
 `wxRegEx` uses the system regex library on wxMSW (regex.h on wxGTK/wxOSX). On wxMSW, it uses a custom implementation (Henry Spencer's regex). Known differences: `wxRE_ADVANCED` flag enables extended features on wxGTK (POSIX ERE) but may not be supported on wxMSW. Backreferences behave differently across engines.
 
-- [ ] Test `wxRegEx` on all target platforms — regex syntax support varies -> **(P)** [R27]
+- [ ] Test `wxRegEx` on all target platforms — regex syntax support varies → **(P)** [R27]
 
-- [ ] Use `wxRE_ADVANCED` for extended regex, but verify support on wxMSW -> **(P)** [R27]
+- [ ] Use `wxRE_ADVANCED` for extended regex, but verify support on wxMSW → **(P)** [R27]
 
-- [ ] Do NOT use PCRE-specific syntax (named groups `(?P<name>)`) — wxRegEx does NOT support PCRE -> **(P)** [R27]
+- [ ] Do NOT use PCRE-specific syntax (named groups `(?P<name>)`) — wxRegEx does NOT support PCRE → **(P)** [R27]
 
-- [ ] Use `wxRegEx::GetMatch()` with explicit match index — named captures are NOT supported -> **(P)** [R27]
+- [ ] Use `wxRegEx::GetMatch()` with explicit match index — named captures are NOT supported → **(P)** [R27]
 
 - **Consequence:** Regex fails on one platform, unsupported syntax causes error, named captures not working
 
@@ -2951,13 +2951,13 @@ bool MyApp::OnInit() {
 
 `wxVariant` (dynamic typing) and `wxAny` (3.0+, lighter) both provide dynamic typing. `wxAny` is preferred for new code — it is more efficient and type-safe. `wxVariant` has known issues with `operator==` comparing different types (e.g., `long` vs `int`), and conversion may silently fail.
 
-- [ ] Use `wxAny` (not `wxVariant`) for new code — it is more efficient and type-safe -> **(P)** [R27]
+- [ ] Use `wxAny` (not `wxVariant`) for new code — it is more efficient and type-safe → **(P)** [R27]
 
-- [ ] Use `wxAny::GetAs<T>()` with explicit type — do NOT rely on implicit conversion -> **(P)** [R27]
+- [ ] Use `wxAny::GetAs<T>()` with explicit type — do NOT rely on implicit conversion → **(P)** [R27]
 
-- [ ] Test `wxVariant::Convert()` for lossy conversions (double to int) — may silently truncate -> **(P)** [R27]
+- [ ] Test `wxVariant::Convert()` for lossy conversions (double to int) — may silently truncate → **(P)** [R27]
 
-- [ ] Use `wxAny::CheckType<T>()` before `GetAs<T>()` — type mismatch throws -> **(P)** [R27]
+- [ ] Use `wxAny::CheckType<T>()` before `GetAs<T>()` — type mismatch throws → **(P)** [R27]
 
 - **Consequence:** Silent type conversion errors, comparison of different types fails, runtime type exception
 
@@ -2967,13 +2967,13 @@ bool MyApp::OnInit() {
 
 `wxDateTime` handles date/time with timezone support. Known issues in 3.1.5: DST transitions may cause 1-hour errors when comparing times across DST boundary, `wxDateTime::Now()` uses local time which may change meaning across DST, and `wxDateTime::GetWeekDay()` in ISO mode (Monday=1) vs Sunday mode (Sunday=0) can cause off-by-one errors.
 
-- [ ] Use `wxDateTime::GetUTCTimeMillis()` for unambiguous time storage — UTC has no DST -> **(P)** [R27]
+- [ ] Use `wxDateTime::GetUTCTimeMillis()` for unambiguous time storage — UTC has no DST → **(P)** [R27]
 
-- [ ] For date arithmetic across DST boundaries, use `wxDateSpan` (calendar-based) not `wxTimeSpan` (duration-based) -> **(P)** [R27]
+- [ ] For date arithmetic across DST boundaries, use `wxDateSpan` (calendar-based) not `wxTimeSpan` (duration-based) → **(P)** [R27]
 
-- [ ] Test DST transitions (spring forward, fall back) — time may be ambiguous or skipped -> **(P)** [R27]
+- [ ] Test DST transitions (spring forward, fall back) — time may be ambiguous or skipped → **(P)** [R27]
 
-- [ ] Use `wxDateTime::FromUTC()` for explicit UTC parsing, `ToUTC()` for UTC output -> **(P)** [R27]
+- [ ] Use `wxDateTime::FromUTC()` for explicit UTC parsing, `ToUTC()` for UTC output → **(P)** [R27]
 
 ```cpp
 // Good — use UTC for storage, local for display
@@ -2989,13 +2989,13 @@ wxDateTime local = utc.FromUTC(); // Convert to local for display
 
 `wxFileHistory` manages a list of recently opened files, typically shown in a File menu. Known issues in 3.1.5: `wxFileHistory::AddFileToHistory()` may exceed the menu's ID range if `SetMenu()` is not called with a menu that has contiguous IDs, and file paths with special characters may display incorrectly.
 
-- [ ] Use `wxFileHistory::SetMenu()` with a menu that has room for `m_fileHistory->GetMaxFiles()` IDs -> **(P)** [R27]
+- [ ] Use `wxFileHistory::SetMenu()` with a menu that has room for `m_fileHistory->GetMaxFiles()` IDs → **(P)** [R27]
 
-- [ ] Use `wxID_FILE1` through `wxID_FILE9` (or `wxID_FILE10`) for file history menu item IDs -> **(P)** [R27]
+- [ ] Use `wxID_FILE1` through `wxID_FILE9` (or `wxID_FILE10`) for file history menu item IDs → **(P)** [R27]
 
-- [ ] Handle `wxEVT_MENU` for `wxID_FILE1`..`wxID_FILE10` to open recent files -> **(P)** [R27]
+- [ ] Handle `wxEVT_MENU` for `wxID_FILE1`..`wxID_FILE10` to open recent files → **(P)** [R27]
 
-- [ ] Use `wxFileName::GetFullPath()` for display, `wxFileName::GetFullPath()` for storage -> **(P)** [R27]
+- [ ] Use `wxFileName::GetFullPath()` for display, `wxFileName::GetFullPath()` for storage → **(P)** [R27]
 
 ```cpp
 // Good — set up file history
@@ -3019,13 +3019,13 @@ Bind(wxEVT_MENU, &MyFrame::OnRecentFile, this, wxID_FILE1, wxID_FILE9);
 
 `wxLocale` loads translation catalogs (`.mo` files) via `wxFileTranslationsLoader` or `wxResourceTranslationsLoader`. Known issues in 3.1.5: the default search path may not include the app's resource directory, and `.mo` file names must match the locale name exactly (e.g., `zh_CN.mo` not `chinese.mo`).
 
-- [ ] Use `wxFileTranslationsLoader::SetCatalogDir()` or `wxLocale::AddCatalogLookupPathPrefix()` to set the translation search path -> **(P)** [R28]
+- [ ] Use `wxFileTranslationsLoader::SetCatalogDir()` or `wxLocale::AddCatalogLookupPathPrefix()` to set the translation search path → **(P)** [R28]
 
-- [ ] Use standard locale names (e.g., `zh_CN`, `ja_JP`, `de_DE`) for `.mo` file names -> **(P)** [R28]
+- [ ] Use standard locale names (e.g., `zh_CN`, `ja_JP`, `de_DE`) for `.mo` file names → **(P)** [R28]
 
-- [ ] Call `wxLocale::Init()` before creating any translatable strings — `wxGetTranslation()` uses the global locale -> **(P)** [R28]
+- [ ] Call `wxLocale::Init()` before creating any translatable strings — `wxGetTranslation()` uses the global locale → **(P)** [R28]
 
-- [ ] Test translation loading with missing `.mo` files — should fall back to source language -> **(P)** [R28]
+- [ ] Test translation loading with missing `.mo` files — should fall back to source language → **(P)** [R28]
 
 ```cpp
 // Good — set catalog path before init
@@ -3045,13 +3045,13 @@ m_locale->AddCatalog("myapp"); // Loads myapp.mo from zh_CN or zh
 wxWidgets 3.1.5 uses UTF-8 as the internal `wxString` encoding by default. Translation source (`.po`/`.pot`) files must be UTF-8 encoded. Using `_("non-ASCII string")` in source code requires the source file to be UTF-8. Non-UTF-8 source files (e.g., GBK on Windows) will produce garbled translations.
 ```
 
-- [ ] Save source files as UTF-8 — `_("...")` strings are extracted and compiled into `.mo` files -> **(P)** [R28]
+- [ ] Save source files as UTF-8 — `_("...")` strings are extracted and compiled into `.mo` files → **(P)** [R28]
 
-- [ ] Use `wxGetTranslation()`/`_()` for ALL translatable strings, including menu items, labels, tooltips -> **(P)** [R28]
+- [ ] Use `wxGetTranslation()`/`_()` for ALL translatable strings, including menu items, labels, tooltips → **(P)** [R28]
 
-- [ ] Test translations with non-ASCII characters (Chinese, Japanese, Arabic) — verify encoding is correct -> **(P)** [R28]
+- [ ] Test translations with non-ASCII characters (Chinese, Japanese, Arabic) — verify encoding is correct → **(P)** [R28]
 
-- [ ] Use `wxString::FromUTF8()` when loading strings from external UTF-8 sources (files, network) -> **(P)** [R28]
+- [ ] Use `wxString::FromUTF8()` when loading strings from external UTF-8 sources (files, network) → **(P)** [R28]
 
 - **Consequence:** Garbled translations, mojibake, encoding mismatch between source and `.mo`
 
@@ -3061,13 +3061,13 @@ wxWidgets 3.1.5 uses UTF-8 as the internal `wxString` encoding by default. Trans
 
 `wxGetTranslation()` supports plural forms via `ngettext()`. The plural form rules are defined in the `.po` file header (`Plural-Forms`). wxWidgets 3.1.5 uses the GNU gettext plural form syntax. Known issue: some languages (Arabic, Russian, Polish) have complex plural rules that must be correctly specified in the `.po` header.
 
-- [ ] Use `wxPLURAL(msgid, msgid_plural, n)` macro for plurals — it wraps `ngettext` -> **(P)** [R28]
+- [ ] Use `wxPLURAL(msgid, msgid_plural, n)` macro for plurals — it wraps `ngettext` → **(P)** [R28]
 
-- [ ] Verify `Plural-Forms` header in `.po` files for complex-plural languages (Arabic: 6 forms, Russian: 3 forms) -> **(P)** [R28]
+- [ ] Verify `Plural-Forms` header in `.po` files for complex-plural languages (Arabic: 6 forms, Russian: 3 forms) → **(P)** [R28]
 
-- [ ] Test plural forms with n=0, n=1, n=2, n=many — verify correct form is selected -> **(P)** [R28]
+- [ ] Test plural forms with n=0, n=1, n=2, n=many — verify correct form is selected → **(P)** [R28]
 
-- [ ] Do NOT use `wxGetTranslation()` for plurals — it does not support plural form selection -> **(P)** [R28]
+- [ ] Do NOT use `wxGetTranslation()` for plurals — it does not support plural form selection → **(P)** [R28]
 
 ```cpp
 // Good — use wxPLURAL for plurals
@@ -3082,13 +3082,13 @@ wxString msg = wxPLURAL("1 file", "%d files", count);
 
 `wxFontMapper` maps logical font encoding (e.g., `wxFONTENCODING_CP1252`) to actual fonts. Known issues in 3.1.5: on systems without the requested font encoding, `wxFontMapper` falls back to a default which may not display all characters. `wxFontEncoding` may be ignored on platforms that use Unicode fonts (macOS, modern Linux).
 
-- [ ] Use `wxFONTENCODING_UTF8` for all new code — modern platforms use Unicode fonts -> **(P)** [R28]
+- [ ] Use `wxFONTENCODING_UTF8` for all new code — modern platforms use Unicode fonts → **(P)** [R28]
 
-- [ ] Do NOT rely on `wxFontMapper` on macOS — all fonts are Unicode, encoding is ignored -> **(P)** [R28]
+- [ ] Do NOT rely on `wxFontMapper` on macOS — all fonts are Unicode, encoding is ignored → **(P)** [R28]
 
-- [ ] For legacy encodings (e.g., `wxFONTENCODING_CP1251` for Cyrillic), test on all platforms — fallback may differ -> **(P)** [R28]
+- [ ] For legacy encodings (e.g., `wxFONTENCODING_CP1251` for Cyrillic), test on all platforms — fallback may differ → **(P)** [R28]
 
-- [ ] Use `wxFont::IsOk()` after creation — encoding mismatch may produce an invalid font -> **(P)** [R28]
+- [ ] Use `wxFont::IsOk()` after creation — encoding mismatch may produce an invalid font → **(P)** [R28]
 
 - **Consequence:** Wrong characters displayed, font not found, encoding ignored on modern platforms
 
@@ -3098,13 +3098,13 @@ wxString msg = wxPLURAL("1 file", "%d files", count);
 
 `wxGridCellEditor` and `wxGridCellRenderer` are created per-cell and deleted by the grid. Known issues in 3.1.5: custom editors must call `wxGridCellEditor::Create()` to create the editor control, and the editor control's parent must be the grid. Also, `wxGridCellEditor::StartingKey()` may not fire on all platforms.
 
-- [ ] Custom `wxGridCellEditor`: call `Create()` to instantiate the control, set parent to the grid -> **(P)** [R28]
+- [ ] Custom `wxGridCellEditor`: call `Create()` to instantiate the control, set parent to the grid → **(P)** [R28]
 
-- [ ] Override `wxGridCellEditor::HandleReturn()` and `StartingKey()` — key handling differs across platforms -> **(P)** [R28]
+- [ ] Override `wxGridCellEditor::HandleReturn()` and `StartingKey()` — key handling differs across platforms → **(P)** [R28]
 
-- [ ] Do NOT delete `wxGridCellEditor`/`wxGridCellRenderer` manually — the grid owns them -> **(P)** [R28]
+- [ ] Do NOT delete `wxGridCellEditor`/`wxGridCellRenderer` manually — the grid owns them → **(P)** [R28]
 
-- [ ] Use `wxGridCellAutoWrapStringRenderer` for auto-wrapping text cells, not custom rendering -> **(P)** [R28]
+- [ ] Use `wxGridCellAutoWrapStringRenderer` for auto-wrapping text cells, not custom rendering → **(P)** [R28]
 
 - **Consequence:** Editor control not created, key events missing, double-free crash, text not wrapping
 
@@ -3114,13 +3114,13 @@ wxString msg = wxPLURAL("1 file", "%d files", count);
 
 `wxGridTableBase` provides a virtual grid interface for large datasets. Known issues in 3.1.5: `wxGridTableBase::GetValue()` is called synchronously during paint, so it must be fast. For large datasets, this can cause performance issues. Also, `wxGridTableBase::AppendRows()`/`DeleteRows()` must call `wxGrid::RowNumChanged()` or the view may not update.
 
-- [ ] Make `wxGridTableBase::GetValue()` fast — it is called during paint, blocking the UI -> **(P)** [R28]
+- [ ] Make `wxGridTableBase::GetValue()` fast — it is called during paint, blocking the UI → **(P)** [R28]
 
-- [ ] Call `wxGrid::ProcessTableMessage(wxGridTableMessage)` after row/column changes — or the view will not update -> **(P)** [R28]
+- [ ] Call `wxGrid::ProcessTableMessage(wxGridTableMessage)` after row/column changes — or the view will not update → **(P)** [R28]
 
-- [ ] Use `wxGridStringTable` for simple string data — do NOT implement `wxGridTableBase` unless you need virtual behavior -> **(P)** [R28]
+- [ ] Use `wxGridStringTable` for simple string data — do NOT implement `wxGridTableBase` unless you need virtual behavior → **(P)** [R28]
 
-- [ ] For very large grids (> 100K rows), consider `wxDataViewCtrl` with virtual model instead of `wxGrid` -> **(P)** [R4]
+- [ ] For very large grids (> 100K rows), consider `wxDataViewCtrl` with virtual model instead of `wxGrid` → **(P)** [R4]
 
 ```cpp
 // Good — notify grid after row changes
@@ -3141,13 +3141,13 @@ void MyGridTable::AppendRows(size_t n) {
 
 `wxGrid` selection modes (`wxGridSelectionModes`) differ across platforms. `wxGridSelectCells` (default) selects individual cells, `wxGridSelectRows` selects entire rows, `wxGridSelectColumns` selects columns. Known issues: `wxGrid::SelectBlock()` may not fire `wxEVT_GRID_RANGE_SELECT` on wxGTK, and `wxGrid::ClearSelection()` may not update the visual state on macOS.
 
-- [ ] Use `wxGrid::SetSelectionMode()` for consistent selection behavior — default is cell selection -> **(P)** [R28]
+- [ ] Use `wxGrid::SetSelectionMode()` for consistent selection behavior — default is cell selection → **(P)** [R28]
 
-- [ ] Call `wxGrid::Refresh()` after `ClearSelection()` on macOS — visual state may not update -> **(P)** [R28]
+- [ ] Call `wxGrid::Refresh()` after `ClearSelection()` on macOS — visual state may not update → **(P)** [R28]
 
-- [ ] Handle `wxEVT_GRID_RANGE_SELECT` for block selection, `wxEVT_GRID_SELECT_CELL` for cell selection -> **(P)** [R28]
+- [ ] Handle `wxEVT_GRID_RANGE_SELECT` for block selection, `wxEVT_GRID_SELECT_CELL` for cell selection → **(P)** [R28]
 
-- [ ] Test selection behavior on all platforms — wxGTK and wxOSX differ from wxMSW -> **(P)** [R28]
+- [ ] Test selection behavior on all platforms — wxGTK and wxOSX differ from wxMSW → **(P)** [R28]
 
 - **Consequence:** Wrong selection behavior, stale visual state, missing selection events on GTK
 
@@ -3157,13 +3157,13 @@ void MyGridTable::AppendRows(size_t n) {
 
 `wxTimer` fires `wxEVT_TIMER` events. `wxTimer::StartOnce()` fires a single event; `Start(interval)` fires repeatedly. Known issues in 3.1.5: `wxTimer` events are delivered via the main event loop, so they may be delayed if the event loop is busy. `wxTimer` is NOT thread-safe — do NOT create or start timers from worker threads.
 
-- [ ] Use `wxTimer::StartOnce()` for single-fire timers, `Start(interval, false)` for repeating -> **(P)** [R28]
+- [ ] Use `wxTimer::StartOnce()` for single-fire timers, `Start(interval, false)` for repeating → **(P)** [R28]
 
-- [ ] Do NOT create or start `wxTimer` from worker threads — use `wxPostEvent` to signal the main thread -> **(P)** [R5]
+- [ ] Do NOT create or start `wxTimer` from worker threads — use `wxPostEvent` to signal the main thread → **(P)** [R5]
 
-- [ ] Be aware that `wxTimer` events may be delayed if the event loop is busy — do NOT use for real-time deadlines -> **(P)** [R28]
+- [ ] Be aware that `wxTimer` events may be delayed if the event loop is busy — do NOT use for real-time deadlines → **(P)** [R28]
 
-- [ ] Use `wxTimerEvent::GetInterval()` to verify the timer in multi-timer scenarios -> **(P)** [R28]
+- [ ] Use `wxTimerEvent::GetInterval()` to verify the timer in multi-timer scenarios → **(P)** [R28]
 
 - **Consequence:** Timer fires from wrong thread, events delayed, missed deadline, wrong timer ID
 
@@ -3173,13 +3173,13 @@ void MyGridTable::AppendRows(size_t n) {
 
 `wxBusyCursor` (RAII) shows an hourglass cursor. `wxWindowDisabler` (RAII) disables all windows. Known issues: `wxWindowDisabler` disables ALL windows including the one that triggered the action, which can prevent UI updates. Using both together is common but may cause the UI to appear frozen.
 
-- [ ] Use `wxBusyCursor` for short operations (< 1 second) — shows busy without disabling UI -> **(P)** [R28]
+- [ ] Use `wxBusyCursor` for short operations (< 1 second) — shows busy without disabling UI → **(P)** [R28]
 
-- [ ] Use `wxWindowDisabler` for long operations — disables input but allows paint events -> **(P)** [R28]
+- [ ] Use `wxWindowDisabler` for long operations — disables input but allows paint events → **(P)** [R28]
 
-- [ ] Call `wxYield()` periodically during long operations if UI updates are needed — but beware reentrancy -> **(P)** [R28]
+- [ ] Call `wxYield()` periodically during long operations if UI updates are needed — but beware reentrancy → **(P)** [R28]
 
-- [ ] Do NOT use `wxWindowDisabler` with modal dialogs — the dialog is already modal -> **(P)** [R28]
+- [ ] Do NOT use `wxWindowDisabler` with modal dialogs — the dialog is already modal → **(P)** [R28]
 
 ```cpp
 // Good — busy cursor + window disabler for long ops
@@ -3203,13 +3203,13 @@ void MyGridTable::AppendRows(size_t n) {
 
 `wxAcceleratorTable` provides keyboard shortcuts (e.g., Ctrl+S). On 3.1.5, accelerator keys are handled before normal key events. Known issues: `wxAcceleratorEntry` uses `wxACCEL_CTRL` for Ctrl, but on macOS, the Command key is the primary modifier — `wxACCEL_CMD` maps to Command. Also, function keys (F1-F12) may conflict with system shortcuts on macOS.
 
-- [ ] Use `wxACCEL_CMD` (not `wxACCEL_CTRL`) on macOS for Command-key shortcuts -> **(P)** [R28]
+- [ ] Use `wxACCEL_CMD` (not `wxACCEL_CTRL`) on macOS for Command-key shortcuts → **(P)** [R28]
 
-- [ ] Do NOT use F1-F12 on macOS without checking system conflicts — Mission Control, Spotlight use these -> **(P)** [R28]
+- [ ] Do NOT use F1-F12 on macOS without checking system conflicts — Mission Control, Spotlight use these → **(P)** [R28]
 
-- [ ] Call `wxWindow::SetAcceleratorTable()` on the frame (not child windows) — accelerators are window-level -> **(P)** [R28]
+- [ ] Call `wxWindow::SetAcceleratorTable()` on the frame (not child windows) — accelerators are window-level → **(P)** [R28]
 
-- [ ] Test accelerators on all platforms — Ctrl vs Command, function key conflicts differ -> **(P)** [R28]
+- [ ] Test accelerators on all platforms — Ctrl vs Command, function key conflicts differ → **(P)** [R28]
 
 ```cpp
 // Good — platform-specific accelerator
@@ -3230,13 +3230,13 @@ frame->SetAcceleratorTable(wxAcceleratorTable(1, entries));
 
 `wxWebView` provides an embedded web view. In 3.1.5, the backend varies by platform: wxMSW uses Edge (Chromium) via `wxWebViewEdge`, wxGTK uses WebKitGTK, wxOSX uses WKWebView. Known issues: `wxWebViewEdge` requires WebView2 runtime (may not be installed on older Windows), WebKitGTK version must be >= 2.14, and WKWebView on macOS may not support all JavaScript APIs.
 
-- [ ] Use `wxWebView::New()` with explicit backend name for platform-specific control -> **(P)** [R29]
+- [ ] Use `wxWebView::New()` with explicit backend name for platform-specific control → **(P)** [R29]
 
-- [ ] Check `wxWebViewEdge::IsAvailable()` before using Edge backend — requires WebView2 runtime -> **(P)** [R29]
+- [ ] Check `wxWebViewEdge::IsAvailable()` before using Edge backend — requires WebView2 runtime → **(P)** [R29]
 
-- [ ] Test JavaScript execution on all platforms — `wxWebView::RunScript()` behavior may differ -> **(P)** [R29]
+- [ ] Test JavaScript execution on all platforms — `wxWebView::RunScript()` behavior may differ → **(P)** [R29]
 
-- [ ] Handle `wxEVT_WEBVIEW_ERROR` for backend-specific errors — network, script, navigation failures -> **(P)** [R29]
+- [ ] Handle `wxEVT_WEBVIEW_ERROR` for backend-specific errors — network, script, navigation failures → **(P)** [R29]
 
 ```cpp
 // Good — check backend availability
@@ -3257,13 +3257,13 @@ if (wxWebViewEdge::IsAvailable()) {
 
 `wxWebView` cookies are handled by the backend (Edge, WebKitGTK, WKWebView). In 3.1.5, there is no unified API for cookie management — each backend handles cookies independently. Session cookies may persist across `wxWebView` instances on the same backend. Known issue: clearing cookies requires backend-specific code.
 
-- [ ] Do NOT assume cookies are isolated per `wxWebView` instance — backend may share them -> **(P)** [R29]
+- [ ] Do NOT assume cookies are isolated per `wxWebView` instance — backend may share them → **(P)** [R29]
 
-- [ ] For private/incognito browsing, use `wxWebViewEdge` with `--incognito` flag or WKWebView `nonPersistentDataStore` -> **(P)** [R29]
+- [ ] For private/incognito browsing, use `wxWebViewEdge` with `--incognito` flag or WKWebView `nonPersistentDataStore` → **(P)** [R29]
 
-- [ ] Test cookie behavior across app restarts — persistent cookies may remain -> **(P)** [R29]
+- [ ] Test cookie behavior across app restarts — persistent cookies may remain → **(P)** [R29]
 
-- [ ] Use `wxWebView::ClearHistory()` (not cookies) for history clearing — cookie clearing is backend-specific -> **(P)** [R29]
+- [ ] Use `wxWebView::ClearHistory()` (not cookies) for history clearing — cookie clearing is backend-specific → **(P)** [R29]
 
 - **Consequence:** Cookies leak between instances, persistent across restarts, no unified API
 
@@ -3273,13 +3273,13 @@ if (wxWebViewEdge::IsAvailable()) {
 
 `wxWebView` in 3.1.5 has limited print support — `wxWebView::Print()` is not available on all backends. PDF export requires backend-specific JavaScript (`window.print()`) or native API calls. Known issues: print preview is not supported, and the print output may not match the screen rendering.
 
-- [ ] Use JavaScript `window.print()` for printing — native print API is backend-specific -> **(P)** [R29]
+- [ ] Use JavaScript `window.print()` for printing — native print API is backend-specific → **(P)** [R29]
 
-- [ ] Do NOT rely on `wxWebView::Print()` — it may not exist on all backends -> **(P)** [R29]
+- [ ] Do NOT rely on `wxWebView::Print()` — it may not exist on all backends → **(P)** [R29]
 
-- [ ] For PDF export, use backend-specific API or a JavaScript library (e.g., `jsPDF`) -> **(P)** [R29]
+- [ ] For PDF export, use backend-specific API or a JavaScript library (e.g., `jsPDF`) → **(P)** [R29]
 
-- [ ] Test print output on all backends — rendering may differ from screen -> **(P)** [R29]
+- [ ] Test print output on all backends — rendering may differ from screen → **(P)** [R29]
 
 - **Consequence:** Print not available, PDF export fails, output inconsistent with screen
 
@@ -3289,13 +3289,13 @@ if (wxWebViewEdge::IsAvailable()) {
 
 `wxPrintout` provides the document-to-printer interface. Known issues in 3.1.5: page size and margins differ by platform — wxMSW uses `DEVMODE`, wxGTK uses `GtkPrintSettings`, wxOSX uses `NSPrintInfo`. The `wxPageSetupDialogData` maps differently to each platform, and `GetPaperRect()` may return different coordinate systems.
 
-- [ ] Use `wxPrintout::GetDC()` for all drawing — do NOT assume pixel coordinates, use `MapScreenSizeToPage()` -> **(P)** [R29]
+- [ ] Use `wxPrintout::GetDC()` for all drawing — do NOT assume pixel coordinates, use `MapScreenSizeToPage()` → **(P)** [R29]
 
-- [ ] Handle `wxPageSetupDialogData::CalcMinMargins()` for consistent margins across platforms -> **(P)** [R29]
+- [ ] Handle `wxPageSetupDialogData::CalcMinMargins()` for consistent margins across platforms → **(P)** [R29]
 
-- [ ] Test printing on all platforms — paper size, orientation, margins may differ -> **(P)** [R29]
+- [ ] Test printing on all platforms — paper size, orientation, margins may differ → **(P)** [R29]
 
-- [ ] Use `wxPrintout::OnPrintPage()` with page loop — do NOT assume single-page printing -> **(P)** [R29]
+- [ ] Use `wxPrintout::OnPrintPage()` with page loop — do NOT assume single-page printing → **(P)** [R29]
 
 - **Consequence:** Print output misaligned, wrong paper size, margins inconsistent
 
@@ -3305,13 +3305,13 @@ if (wxWebViewEdge::IsAvailable()) {
 
 `wxPrintPreview` shows a preview of print output. Known issues in 3.1.5: the preview may render at lower quality than the actual print, and the preview's page count may differ from actual pages (due to pagination differences). On macOS, the preview uses the native print preview dialog which is different from the wxWidgets preview.
 
-- [ ] Use `wxPrintPreview` for basic preview — on macOS, it may use native dialog instead -> **(P)** [R29]
+- [ ] Use `wxPrintPreview` for basic preview — on macOS, it may use native dialog instead → **(P)** [R29]
 
-- [ ] Do NOT assume preview page count equals print page count — pagination may differ -> **(P)** [R29]
+- [ ] Do NOT assume preview page count equals print page count — pagination may differ → **(P)** [R29]
 
-- [ ] Set `wxPrintPreview::SetZoom()` for user-controlled zoom — default may be too small -> **(P)** [R29]
+- [ ] Set `wxPrintPreview::SetZoom()` for user-controlled zoom — default may be too small → **(P)** [R29]
 
-- [ ] Test preview rendering on all platforms — quality and behavior differ -> **(P)** [R29]
+- [ ] Test preview rendering on all platforms — quality and behavior differ → **(P)** [R29]
 
 - **Consequence:** Preview looks different from print, wrong page count, macOS uses native dialog
 
@@ -3321,13 +3321,13 @@ if (wxWebViewEdge::IsAvailable()) {
 
 `wxImage` uses handler-based loading for different formats (PNG, JPEG, GIF, BMP, etc.). In 3.1.5, handlers must be registered via `wxImage::AddHandler()` before loading. Known issue: `wxInitAllImageHandlers()` registers all built-in handlers, but it may not include handlers for formats loaded from plugins.
 
-- [ ] Call `wxInitAllImageHandlers()` once at app startup — or register specific handlers only -> **(P)** [R29]
+- [ ] Call `wxInitAllImageHandlers()` once at app startup — or register specific handlers only → **(P)** [R29]
 
-- [ ] For specific formats, use `wxImage::AddHandler(new wxPNGHandler)` — lighter than registering all -> **(P)** [R29]
+- [ ] For specific formats, use `wxImage::AddHandler(new wxPNGHandler)` — lighter than registering all → **(P)** [R29]
 
-- [ ] Check `wxImage::FindHandler()` before loading — handler may not be registered -> **(P)** [R29]
+- [ ] Check `wxImage::FindHandler()` before loading — handler may not be registered → **(P)** [R29]
 
-- [ ] Test image loading with corrupt files — some handlers may crash on malformed input -> **(P)** [R29]
+- [ ] Test image loading with corrupt files — some handlers may crash on malformed input → **(P)** [R29]
 
 ```cpp
 // Good — register only needed handlers
@@ -3345,13 +3345,13 @@ wxImage::AddHandler(new wxICOHandler);
 
 `wxImage::Scale()` uses nearest-neighbor by default (fast but low quality). For better quality, use `wxIMAGE_QUALITY_BICUBIC` or `wxIMAGE_QUALITY_BOX` (3.1.5+). Known issues: scaling down with nearest-neighbor produces jagged edges, and `wxIMAGE_QUALITY_HIGH` may be slow for large images.
 
-- [ ] Use `wxImage::Scale(w, h, wxIMAGE_QUALITY_BICUBIC)` for high-quality scaling -> **(P)** [R29]
+- [ ] Use `wxImage::Scale(w, h, wxIMAGE_QUALITY_BICUBIC)` for high-quality scaling → **(P)** [R29]
 
-- [ ] Use `wxIMAGE_QUALITY_NEAREST` for fast, pixelated scaling (retro/gaming) -> **(P)** [R29]
+- [ ] Use `wxIMAGE_QUALITY_NEAREST` for fast, pixelated scaling (retro/gaming) → **(P)** [R29]
 
-- [ ] Avoid scaling in a paint event — pre-scale images during loading or setup -> **(P)** [R29]
+- [ ] Avoid scaling in a paint event — pre-scale images during loading or setup → **(P)** [R29]
 
-- [ ] Test image quality on different scaling ratios (2x, 4x, 0.5x) -> **(P)** [R29]
+- [ ] Test image quality on different scaling ratios (2x, 4x, 0.5x) → **(P)** [R29]
 
 ```cpp
 // Good — high-quality scaling
@@ -3367,13 +3367,13 @@ wxImage scaled = img.Scale(100, 100, wxIMAGE_QUALITY_BICUBIC);
 
 `wxCursor` supports custom cursors from `wxImage`. In 3.1.5, the cursor hotspot is set via `wxImage::SetOption(wxBITMAP_OPTION_CUR_HOTSPOT_X/Y)`. Known issues: cursor size is limited to 32x32 on Windows (classic) but may be larger on macOS and Linux. Monochrome cursors may not work on all platforms.
 
-- [ ] Set cursor hotspot via `wxImage::SetOption()` before creating `wxCursor` -> **(P)** [R29]
+- [ ] Set cursor hotspot via `wxImage::SetOption()` before creating `wxCursor` → **(P)** [R29]
 
-- [ ] Keep cursor size to 32x32 for Windows compatibility — larger may fail on legacy Windows -> **(P)** [R29]
+- [ ] Keep cursor size to 32x32 for Windows compatibility — larger may fail on legacy Windows → **(P)** [R29]
 
-- [ ] Use color cursors (not monochrome) — monochrome may not work on macOS/Linux -> **(P)** [R29]
+- [ ] Use color cursors (not monochrome) — monochrome may not work on macOS/Linux → **(P)** [R29]
 
-- [ ] Test custom cursors on all platforms — hotspot and size behavior differ -> **(P)** [R29]
+- [ ] Test custom cursors on all platforms — hotspot and size behavior differ → **(P)** [R29]
 
 ```cpp
 // Good — custom cursor with hotspot
@@ -3395,13 +3395,13 @@ window->SetCursor(cursor);
 
 `wxIconBundle` contains multiple `wxIcon` objects for different sizes. In 3.1.5, `wxIconBundle` is used for window/taskbar icons. On Windows, the bundle is used for taskbar (large) and window title (small) icons. On macOS, the `.icns` file provides multiple resolutions. Known issue: `wxIconBundle::GetIcon(size)` may not return the best match on all platforms.
 
-- [ ] Use `wxIconBundle` with multiple sizes (16x16, 32x32, 48x48, 256x256) for all platforms -> **(P)** [R29]
+- [ ] Use `wxIconBundle` with multiple sizes (16x16, 32x32, 48x48, 256x256) for all platforms → **(P)** [R29]
 
-- [ ] On macOS, use `.icns` file — it contains all resolutions natively -> **(P)** [R29]
+- [ ] On macOS, use `.icns` file — it contains all resolutions natively → **(P)** [R29]
 
-- [ ] Use `wxFrame::SetIcons(bundle)` (not `SetIcon()`) for multi-resolution -> **(P)** [R29]
+- [ ] Use `wxFrame::SetIcons(bundle)` (not `SetIcon()`) for multi-resolution → **(P)** [R29]
 
-- [ ] Test icon rendering on taskbar, window title, and Alt-Tab — sizes differ -> **(P)** [R29]
+- [ ] Test icon rendering on taskbar, window title, and Alt-Tab — sizes differ → **(P)** [R29]
 
 - **Consequence:** Wrong icon size shown, blurry icons, no high-res icon on Retina
 
@@ -3411,13 +3411,13 @@ window->SetCursor(cursor);
 
 `wxDropTarget` receives drag-and-drop data. Custom formats require `wxDataObject` subclass with `wxDataFormat` registration. In 3.1.5, `wxDataFormat::GetId()` returns the format name (string) which is registered per-session. Known issues: format names must be unique across apps, and `wxDropTarget::OnData()` may be called multiple times for the same drop.
 
-- [ ] Use unique format names (include app name prefix) — format IDs are global per-session -> **(P)** [R29]
+- [ ] Use unique format names (include app name prefix) — format IDs are global per-session → **(P)** [R29]
 
-- [ ] Implement `wxDropTarget::OnData()` to call `wxDataObject::SetData()` — the data is NOT auto-set -> **(P)** [R29]
+- [ ] Implement `wxDropTarget::OnData()` to call `wxDataObject::SetData()` — the data is NOT auto-set → **(P)** [R29]
 
-- [ ] Use `wxDropTarget::OnDrop()` for veto-able drop — return false to reject the drop -> **(P)** [R29]
+- [ ] Use `wxDropTarget::OnDrop()` for veto-able drop — return false to reject the drop → **(P)** [R29]
 
-- [ ] Test DnD with external apps — custom format may not be recognized by other apps -> **(P)** [R29]
+- [ ] Test DnD with external apps — custom format may not be recognized by other apps → **(P)** [R29]
 
 ```cpp
 // Good — custom drop target with format
@@ -3672,7 +3672,7 @@ try {
 
 When integrating Dear ImGui with wxGLCanvas, coordinate spaces, event forwarding, and framebuffer management require careful handling.
 
-- [ ] Use GetSize() * GetContentScaleFactor() for ImGui framebuffer size → **(P)** [R1]
+- [ ] Use GetClientSize() * GetContentScaleFactor() for ImGui framebuffer size → **(P)** [R1]
 
 - [ ] Convert mouse coordinates from logical to physical using GetContentScaleFactor() → **(P)** [R1]
 
@@ -3689,7 +3689,7 @@ When integrating Dear ImGui with wxGLCanvas, coordinate spaces, event forwarding
 ```cpp
 void OnPaint(wxPaintEvent&) {
     if (!SetCurrent(*m_context)) return;
-    const wxSize size = GetSize() * GetContentScaleFactor();
+    const wxSize size = GetClientSize() * GetContentScaleFactor();
     ImGuiIO& io = ImGui::GetIO();
     io.DisplaySize = ImVec2(size.x, size.y);
     io.DisplayFramebufferScale = ImVec2(GetContentScaleFactor(), GetContentScaleFactor());
@@ -3769,7 +3769,7 @@ void OnPaint(wxPaintEvent&) {
 
 | R7 | P | wxWidgets CMake / wx-config Documentation | Build system integration | verified-2026 | 2026-07 |
 
-| R8 | P | Stack Overflow [wxwidgets] tag | Common pitfalls (setup.h, memory leaks, encoding) | verified-2026 | 2026-07 |
+| R8 | P | wxWidgets 3.1.5 docs/doxygen/overviews/string.h, cmake.h, unicode.h | wxString encoding, build system, common pitfalls | verified-2026 | 2026-07 |
 
 | R10 | P | wxWidgets 3.1.5 docs/doxygen/overviews/eventhandling.h, thread.h, sizer.h | Official documentation overviews | verified-2026 | 2026-07 |
 
@@ -3797,7 +3797,7 @@ void OnPaint(wxPaintEvent&) {
 
 | R22 | P | wxWidgets GitHub Issues #23367, #18845, #12037, #11567, #24966, #16443, #18625, #19199; wxWidgets 3.1.5 docs/changes.txt (macOS section) | wxOSX macOS platform pitfalls (menu bar, App Nap, file assoc, Retina, pasteboard, sheets, NSStatusItem, panels, NSApp delegation, color panel) | verified-2026 | 2026-07 |
 
-| R23 | P | wxWidgets 3.1.5 docs/doxygen/overviews/sizer.h, roughguide.h; Stack Overflow [wxwidgets] tag cross-platform UI best practices; wxWidgets GitHub Issues #18964, #12464, #11842, #16088 | UI/UX best practices (control semantics, layout, notebook, tooltip, static box, status bar, static text, choice/combo, file dialog, progress dialog) | verified-2026 | 2026-07 |
+| R23 | P | wxWidgets 3.1.5 docs/doxygen/overviews/sizer.h, roughguide.h; wxWidgets 3.1.5 docs/doxygen/overviews/string.h, cmake.h, unicode.h cross-platform UI best practices; wxWidgets GitHub Issues #18964, #12464, #11842, #16088 | UI/UX best practices (control semantics, layout, notebook, tooltip, static box, status bar, static text, choice/combo, file dialog, progress dialog) | verified-2026 | 2026-07 |
 
 | R24 | P | wxWidgets GitHub Issues #23446, #18845, #19199, #16443; wxWidgets 3.1.5 docs/doxygen/classwx_rich_text_ctrl.h, classwx_animation_ctrl.h, classwx_hyperlink_ctrl.h, classwx_collapsible_pane.h, classwx_search_ctrl.h, classwx_info_bar.h | RichText, Animation, Hyperlink, CollapsiblePane, SearchCtrl, InfoBar, BannerWindow, ActivityIndicator, CommandLinkButton, RearrangeList | verified-2026 | 2026-07 |
 
