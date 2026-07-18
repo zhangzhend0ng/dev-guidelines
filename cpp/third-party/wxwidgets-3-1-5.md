@@ -3486,10 +3486,10 @@ Migrating from 3.0?
 ### 131. wxString Conversion Buffer Lifetime: ToUTF8()/utf8_str()/mb_str() Temporary Object UB  **(P)** [R30]
 
 ```cpp
-wxString::utf8_str(), wxString::ToUTF8(), and wxString::mb_str() all return a **temporary** wxScopedCharBuffer (or wxCharBuffer) object. Calling .data() or .c_str() on this temporary-without first assigning it to a local variable-creates a **dangling pointer** and is **undefined behaviour**. This is the #1 wxString lifetime bug in real-world wxWidgets applications. wxWidgets 3.1.5 official docs (interface/wx/string.h) explicitly warn:
+wxString::utf8_str(), wxString::ToUTF8(), and wxString::mb_str() return a wxScopedCharBuffer / wxCharBuffer **by value**. Calling .data() or .c_str() on that temporary and using the pointer after the full-expression ends is a **dangling pointer** and **undefined behaviour**. This is the #1 wxString lifetime bug in real-world wxWidgets applications.
 ```
 
-> "It's even more dangerous to do something like printf(" %s", utf8_str().data())!"
+> **Official warning (interface/wx/string.h, utf8_str() doc):** the return type *"is either a temporary wxCharBuffer object or ... a pointer to the internal string contents in UTF-8 build."* The same overview (interface/wx/string.h, around the c_str() docs) warns that vararg calls like `printf("...%s...", s.c_str())` are dangerous because the argument types are not checked — bind the buffer to a named local first.
 
 - [ ] Never call .data() or .c_str() directly on a temporary returned by ToUTF8(), utf8_str(), or mb_str() → **(P)** [R30]
 
@@ -3499,9 +3499,9 @@ wxString::utf8_str(), wxString::ToUTF8(), and wxString::mb_str() all return a **
 
 - [ ] Prefer wxString::ToStdString(wxConvUTF8) as another safe alternative → **(P)** [R30]
 
-- [ ] wc_str() returns a direct const wchar_t* pointer to internal buffer and does **not** have this issue — but the pointer is only valid for the wxString's lifetime → **(N)** [R30]
+- [ ] wc_str() return type is **build-dependent**: in the wchar build (wxMSW default) it returns `const wchar_t*` directly into the internal buffer (no dangling); in the UTF-8 build (wxGTK/wxOSX default) it returns a **temporary wxScopedWCharBuffer** that CAN dangle — bind it to a local first on non-wchar builds → **(P)** [R30]
 
-- [ ] 	_str() returns const wxStringCharType* — same as wc_str() in Unicode builds; safe from temporary-buffer UB but bound to wxString lifetime → **(N)** [R30]
+- [ ] c_str() returns a **wxCStrData** proxy object (implicitly convertible to `const char*`/`const wchar_t*`), NOT a raw pointer; the method that returns the raw internal pointer is **wx_str()** (`const wxStringCharType*`) → **(P)** [R30]
 
 ```cpp
 // Bad — UB: .data() on temporary wxScopedCharBuffer
@@ -3511,23 +3511,16 @@ const char* p = str.utf8_str().data(); // p is dangling as soon as ';' executes
 
 ```cpp
 // Good — assign buffer to local variable first
-```
-
-```cpp
 const auto buf = dialog.GetPath().ToUTF8();
-```
-
-```cpp
 std::string file_name = buf.data();
 ```
 
-// Best — use utf8_string() (3.1.5+), returns std::string directly
-
 ```cpp
+// Best — use utf8_string() (3.1.5+), returns std::string directly
 std::string file_name = dialog.GetPath().utf8_string();
 ```
 
-**Rationale (from official docs):** wxScopedCharBuffer is a RAII buffer that frees its memory when destroyed. The official wxWidgets 3.1.5 documentation source code (interface/wx/string.h) explicitly calls out printf("%s", utf8_str().data()) as dangerous.
+**Rationale:** wxScopedCharBuffer / wxCharBuffer are RAII buffers that free their memory when destroyed. The official wxWidgets 3.1.5 docs (interface/wx/string.h) document the return types as build-conditional temporaries and warn against passing the conversion results through C varargs.
 
 ### 132. Freeze()/Thaw() Batch Update and wxWindowUpdateLocker  **(P)** [R30]
 
@@ -3623,7 +3616,7 @@ wxPopupTransientWindow is designed for auto-dismissing popup windows. It adds au
 
 - [ ] Override OnDismiss() for cleanup (not Dismiss()) — Dismiss() is a non-virtual hide trigger → **(P)** [R30]
 
-- [ ] Override ProcessLeftDown() and return 	rue to prevent auto-dismiss on specific mouse clicks → **(N)** [R30]
+- [ ] Override ProcessLeftDown() and return true to prevent auto-dismiss on specific mouse clicks → **(P)** [R30]
 
 - [ ] Use wxPU_CONTAINS_CONTROLS style on wxMSW when the popup contains focus-needing controls → **(P)** [R30]
 
@@ -3732,6 +3725,14 @@ void OnPaint(wxPaintEvent&) {
 - **Fix:** Assign buffer to local variable first: const auto buf = wxstr.ToUTF8(); std::string s = buf.data(); or use wxstr.utf8_string() (3.1.5+)
 
 ### Anti-Pattern 2: Direct GUI Access from Worker Thread
+
+- **Appearance:** `workerThread` calls `m_gauge->SetValue(n)` or `m_list->Append(...)` directly from `Entry()`
+
+- **Trap:** wxWidgets GUI objects are not thread-safe; only the main thread may touch them (see §6, §16). Symptoms are non-deterministic: crashes, corruption, or silent mis-paint — often only under load or on a specific port (wxGTK especially)
+
+- **Consequence:** Race condition, heap corruption, intermittent crash that never reproduces in the debugger, or events delivered to the wrong window
+
+- **Fix:** Communicate via `wxTheApp->CallAfter([](){...})` (lambda runs in main thread) or `wxQueueEvent(handler, new wxThreadEvent(...))`. Never use `wxMutexGuiEnter()`/`wxMutexGuiLeave()` — deprecated and unsafe (#10366)
 
 ## See Also
 
