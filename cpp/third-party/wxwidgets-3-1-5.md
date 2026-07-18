@@ -76,6 +76,7 @@ related:
 supersedes: []
 
 changelog:
+  - "2026.07: Adversarial audit (Phase 1-4) against wxWidgets v3.1.5 source — corrected fabricated/nonexistent APIs (§52 SetAppNapEnabled, §54b MSWGetContentScaleFactor + GetDPIScaleFactor semantics, §61/§62 FromDIP signatures, §92 MSWEnableDarkMode, §96 wxFD_USE_LEGACY_DIALOG); corrected §131 wc_str/c_str build-conditional behavior and removed fabricated printf quote (N→P tier fix); fixed version attribution (wxBitmapBundle 3.1.5→3.1.6, wxActivityIndicator 3.1.5→3.1.0, wxEVT_DPI_CHANGED 3.1.5→3.1.6); fixed §1 build option names (wxUSE_STL_BASE_WXSTRING→wxUSE_STL, wxUSE_UTF8_LOCALE→wxUSE_UTF8_LOCALE_ONLY); filled empty Anti-Pattern 2; §134 tab/typo cleanup"
   - "2026.07: Audit fixes — Section 3 wxPaintDC removed from wxGLCanvas; single-backtick code fences converted; Wayland detection improved (XDG_SESSION_TYPE); Section 5 workaround clarified; Section 50 wording fixed (multi-resolution); Section 54b added (fractional DPI, GetDPIScaleFactor, wxDisplay, X11 GDK_SCALE, MSWGetContentScaleFactor); R31 reference added for wxDisplay DPI APIs; R8 restored, R9 removed; based_on and Reference Sources table updated"
   - "2026.07: Sections 131-136 added (ToUTF8 buffer lifetime UB, Freeze/Thaw, Custom widget paint, wxPopupTransientWindow, wxWebView Edge backend, ImGui+wxGLCanvas)"
   - "2026.07: Initial draft from wxWidgets 3.1.5 changelog, GitHub issues, forum posts, and Stack Overflow"
@@ -115,7 +116,7 @@ changelog:
 ### 1. wxString Encoding and Conversion  **(P)** [R1][R8]
 
 ```cpp
-wxString internal representation differs by build configuration (`wxUSE_UNICODE` is default on since 3.0, but `wxUSE_STL_BASE_WXSTRING` and `wxUSE_UTF8_LOCALE` affect behavior). Mixing `c_str()` return types across boundaries is the #1 source of mysterious assertion failures and encoding corruption.
+wxString internal representation differs by build configuration (`wxUSE_UNICODE` is default on since 3.0, but `wxUSE_UNICODE_WCHAR` vs `wxUSE_UNICODE_UTF8` selects the internal storage, and `wxUSE_STL` / `wxUSE_UTF8_LOCALE_ONLY` further affect behavior). Mixing `c_str()` return types across boundaries is the #1 source of mysterious assertion failures and encoding corruption.
 ```
 
 - [ ] Never pass `wxString::c_str()` to non-wx APIs expecting `const char*` without explicit conversion → **(P)** [R1]
@@ -3817,6 +3818,8 @@ void OnPaint(wxPaintEvent&) {
 ---
 
 ## Changelog
+
+- 2026.07: Adversarial audit (Phase 1-4) against wxWidgets v3.1.5 source. Corrected fabricated/nonexistent APIs in §52 (SetAppNapEnabled), §54b (MSWGetContentScaleFactor; GetDPIScaleFactor returns double not int), §61/§62 (FromDIP signatures), §92 (MSWEnableDarkMode — added only in 3.3/master), §96 (wxFD_USE_LEGACY_DIALOG does not exist). Corrected §131 wc_str/c_str build-conditional behavior and removed a fabricated `printf("%s", utf8_str().data())` quote; downgraded two items from (N) to (P). Fixed version attribution: wxBitmapBundle 3.1.5→3.1.6, wxActivityIndicator 3.1.5→3.1.0, wxEVT_DPI_CHANGED 3.1.5→3.1.6. Fixed §1 build option names: wxUSE_STL_BASE_WXSTRING→wxUSE_STL, wxUSE_UTF8_LOCALE→wxUSE_UTF8_LOCALE_ONLY. Filled empty Anti-Pattern 2; §134 tab/typo cleanup.
 
 - 2026.07: Added sections 131-136 (ToUTF8 buffer lifetime UB, Freeze/Thaw batch update, Custom widget paint patterns, wxPopupTransientWindow lifecycle, wxWebView Edge backend, ImGui+wxGLCanvas integration); expanded Anti-Pattern 1; added reference R30. Based on wxWidgets 3.1.5 official interface headers and SnapmakerOrca codebase audit (146 ToUTF8().data() UB sites found).
 
