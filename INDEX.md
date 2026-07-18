@@ -1,4 +1,4 @@
-# Harness Index
+﻿# Harness Index
 
 Cross-project shared code review and generation guidelines. Each harness is a checklist-based decision document.
 
@@ -12,6 +12,9 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | Control AI tool calls or agent actions | [Tool Calling and Agent Control](common\ai\tool-calling-and-agent-control.md) |
 | Propose a new harness | [Contributing Guide](CONTRIBUTING.md) |
 | Understand the authority system | [Design Spec](docs/specs/2026-05-31-repo-structure-design.md) |
+| Ensure new harnesses don't duplicate existing ones | [Prior Art and Reuse](common\meta\prior-art-and-reuse.md) |
+| Validate harness description, naming, and scoping | [Harness Quality Standards](common\meta\harness-quality-standards.md) |
+| Ensure AI output defaults to Chinese for reports | [Output Language Convention](common\documentation\output-language.md) |
 
 ## All Harnesses by Category
 
@@ -51,7 +54,6 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | common-code-review-checklist | [Code Review Checklist](common\code-review\review-checklist.md) | common | C | draft | 2026.06 |
-| common-harness-driven-review | [Harness-Driven Development Protocol](common\code-review\harness-driven-review.md) | common | A | draft | 2026.06 |
 
 ### commits
 
@@ -127,12 +129,6 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 |----|-------|----------|------|--------|---------|
 | common-logging-standards | [Logging Standards Checklist](common\logging\logging-standards.md) | common | N | draft | 2026.06 |
 
-### meta
-
-| ID | Title | Language | Tier | Status | Version |
-|----|-------|----------|------|--------|---------|
-| common-harness-evolution | [Harness Evolution and Lifecycle Governance](common\meta\harness-evolution.md) | common | A | draft | 2026.05 |
-
 ### naming
 
 | ID | Title | Language | Tier | Status | Version |
@@ -153,6 +149,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | common-risk-verification-plan | [Risk and Verification Plan Checklist](common\planning\risk-and-verification-plan.md) | common | C | draft | 2026.06 |
 | common-rollback-migration-plan | [Rollback and Migration Plan Checklist](common\planning\rollback-and-migration-plan.md) | common | C | draft | 2026.06 |
 | common-task-decomposition | [Task Decomposition Checklist](common\planning\task-decomposition.md) | common | A | draft | 2026.06 |
+
 ### project-specific
 
 | ID | Title | Language | Tier | Status | Version |
@@ -209,6 +206,14 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | common-testing-strategy | [Testing Strategy Checklist](common\testing\testing-strategy.md) | common | C | draft | 2026.06 |
 | python-pytest-patterns | [pytest Patterns Checklist](python\testing\pytest-patterns.md) | python | C | draft | 2026.06 |
 
+### third-party
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| cpp-qt6-core | [Qt 6 C++ Core Pitfalls, Limitations, and Best Practices Checklist](cpp\third-party\qt6-core.md) | cpp | P | draft | 2026.07 |
+| cpp-wxwidgets-3-1-5 | [wxWidgets 3.1.5 Pitfalls, Limitations, and Best Practices Checklist](cpp\third-party\wxwidgets-3-1-5.md) | cpp | P | draft | 2026.07 |
+| cpp-qt6-qml | [Qt 6 QML Pitfalls, Limitations, and Best Practices Checklist](cpp\third-party\qt6-qml.md) | cpp | P | draft | 2026.07 |
+
 ### tooling-process
 
 | ID | Title | Language | Tier | Status | Version |
@@ -229,6 +234,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | Testing | Unit tests, integration tests, TDD, coverage, mocking |
 | Performance | Algorithm selection, memory layout, caching, concurrency |
 | Tooling/Process | CI/CD, code review workflow, Git conventions, build system |
+| Third-Party | Known pitfalls, limitations, and best practices for specific libraries/frameworks |
 | Cross-Language | Language-agnostic design principles applicable to all projects |
 
 ## Harness Status Definitions
@@ -239,3 +245,6 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | reviewed | Approved by CODEOWNER, ready for use |
 | stable | Used in real projects for ≥1 month without issues |
 | deprecated | Superseded; links to replacement. Will be archived after 12 months. |
+
+
+
