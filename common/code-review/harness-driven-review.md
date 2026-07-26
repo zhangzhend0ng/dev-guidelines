@@ -101,16 +101,20 @@ When asked to implement a feature, fix a bug, or write any code:
 
 ### B5. Report Format
 
-- [ ] List each harness by name, report items as PASS/FAIL with tier+line → **(A)** [R1]
-- [ ] Include summary table → **(A)** [R1]
+Token economy rule: **PASS items are collapsed, FAIL/N/A items are expanded.** Reviewers and AI agents must not narrate passing checks — routine PASS output wastes tokens and buries actionable findings.
+
+- [ ] Per harness: collapse all-PASS items into one summary line; expand only FAIL, N/A, or tier-flagged items with `file:line` + reason → **(A)** [R1]
+- [ ] Summary table at end: harness × (PASS count / FAIL count) → **(A)** [R1]
 
 ```
 ## Harness: Parameter Validation (cpp/functions/parameter-validation.md)
-Item 1 — N/A (static internal)
-Item 2 — PASS (line 1193, region checked)
-...
-## Verdict: APPROVE
+Items 1-4,6-7 — PASS (no findings)
+Item 5 — FAIL (C): line 1193, region unchecked; fix: add bounds check
+Item 8 — N/A (static internal)
+## Verdict: REQUEST CHANGES
 ```
+
+**Do NOT** write `Item N — PASS (line X, checked)` for every passing item. A passing item needs no justification — silence is the correct PASS output.
 
 ### B6. Feedback Signal Check
 
