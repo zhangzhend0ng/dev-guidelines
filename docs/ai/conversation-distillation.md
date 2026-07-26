@@ -216,10 +216,31 @@ When a strong-model conversation produces useful decisions:
 3. Add good and bad fixtures for weak-model behavior.
 4. Add or update protocol checks when the failure can be detected mechanically.
 5. Re-run AI protocol tests.
+6. **If the decision is a harness improvement signal** (item was wrong/missing/inoperable/misleading/tier-mismatched in a real review), append an entry to `common/meta/harness-feedback-log.md`. See "Harness Feedback Distillation" below.
+
+## Harness Feedback Distillation
+
+Not all distillation output is a rule or prompt. A significant class of output is **evidence that a harness itself needs to change** — observed when applying the harness in a real review surfaces a gap, an inoperable item, a misleading condition, or a tier mismatch.
+
+This output has a dedicated destination: `common/meta/harness-feedback-log.md`. That log is the bridge between this distillation process and `common/meta/harness-evolution.md` (the lifecycle governor). Distillation writes to it; evolution reads from it.
+
+**Distill a harness-feedback entry when:**
+
+- An item FAILed but no harness item framed the finding (gap)
+- An item could not be evaluated against the code (inoperable)
+- An item PASSed but via a path the item does not describe (misleading)
+- An item failed to trigger in a scenario where it plausibly should (under-coverage)
+- A tier tag was inflated or deflated relative to source backing (tier-mismatch)
+
+**Do not distill** routine PASS/FAIL where the item behaved as designed — that is not an improvement signal and dilutes the dataset.
+
+Entry schema and examples are defined in `common/meta/harness-feedback-log.md`. Keep entries under 8 lines; deep analysis belongs in the linked commit message, not the log.
+
+This activates the previously-deferred "conversation-to-fixture checklist" item below for the harness-improvement case: the checklist is now the 5-bullet signal list above, and the fixture destination is the feedback log.
 
 ## Next Assets to Create
 
 - [x] `prompts/weak-model-from-distilled-task.md`
 - [ ] more fixtures from real dsv4pro runs
 - [ ] per-model notes after eval evidence exists
-- [ ] conversation-to-fixture checklist for future strong-model sessions
+- [x] conversation-to-fixture checklist for harness-improvement case (now: "Harness Feedback Distillation" section above; destination: `common/meta/harness-feedback-log.md`)
