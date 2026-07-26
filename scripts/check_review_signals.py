@@ -37,7 +37,11 @@ ROOT = Path(__file__).resolve().parent.parent
 LOG_PATH = ROOT / "common" / "meta" / "harness-feedback-log.md"
 
 # A harness path mention, e.g. cpp/memory/raii.md or common/code-review/review-checklist.md
-HARNESS_PATH_RE = re.compile(r"\(([\w./-]+\.md)\)")
+# A harness path mention. Accepts three wrapping styles seen in real reports:
+#   (cpp/memory/raii.md)        — parenthesized
+#   `cpp/memory/raii.md`        — backtick-wrapped (common in markdown tables)
+#   cpp/memory/raii.md          — bare path
+HARNESS_PATH_RE = re.compile(r"(?:[\(`])([\w./-]+\.md)[\)`]|^([\w./-]+\.md)\s*$", re.MULTILINE)
 # "Item N — STATUS" or "Item N: STATUS" — status is first word after separator
 ITEM_LINE_RE = re.compile(r"^\s*Item\s+(\d+)\s*[—:\-]\s*([A-Za-z/]+)\b(.*)$", re.IGNORECASE)
 # Inline signal marker
@@ -55,8 +59,9 @@ def find_harness_files(text):
     out = []
     seen = set()
     for m in HARNESS_PATH_RE.finditer(text):
-        p = m.group(1)
-        if p in seen:
+        # group 1 = wrapped path (paren/backtick), group 2 = bare path on its own line
+        p = m.group(1) or m.group(2)
+        if not p or p in seen:
             continue
         seen.add(p)
         # Resolve relative to repo root
