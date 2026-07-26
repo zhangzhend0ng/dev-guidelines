@@ -40,6 +40,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | cpp-module-boundaries | [C++ Module Boundaries Checklist](cpp\architecture\module-boundaries.md) | cpp | C | draft | 2026.06 |
+| cpp-layering-and-dip | [Layering and Dependency Inversion Checklist](cpp\architecture\layering-and-dependency-inversion.md) | cpp | C | draft | 2026.07 |
 
 ### build
 
@@ -54,6 +55,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | common-code-review-checklist | [Code Review Checklist](common\code-review\review-checklist.md) | common | C | draft | 2026.06 |
+| common-harness-driven-review | [Harness-Driven Development Protocol](common\code-review\harness-driven-review.md) | common | A | draft | 2026.06 |
 
 ### commits
 
@@ -110,6 +112,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | common-api-design | [API Design Principles Checklist](common\api-design\restful-api-design.md) | common | C | draft | 2026.06 |
 | cpp-result-vs-exception | [C++ Result vs Exception Checklist](cpp\error-handling\result-vs-exception.md) | cpp | C | draft | 2026.06 |
 | common-error-handling | [Error Handling Strategy Checklist](common\error-handling\error-handling-strategy.md) | common | C | draft | 2026.05 |
+| cpp-feature-design-prerequisites | [Feature Design Prerequisites Checklist](cpp\design\feature-design-prerequisites.md) | cpp | C | draft | 2026.07 |
 
 ### documentation
 
@@ -128,6 +131,14 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | common-logging-standards | [Logging Standards Checklist](common\logging\logging-standards.md) | common | N | draft | 2026.06 |
+
+### meta
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| common-harness-evolution | [Harness Evolution and Lifecycle Governance](common\meta\harness-evolution.md) | common | A | draft | 2026.05 |
+| common-harness-quality-standards | [Harness Quality Standards Checklist](common\meta\harness-quality-standards.md) | common | A | draft | 2026.07 |
+| common-prior-art-and-reuse | [Prior Art and Reuse Checklist](common\meta\prior-art-and-reuse.md) | common | A | draft | 2026.07 |
 
 ### naming
 
@@ -205,14 +216,6 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | common-test-doubles | [Test Doubles Taxonomy and Selection Checklist](common\testing\test-doubles.md) | common | C | draft | 2026.06 |
 | common-testing-strategy | [Testing Strategy Checklist](common\testing\testing-strategy.md) | common | C | draft | 2026.06 |
 | python-pytest-patterns | [pytest Patterns Checklist](python\testing\pytest-patterns.md) | python | C | draft | 2026.06 |
-
-### third-party
-
-| ID | Title | Language | Tier | Status | Version |
-|----|-------|----------|------|--------|---------|
-| cpp-qt6-core | [Qt 6 C++ Core Pitfalls, Limitations, and Best Practices Checklist](cpp\third-party\qt6-core.md) | cpp | P | draft | 2026.07 |
-| cpp-wxwidgets-3-1-5 | [wxWidgets 3.1.5 Pitfalls, Limitations, and Best Practices Checklist](cpp\third-party\wxwidgets-3-1-5.md) | cpp | P | draft | 2026.07 |
-| cpp-qt6-qml | [Qt 6 QML Pitfalls, Limitations, and Best Practices Checklist](cpp\third-party\qt6-qml.md) | cpp | P | draft | 2026.07 |
 
 ### tooling-process
 
