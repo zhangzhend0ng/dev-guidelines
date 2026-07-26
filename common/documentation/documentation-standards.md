@@ -20,6 +20,7 @@ based_on:
   - "[A] Keep a Changelog (keepachangelog.com)"
 related:
   - "common/ai/ai-evaluation-and-regression-strategy.md"
+  - "cpp/architecture/layering-and-dependency-inversion.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

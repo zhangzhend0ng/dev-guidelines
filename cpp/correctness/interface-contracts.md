@@ -23,6 +23,8 @@ related:
   - "cpp/error-handling/result-vs-exception.md"
   - "cpp/correctness/class-hierarchies.md"
   - "cpp/functions/parameter-validation.md"
+  - "cpp/architecture/layering-and-dependency-inversion.md"
+  - "cpp/design/feature-design-prerequisites.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

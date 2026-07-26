@@ -21,6 +21,7 @@ related:
   - "cpp/correctness/interface-contracts.md"
   - "cpp/api/abi-compatibility.md"
   - "common/api-design/restful-api-design.md"
+  - "cpp/architecture/layering-and-dependency-inversion.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

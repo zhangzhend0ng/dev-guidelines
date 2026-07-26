@@ -1,4 +1,4 @@
-# Harness Index
+﻿# Harness Index
 
 Cross-project shared code review and generation guidelines. Each harness is a checklist-based decision document.
 
@@ -12,6 +12,9 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | Control AI tool calls or agent actions | [Tool Calling and Agent Control](common\ai\tool-calling-and-agent-control.md) |
 | Propose a new harness | [Contributing Guide](CONTRIBUTING.md) |
 | Understand the authority system | [Design Spec](docs/specs/2026-05-31-repo-structure-design.md) |
+| Ensure new harnesses don't duplicate existing ones | [Prior Art and Reuse](common\meta\prior-art-and-reuse.md) |
+| Validate harness description, naming, and scoping | [Harness Quality Standards](common\meta\harness-quality-standards.md) |
+| Ensure AI output defaults to Chinese for reports | [Output Language Convention](common\documentation\output-language.md) |
 
 ## All Harnesses by Category
 
@@ -37,6 +40,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | cpp-module-boundaries | [C++ Module Boundaries Checklist](cpp\architecture\module-boundaries.md) | cpp | C | draft | 2026.06 |
+| cpp-layering-and-dip | [Layering and Dependency Inversion Checklist](cpp\architecture\layering-and-dependency-inversion.md) | cpp | A | draft | 2026.07.1 |
 
 ### build
 
@@ -51,7 +55,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | common-code-review-checklist | [Code Review Checklist](common\code-review\review-checklist.md) | common | C | draft | 2026.06 |
-| common-harness-driven-review | [Harness-Driven Development Protocol](common\code-review\harness-driven-review.md) | common | A | draft | 2026.06 |
+| common-harness-driven-review | [Harness-Driven Development Protocol](common\code-review\harness-driven-review.md) | common | A | draft | 2026.07 |
 
 ### commits
 
@@ -108,6 +112,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | common-api-design | [API Design Principles Checklist](common\api-design\restful-api-design.md) | common | C | draft | 2026.06 |
 | cpp-result-vs-exception | [C++ Result vs Exception Checklist](cpp\error-handling\result-vs-exception.md) | cpp | C | draft | 2026.06 |
 | common-error-handling | [Error Handling Strategy Checklist](common\error-handling\error-handling-strategy.md) | common | C | draft | 2026.05 |
+| cpp-feature-design-prerequisites | [Feature Design Prerequisites Checklist](cpp\design\feature-design-prerequisites.md) | cpp | C | draft | 2026.07.2 |
 
 ### documentation
 
@@ -131,7 +136,9 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
-| common-harness-evolution | [Harness Evolution and Lifecycle Governance](common\meta\harness-evolution.md) | common | A | draft | 2026.05 |
+| common-harness-evolution | [Harness Evolution and Lifecycle Governance](common\meta\harness-evolution.md) | common | A | draft | 2026.07.1 |
+| common-harness-quality-standards | [Harness Quality Standards Checklist](common\meta\harness-quality-standards.md) | common | A | draft | 2026.07 |
+| common-prior-art-and-reuse | [Prior Art and Reuse Checklist](common\meta\prior-art-and-reuse.md) | common | A | draft | 2026.07 |
 
 ### naming
 
@@ -223,6 +230,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | Testing | Unit tests, integration tests, TDD, coverage, mocking |
 | Performance | Algorithm selection, memory layout, caching, concurrency |
 | Tooling/Process | CI/CD, code review workflow, Git conventions, build system |
+| Third-Party | Known pitfalls, limitations, and best practices for specific libraries/frameworks |
 | Cross-Language | Language-agnostic design principles applicable to all projects |
 
 ## Harness Status Definitions
@@ -233,3 +241,6 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | reviewed | Approved by CODEOWNER, ready for use |
 | stable | Used in real projects for ≥1 month without issues |
 | deprecated | Superseded; links to replacement. Will be archived after 12 months. |
+
+
+
