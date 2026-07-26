@@ -76,6 +76,7 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | A19 | Large-Scale C++ Software Design Vol. I | Physical design, packages, layering, compile-time coupling | John Lakos | 2019 | Low — principles stable |
 | A20 | Clean Architecture | SOLID, dependency rule, layering, component boundaries | Robert C. Martin | 2017 | Low — principles stable |
 | A21 | Domain-Driven Design | Value object vs entity, bounded contexts, ubiquitous language | Eric Evans | 2003 | Low — principles timeless |
+| A22 | Object-Oriented Software Construction (2/e) | Open-Closed Principle (origin), Design by Contract, inheritance taxonomy | Bertrand Meyer | 1997 (1/e 1988) | Low — OCP origin, principles timeless |
 
 ## Deprecated Sources
 
