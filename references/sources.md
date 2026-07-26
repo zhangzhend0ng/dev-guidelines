@@ -2,7 +2,7 @@
 
 Central registry of all sources cited across harnesses. Harness reference tables reference entries here by Source ID. **Single source of truth for tier classification, review cycles, and verification status.**
 
-**Last updated:** 2026-06-01
+**Last updated:** 2026-07-26
 
 ---
 
@@ -73,6 +73,9 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | A16 | AFL++ Documentation | Coverage-guided fuzzing strategy | AFL++ Project | Continuous | Low |
 | A17 | Mull Mutation Testing Documentation | C++ mutation testing | Mull Project | Continuous | Low |
 | A18 | PIT Mutation Testing Concepts | Mutation testing concepts | PIT Project | Continuous | Low |
+| A19 | Large-Scale C++ Software Design Vol. I | Physical design, packages, layering, compile-time coupling | John Lakos | 2019 | Low — principles stable |
+| A20 | Clean Architecture | SOLID, dependency rule, layering, component boundaries | Robert C. Martin | 2017 | Low — principles stable |
+| A21 | Domain-Driven Design | Value object vs entity, bounded contexts, ubiquitous language | Eric Evans | 2003 | Low — principles timeless |
 
 ## Deprecated Sources
 
