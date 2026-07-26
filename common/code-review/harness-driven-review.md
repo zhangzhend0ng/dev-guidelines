@@ -6,7 +6,7 @@ language: "common"
 category: "code-review"
 tier: "A"
 scope: "Enforce that harnesses are applied BEFORE writing code (pre-implementation checklist) AND during code review (verification checklist)"
-version: "2026.07"
+version: "2026.07.2"
 status: "draft"
 stable_since: ""
 last_validated: "2026-07-27"
@@ -32,7 +32,7 @@ changelog:
   - "2026.06: Initial draft, review-only"
   - "2026.06: Expanded to cover code generation (pre-implementation harness application)"
   - "2026.07: Added B6 — Feedback Signal Check. Conditional step after verdict: if the review produced a harness-improvement signal (gap/inoperable/misleading/under-coverage/tier-mismatch), append to common/meta/harness-feedback-log.md. Closes the review-side of the distillation->evolution bridge."
-  - "2026.07.1: B6 mechanized for AI-only workflow. Instead of asking the reviewer to judge whether a signal occurred, B6 now runs scripts/check_review_signals.py which auto-detects gap/inoperable/tier-mismatch from the report and auto-appends to the log. misleading/under-coverage handled via inline HTML markers. Zero meta-cognition required."
+  - "2026.07.2: B5 rewritten for token economy. Full report goes to docs/reviews/<branch>-<date>.md; conversation output is only FAIL items as a compact table. PASS items live in the file only, collapsed per harness. Cuts ~99% of report output tokens from the conversation while preserving the full record on disk."
 ---
 # Harness-Driven Development Protocol
 
@@ -101,20 +101,37 @@ When asked to implement a feature, fix a bug, or write any code:
 
 ### B5. Report Format
 
-Token economy rule: **PASS items are collapsed, FAIL/N/A items are expanded.** Reviewers and AI agents must not narrate passing checks — routine PASS output wastes tokens and buries actionable findings.
+Token economy rule: **the full report goes to a file; the conversation gets only FAILs.** A typical review report is 100-300 lines of output token. Pasting it into the conversation wastes budget and buries actionable findings under passing items.
 
-- [ ] Per harness: collapse all-PASS items into one summary line; expand only FAIL, N/A, or tier-flagged items with `file:line` + reason → **(A)** [R1]
-- [ ] Summary table at end: harness × (PASS count / FAIL count) → **(A)** [R1]
+- [ ] Write the full report to `docs/reviews/<branch>-<YYYY-MM-DD>.md` (create the directory if missing) → **(A)** [R1]
+- [ ] In the conversation, output ONLY: a one-line header (report path + verdict), then the FAIL items as a compact table → **(A)** [R1]
+- [ ] PASS items appear ONLY in the file, collapsed to one summary line per harness (`Items 1-4,6-7 — PASS`). The conversation must not list passing items at all → **(A)** [R1]
+
+**Conversation output shape** (this is all that goes in the chat):
 
 ```
+Report: docs/reviews/feature-foo-2026-07-27.md
+Verdict: REQUEST CHANGES
+
+| # | Tier | Harness | Location | Issue |
+|---|------|---------|----------|-------|
+| 1 | C    | review-checklist | file.cpp:1193 | unchecked bounds |
+| 2 | N    | undefined-behavior | file.cpp:2040 | data race on flag |
+```
+
+**File content shape** (full report written to disk):
+
+```
+# Review: <branch> (<date>)
 ## Harness: Parameter Validation (cpp/functions/parameter-validation.md)
 Items 1-4,6-7 — PASS (no findings)
 Item 5 — FAIL (C): line 1193, region unchecked; fix: add bounds check
 Item 8 — N/A (static internal)
+...
 ## Verdict: REQUEST CHANGES
 ```
 
-**Do NOT** write `Item N — PASS (line X, checked)` for every passing item. A passing item needs no justification — silence is the correct PASS output.
+**Do NOT** paste the full report into the conversation. **Do NOT** list PASS items in the conversation. The conversation is for FAIL discussion; the file is the record.
 
 ### B6. Feedback Signal Check
 

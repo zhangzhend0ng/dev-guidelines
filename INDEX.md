@@ -55,7 +55,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | common-code-review-checklist | [Code Review Checklist](common\code-review\review-checklist.md) | common | C | draft | 2026.06 |
-| common-harness-driven-review | [Harness-Driven Development Protocol](common\code-review\harness-driven-review.md) | common | A | draft | 2026.07 |
+| common-harness-driven-review | [Harness-Driven Development Protocol](common\code-review\harness-driven-review.md) | common | A | draft | 2026.07.2 |
 
 ### commits
 
