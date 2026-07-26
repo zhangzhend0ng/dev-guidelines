@@ -6,10 +6,10 @@ language: "cpp"
 category: "design"
 tier: "C"
 scope: "Decide what must be designed and documented BEFORE writing code for a new C++ class, module, or feature: responsibility, entity classification, state and invariants, extension-point mechanism, public surface, and failure modes"
-version: "2026.07"
+version: "2026.07.1"
 status: "draft"
 stable_since: ""
-last_validated: "2026-07-26"
+last_validated: "2026-07-27"
 review_cycle: "12m"
 tags: [design, feature-design, prerequisites, domain-modeling, value-type, entity, state-machine, extension-point, public-api, failure-modes]
 based_on:
@@ -54,25 +54,25 @@ changelog:
 
 ## Checklist
 
-### 1. Design Artifact Exists Before Code **(C)** [R1][R2]
+### 1. Design Artifact Exists Before Code **(A)** [R1][R2]
 
-- [ ] New non-trivial class, module, or feature has no written design record → **(C)** produce one (header doc-comment block, design note, or ADR) before writing the body. Trivial helpers are exempt. [R1][R2]
-- [ ] The design record is co-located with the code it governs (header doc-comment) or in a discoverable location (ADR under `docs/`) → **(C)** do not let design live only in chat or memory. [R2]
+- [ ] New non-trivial class, module, or feature has no written design record → **(A)** produce one (header doc-comment block, design note, or ADR) before writing the body. Trivial helpers are exempt. [R1][R2]
+- [ ] The design record is co-located with the code it governs (header doc-comment) or in a discoverable location (ADR under `docs/`) → **(A)** do not let design live only in chat or memory. [R2]
 - [ ] The change is a refactor with no new behavior → **(A)** no new design artifact required; the existing one still applies. [R1]
 
-### 2. Responsibility Statement (SRP) **(C)** [R1][R2]
+### 2. Responsibility Statement (SRP) **(A)** [R1][R2]
 
-- [ ] The type/module cannot be described in a single sentence of the form "An X that does Y" without using "and" → **(C)** it has more than one responsibility; split. [R1][R2]
-- [ ] Two unrelated change-driving actors touch the same class → **(C)** split by actor. [R2]
-- [ ] The responsibility statement is recorded in the design artifact → **(C)** a name alone is not enough; the *what it does* must be explicit. [R1]
+- [ ] The type/module cannot be described in a single sentence of the form "An X that does Y" without using "and" → **(A)** it has more than one responsibility; split. [R1][R2]
+- [ ] Two unrelated change-driving actors touch the same class → **(A)** split by actor. [R2]
+- [ ] The responsibility statement is recorded in the design artifact → **(A)** a name alone is not enough; the *what it does* must be explicit. [R1]
 
-### 3. Entity Classification — Value / Entity / Service **(C)** [R1][R3]
+### 3. Entity Classification — Value / Entity / Service **(A)** [R1][R3]
 
-- [ ] The type is classified explicitly as value type, entity, or service/policy before its interface is drafted → **(C)** the classification drives copy semantics, equality, mutability, and lifetime. [R3]
-- [ ] A value type is immutable, cheap to copy, and compared by value (no identity) → **(C)** if it needs identity or mutation, it is an entity, not a value. [R3]
-- [ ] An entity has a defined identity, lifecycle, and persistence boundary → **(C)** document where its state lives and who owns its lifetime. [R3]
-- [ ] A service/policy is stateless or environment-bound only (no per-instance mutable data) → **(C)** if it accumulates per-instance state, re-classify as entity. [R2]
-- [ ] Classification is ambiguous (e.g., a value with identity) → **(C)** record the decision and rationale; do not leave it implicit. [R3]
+- [ ] The type is classified explicitly as value type, entity, or service/policy before its interface is drafted → **(A)** the classification drives copy semantics, equality, mutability, and lifetime. [R3]
+- [ ] A value type is immutable, cheap to copy, and compared by value (no identity) → **(A)** if it needs identity or mutation, it is an entity, not a value. [R3]
+- [ ] An entity has a defined identity, lifecycle, and persistence boundary → **(A)** document where its state lives and who owns its lifetime. [R3]
+- [ ] A service/policy is stateless or environment-bound only (no per-instance mutable data) → **(A)** if it accumulates per-instance state, re-classify as entity. [R2]
+- [ ] Classification is ambiguous (e.g., a value with identity) → **(A)** record the decision and rationale; do not leave it implicit. [R3]
 
 ### 4. State and Invariants Documented **(C)** [R1][R2]
 
@@ -81,13 +81,13 @@ changelog:
 - [ ] A transition is reachable from multiple states with different outcomes → **(C)** the state machine must show this; implicit "we'll handle it" is a bug source. [R2]
 - [ ] Concurrency touches the state → **(C)** cross-link to `cpp/concurrency/thread-safety.md`; document the synchronization contract. [R1]
 
-### 5. Extension-Point Mechanism Chosen and Justified **(C)** [R1][R2][R4]
+### 5. Extension-Point Mechanism Chosen and Justified **(A)** [R1][R2][R4]
 
-- [ ] A future variant or behavior swap is anticipated → **(C)** choose and record the extension-point mechanism: template/CRTP, runtime polymorphism, `std::function`/callback, or `std::variant`+visitor. [R1][R4]
+- [ ] A future variant or behavior swap is anticipated → **(A)** choose and record the extension-point mechanism: template/CRTP, runtime polymorphism, `std::function`/callback, or `std::variant`+visitor. [R1][R4]
 - [ ] Runtime polymorphism chosen when the variant set is closed and known at compile time → **(A)** reconsider template or variant; runtime indirection has a cost that closed sets do not need to pay. [R4]
-- [ ] `std::function` chosen for an extension point that is called in a hot path → **(C)** document the overhead or pick a template/lambda-based design. [R4]
+- [ ] `std::function` chosen for an extension point that is called in a hot path → **(A)** document the overhead or pick a template/lambda-based design. [R4]
 - [ ] Inheritance chosen when the project (P) policy forbids multiple/virtual inheritance → **(P)** respect the project floor; prefer composition or variant. [R2]
-- [ ] The chosen mechanism is recorded with a one-line rationale in the design artifact → **(C)** future maintainers must not have to reverse-engineer why. [R1]
+- [ ] The chosen mechanism is recorded with a one-line rationale in the design artifact → **(A)** future maintainers must not have to reverse-engineer why. [R1]
 
 ### 6. Public Surface Minimized **(C)** [R1][R2]
 
@@ -178,3 +178,4 @@ About to write a new class / module / feature?
 ## Changelog
 
 - 2026.07: Initial draft — 7 items covering design artifact, SRP, entity classification, state/invariants, extension-point selection, public-surface minimization, and failure-mode/collaborator declaration
+- 2026.07.1: Item-tier correction. Items 1 (design artifact), 2 (SRP), 3 (entity classification), 5 (extension-point mechanism) downgraded C→A. C++ Core Guidelines [C1] addresses interface/resource mechanics, not these design-process or DDD/SOLID-adjacent decisions as named principles. Items 4 (invariants — C1 I.x), 6 (minimal interface — C1 I.23), 7 (failure/ownership — C1 R.x/E.x) retain (C) with genuine C1 backing. Overall harness tier remains C. Per `harness-quality-standards.md` Anti-Pattern 2 (Tier Inflation).

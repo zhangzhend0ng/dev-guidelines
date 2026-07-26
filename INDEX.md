@@ -40,7 +40,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | cpp-module-boundaries | [C++ Module Boundaries Checklist](cpp\architecture\module-boundaries.md) | cpp | C | draft | 2026.06 |
-| cpp-layering-and-dip | [Layering and Dependency Inversion Checklist](cpp\architecture\layering-and-dependency-inversion.md) | cpp | C | draft | 2026.07 |
+| cpp-layering-and-dip | [Layering and Dependency Inversion Checklist](cpp\architecture\layering-and-dependency-inversion.md) | cpp | A | draft | 2026.07.1 |
 
 ### build
 
@@ -112,7 +112,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | common-api-design | [API Design Principles Checklist](common\api-design\restful-api-design.md) | common | C | draft | 2026.06 |
 | cpp-result-vs-exception | [C++ Result vs Exception Checklist](cpp\error-handling\result-vs-exception.md) | cpp | C | draft | 2026.06 |
 | common-error-handling | [Error Handling Strategy Checklist](common\error-handling\error-handling-strategy.md) | common | C | draft | 2026.05 |
-| cpp-feature-design-prerequisites | [Feature Design Prerequisites Checklist](cpp\design\feature-design-prerequisites.md) | cpp | C | draft | 2026.07 |
+| cpp-feature-design-prerequisites | [Feature Design Prerequisites Checklist](cpp\design\feature-design-prerequisites.md) | cpp | C | draft | 2026.07.1 |
 
 ### documentation
 
