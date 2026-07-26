@@ -67,6 +67,12 @@ Keep each entry under 8 lines. If the finding needs more space, it belongs in a 
 - **Observation:** false claim. `validate.py`'s `check_cross_references` verifies link target existence, errors on archived targets, warns on deprecated targets, but does NOT verify reciprocation. Contributors relying on this claim would ship one-way links that pass CI.
 - **Outcome:** improved — commit `79a4c07` corrected the item to state validate.py checks existence only; pointed to `harness-quality-standards.md` item 5 (the human gate that enforces bidirectionality).
 
+### 2026-07-27 — common-meta-feedback-log, general (schema gap: script-targeted entries)
+- **Signal:** inoperable
+- **Scenario:** ran check_review_signals.py on a real review report to validate the B6 closed loop; attempted to log a finding about the script itself
+- **Observation:** the log's entry schema and check_feedback_signals.py's ENTRY_RE assume entries target a harness (id format `[a-zA-Z0-9_-]+`). A finding about a script (`scripts/check_review_signals.py`) cannot be expressed — the `/` and `.` in the path break the regex. The schema has no concept of non-harness targets (scripts, prompts, templates).
+- **Outcome:** recorded-pending — schema needs extension to accept script/prompt paths as entry targets, or a separate "tooling feedback" log. Not yet fixed.
+
 ---
 
 ## Maintenance
