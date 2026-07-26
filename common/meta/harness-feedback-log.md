@@ -51,7 +51,7 @@ Keep each entry under 8 lines. If the finding needs more space, it belongs in a 
 
 ### 2026-07-27 — cpp-feature-design-prerequisites, item 3 (entity classification)
 - **Signal:** under-coverage
-- **Scenario:** snapmaker-orca `MixedColorMatch` audit — value type `BatchMatchResult` carrying runtime status field (`error_code`); review exposed drift between status field and its producer path (`m_cancel_requested`)
+- **Scenario:** C++ codebase audit — a value type carrying a runtime status field (`error_code`); review exposed drift between the status field and its producer path (a cancel-request flag)
 - **Observation:** item 3 "ambiguous classification → record" was too vague to catch the Result/Outcome pattern where a value type carries a status field that must track a runtime producer. The failure mode (producer mutates state, forgets to sync value field) was unowned by any item.
 - **Outcome:** improved — commit `2b594cc` added bullet covering value-projection rule for Result/Outcome status fields.
 

@@ -104,7 +104,7 @@ Logging, error propagation, and configuration must be applied uniformly across l
 - [ ] Different layers use different logging APIs, severity conventions, or correlation-ID propagation → **(A)** unify through a single logging abstraction; cross-link to `common/logging/logging-standards.md`. [R1]
 - [ ] Error propagation crosses a layer boundary and is translated inconsistently (e.g., infrastructure exception caught and re-thrown as raw at domain, or swallowed silently) → **(A)** define a per-layer error-translation policy; cross-link to `cpp/error-handling/result-vs-exception.md` for mechanism selection. [R1][R2]
 - [ ] Configuration is read directly from environment/registry at multiple layers rather than injected at a single boundary → **(A)** centralize configuration loading; inject values, do not let layers fetch their own. [R2]
-- [ ] A project-level (P) policy constrains cross-cutting decisions (e.g., SnapmakerOrca disables exceptions) → **(P)** the project policy is the floor; this harness layers on top and must not contradict it. [R3]
+- [ ] A project-level (P) policy constrains cross-cutting decisions (e.g., a project that disables exceptions) → **(P)** the project policy is the floor; this harness layers on top and must not contradict it. [R3]
 
 ### 6. Architectural Decision Recording Trigger **(A)** [R3]
 

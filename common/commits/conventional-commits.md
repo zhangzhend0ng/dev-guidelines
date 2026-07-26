@@ -17,8 +17,7 @@ based_on:
   - "[C] Angular Commit Guidelines"
   - "[A] How to Write a Git Commit Message (chris.beams.io)"
   - "[A] Semantic Versioning 2.0.0"
-related:
-  - "projects/snapmaker-orca/workflow-standards.md"
+related: []
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

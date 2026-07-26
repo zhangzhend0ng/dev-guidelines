@@ -20,7 +20,6 @@ based_on:
 related:
   - "cpp/lifetime/dangling-references.md"
   - "cpp/correctness/undefined-behavior.md"
-  - "projects/snapmaker-orca/coding-standards.md"
 supersedes: []
 changelog:
   - "2026.05: Initial draft"
