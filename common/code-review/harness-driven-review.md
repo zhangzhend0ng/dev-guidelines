@@ -32,6 +32,7 @@ changelog:
   - "2026.06: Initial draft, review-only"
   - "2026.06: Expanded to cover code generation (pre-implementation harness application)"
   - "2026.07: Added B6 — Feedback Signal Check. Conditional step after verdict: if the review produced a harness-improvement signal (gap/inoperable/misleading/under-coverage/tier-mismatch), append to common/meta/harness-feedback-log.md. Closes the review-side of the distillation->evolution bridge."
+  - "2026.07.1: B6 mechanized for AI-only workflow. Instead of asking the reviewer to judge whether a signal occurred, B6 now runs scripts/check_review_signals.py which auto-detects gap/inoperable/tier-mismatch from the report and auto-appends to the log. misleading/under-coverage handled via inline HTML markers. Zero meta-cognition required."
 ---
 # Harness-Driven Development Protocol
 
@@ -113,10 +114,11 @@ Item 2 — PASS (line 1193, region checked)
 
 ### B6. Feedback Signal Check
 
-After the verdict, scan the review for harness-improvement signals. This step is **conditional, not mandatory** — only act if a signal occurred.
+After the verdict, mechanically scan the review report for harness-improvement signals. AI-only workflow: run one command, do not meta-cognitively judge.
 
-- [ ] Review produced one of: item FAIL with no framing item (gap); item could not be evaluated against code (inoperable); item PASS via wrong path (misleading); item failed to trigger where it should have (under-coverage); tier tag mismatched to source backing (tier-mismatch) → **(A)** append a structured entry to `common/meta/harness-feedback-log.md` per its schema. [R1]
-- [ ] No signal occurred (routine PASS/FAIL, items behaved as designed) → **(A)** skip this step. Do not log routine outcomes — they dilute the dataset. [R1]
+- [ ] Run `python scripts/check_review_signals.py <this-review-report.md>` → **(A)** the script auto-detects: gap (orphan FAIL), inoperable (N/A + keyword), tier-mismatch (item tier exceeds harness source tier). It auto-appends to `common/meta/harness-feedback-log.md`. [R1]
+- [ ] For misleading / under-coverage (not auto-detectable), if you judge one occurred, add an inline marker `<!-- signal: misleading -->` or `<!-- signal: under-coverage -->` at the relevant report line BEFORE running the script → **(A)** the script collects these markers. [R1]
+- [ ] Script reports "No signals detected" → **(A)** done. Do not force a log entry — routine PASS/FAIL is not an improvement signal. [R1]
 
 ---
 
