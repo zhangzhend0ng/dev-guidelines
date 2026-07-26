@@ -24,6 +24,8 @@ based_on:
 related:
   - "concepts/01-harness-methodology.md"
   - "concepts/02-authority-system.md"
+  - "common/meta/prior-art-and-reuse.md"
+  - "common/meta/harness-quality-standards.md"
 supersedes: []
 changelog:
   - "2026.05: Initial draft"
