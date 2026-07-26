@@ -6,7 +6,7 @@ language: "common"
 category: "meta"
 tier: "A"
 scope: "Govern how coding guideline harnesses evolve through their lifecycle, from draft proposal to archival, ensuring authority integrity and cross-reference consistency"
-version: "2026.07"
+version: "2026.07.1"
 status: "draft"
 stable_since: ""
 last_validated: "2026-07-27"
@@ -30,6 +30,7 @@ supersedes: []
 changelog:
   - "2026.05: Initial draft"
   - "2026.07: Fix Item 6 — corrected false claim that validate.py catches one-way (non-bidirectional) related links. validate.py checks link existence only; bidirectionality is a human gate enforced by harness-quality-standards.md item 5."
+  - "2026.07.1: Item 3 — added feedback-signal trigger. When check_feedback_signals.py reports a harness has accumulated ≥3 same-type signals in harness-feedback-log.md, trigger re-review within 4 weeks. Closes the evolution-side of the distillation->evolution bridge: review B6 writes signals, this item reads them."
 ---
 
 # Harness Evolution and Lifecycle Governance
@@ -90,6 +91,7 @@ What signals indicate this harness needs re-review now (regardless of `review_cy
 - [ ] A `based_on` source has a new edition or revision → **(N)/(C)/(A)** Trigger re-review within 3 months. Update timeliness tags. [R2]
 - [ ] A `related` harness changed tier or was deprecated → **(A)** Check for contradiction. Update cross-references. [R1]
 - [ ] `validate.py --stale` reports this harness overdue → **(A)** Schedule review within 4 weeks. [R1]
+- [ ] `check_feedback_signals.py` reports this harness has accumulated ≥3 same-type signals in `common/meta/harness-feedback-log.md` → **(A)** Trigger re-review within 4 weeks. Same-type accumulation (e.g., 3× "inoperable") is stronger evidence than scattered signals. Run the script quarterly or after any review that logged an entry. [R1]
 - [ ] An authority-challenge issue was filed against this harness → **(A)** Resolve within 2 weeks. See Item 5. [R3]
 - [ ] None of the above → **(A)** Defer to `review_cycle`-based review. [R1]
 

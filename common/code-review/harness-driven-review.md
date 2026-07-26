@@ -6,10 +6,10 @@ language: "common"
 category: "code-review"
 tier: "A"
 scope: "Enforce that harnesses are applied BEFORE writing code (pre-implementation checklist) AND during code review (verification checklist)"
-version: "2026.06"
+version: "2026.07"
 status: "draft"
 stable_since: ""
-last_validated: "2026-06-01"
+last_validated: "2026-07-27"
 review_cycle: "12m"
 tags:
   - code-review
@@ -31,6 +31,7 @@ supersedes: []
 changelog:
   - "2026.06: Initial draft, review-only"
   - "2026.06: Expanded to cover code generation (pre-implementation harness application)"
+  - "2026.07: Added B6 — Feedback Signal Check. Conditional step after verdict: if the review produced a harness-improvement signal (gap/inoperable/misleading/under-coverage/tier-mismatch), append to common/meta/harness-feedback-log.md. Closes the review-side of the distillation->evolution bridge."
 ---
 # Harness-Driven Development Protocol
 
@@ -110,6 +111,13 @@ Item 2 — PASS (line 1193, region checked)
 ## Verdict: APPROVE
 ```
 
+### B6. Feedback Signal Check
+
+After the verdict, scan the review for harness-improvement signals. This step is **conditional, not mandatory** — only act if a signal occurred.
+
+- [ ] Review produced one of: item FAIL with no framing item (gap); item could not be evaluated against code (inoperable); item PASS via wrong path (misleading); item failed to trigger where it should have (under-coverage); tier tag mismatched to source backing (tier-mismatch) → **(A)** append a structured entry to `common/meta/harness-feedback-log.md` per its schema. [R1]
+- [ ] No signal occurred (routine PASS/FAIL, items behaved as designed) → **(A)** skip this step. Do not log routine outcomes — they dilute the dataset. [R1]
+
 ---
 
 ## Decision Tree
@@ -119,9 +127,10 @@ Task received (implement or review)
   │
   ├─ IMPLEMENT:   A1→A2→A3 (harnesses guide every line)
   │
-  └─ REVIEW:      B1→B2→B3→B4→B5 (harnesses verify every line)
+  └─ REVIEW:      B1→B2→B3→B4→B5→B6 (harnesses verify every line)
                     │
-                    └─ B4 Gate: (N)=BLOCK (C)=HIGH (A)=suggestion
+                    ├─ B4 Gate: (N)=BLOCK (C)=HIGH (A)=suggestion
+                    └─ B6: if signal, log to feedback-log; else skip
 ```
 
 ---
