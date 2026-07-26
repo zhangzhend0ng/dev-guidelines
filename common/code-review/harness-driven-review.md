@@ -133,6 +133,13 @@ Item 8 — N/A (static internal)
 
 **Do NOT** paste the full report into the conversation. **Do NOT** list PASS items in the conversation. The conversation is for FAIL discussion; the file is the record.
 
+**Language rule (token economy):** Chinese characters consume ~1.5-2× more tokens than equivalent English in mainstream LLM tokenizers. The two output layers use different languages:
+
+- **Report file** (`docs/reviews/*.md`, read by humans, not re-fed to the model): use the team's language (Chinese for snapmaker-orca). Readability for humans trumps token cost since the file is not conversation input.
+- **Conversation FAIL table** (re-fed as context, token-cost-sensitive): prefer English technical terms (`data race`, `dangling reference`, `bounds check`) with minimal Chinese only where the term has no clean English equivalent. Saves ~30% tokens vs pure Chinese with no real readability loss.
+
+Example conversation row (mixed): `| 1 | C | review-checklist | file.cpp:1193 | unchecked bounds (参数未校验) |`
+
 ### B6. Feedback Signal Check
 
 After the verdict, mechanically scan the review report for harness-improvement signals. AI-only workflow: run one command, do not meta-cognitively judge.
