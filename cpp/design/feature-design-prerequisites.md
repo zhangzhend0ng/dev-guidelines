@@ -6,7 +6,7 @@ language: "cpp"
 category: "design"
 tier: "C"
 scope: "Decide what must be designed and documented BEFORE writing code for a new C++ class, module, or feature: responsibility, entity classification, state and invariants, extension-point mechanism, public surface, and failure modes"
-version: "2026.07.1"
+version: "2026.07.2"
 status: "draft"
 stable_since: ""
 last_validated: "2026-07-27"
@@ -73,6 +73,7 @@ changelog:
 - [ ] An entity has a defined identity, lifecycle, and persistence boundary → **(A)** document where its state lives and who owns its lifetime. [R3]
 - [ ] A service/policy is stateless or environment-bound only (no per-instance mutable data) → **(A)** if it accumulates per-instance state, re-classify as entity. [R2]
 - [ ] Classification is ambiguous (e.g., a value with identity) → **(A)** record the decision and rationale; do not leave it implicit. [R3]
+- [ ] A value type carries a runtime status field (success/failure/cancel, e.g. `Result<T>`/`Outcome`/`BatchMatchResult.error_code`) → **(A)** the status field is a **value projection** of the runtime state whose single source of truth is the producer path/object. Document which path writes the status and that readers treat it as derived, not authoritative. Without this rule the status field and its producer drift (the original source mutates state but forgets to sync the value field). [R3]
 
 ### 4. State and Invariants Documented **(C)** [R1][R2]
 
@@ -179,3 +180,4 @@ About to write a new class / module / feature?
 
 - 2026.07: Initial draft — 7 items covering design artifact, SRP, entity classification, state/invariants, extension-point selection, public-surface minimization, and failure-mode/collaborator declaration
 - 2026.07.1: Item-tier correction. Items 1 (design artifact), 2 (SRP), 3 (entity classification), 5 (extension-point mechanism) downgraded C→A. C++ Core Guidelines [C1] addresses interface/resource mechanics, not these design-process or DDD/SOLID-adjacent decisions as named principles. Items 4 (invariants — C1 I.x), 6 (minimal interface — C1 I.23), 7 (failure/ownership — C1 R.x/E.x) retain (C) with genuine C1 backing. Overall harness tier remains C. Per `harness-quality-standards.md` Anti-Pattern 2 (Tier Inflation).
+- 2026.07.2: Item 3 (entity classification) — added bullet covering value types carrying runtime status fields (Result/Outcome pattern). First real-review feedback: status fields like `BatchMatchResult.error_code` drift from their producer path when the "value projection of runtime state" rule is left implicit.
