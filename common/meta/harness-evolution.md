@@ -6,10 +6,10 @@ language: "common"
 category: "meta"
 tier: "A"
 scope: "Govern how coding guideline harnesses evolve through their lifecycle, from draft proposal to archival, ensuring authority integrity and cross-reference consistency"
-version: "2026.05"
+version: "2026.07"
 status: "draft"
 stable_since: ""
-last_validated: "2026-05-31"
+last_validated: "2026-07-27"
 review_cycle: "12m"
 tags:
   - harness-governance
@@ -29,6 +29,7 @@ related:
 supersedes: []
 changelog:
   - "2026.05: Initial draft"
+  - "2026.07: Fix Item 6 — corrected false claim that validate.py catches one-way (non-bidirectional) related links. validate.py checks link existence only; bidirectionality is a human gate enforced by harness-quality-standards.md item 5."
 ---
 
 # Harness Evolution and Lifecycle Governance
@@ -117,7 +118,7 @@ When harness A links to harness B via `related`, how to keep them consistent?
 - [ ] Harness B is created or modified → **(A)** Check that A's `related` field still accurately describes the relationship. Run `validate.py`. [R1]
 - [ ] Harness B is deprecated → **(A)** Remove B from A's `related` within 30 days, or add a note that B is deprecated and point to the replacement. [R1]
 - [ ] Harness B is archived → **(A)** `validate.py` will error on the dead link. Remove B from `related` immediately. [R1]
-- [ ] Cross-reference is one-way (A links to B but B does not link back) → **(A)** `validate.py` catches this. Fix before merge. [R1]
+- [ ] Cross-reference is one-way (A links to B but B does not link back) → **(A)** `validate.py` does NOT catch this — it checks link existence only, not bidirectionality. Verify reciprocation manually, or apply `common/meta/harness-quality-standards.md` item 5. Fix before merge. [R1]
 
 ### 7. Split vs. Merge Decision
 
