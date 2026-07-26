@@ -22,6 +22,7 @@ related:
   - "common/planning/rollback-and-migration-plan.md"
   - "common/debugging/bug-report-triage.md"
   - "common/ai/model-capability-and-instruction-adherence.md"
+  - "cpp/design/feature-design-prerequisites.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

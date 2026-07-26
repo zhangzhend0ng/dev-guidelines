@@ -26,6 +26,7 @@ related:
   - "common/ai/tool-calling-and-agent-control.md"
   - "common/code-review/review-checklist.md"
   - "common/meta/harness-evolution.md"
+  - "cpp/design/feature-design-prerequisites.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft, review-only"

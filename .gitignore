@@ -17,3 +17,6 @@ skills-lock.json
 # Python
 __pycache__/
 *.pyc
+
+# ZCode agent working artifacts
+.zcode/
