@@ -81,6 +81,46 @@ def parse_harness_items(harness_path):
     return item_count, [t for t in source_tiers if t in "NCAP"]
 
 
+def parse_harness_frontmatter_tier(harness_path):
+    """Return the frontmatter `tier` value of a harness, or None."""
+    text = harness_path.read_text(encoding="utf-8")
+    m = re.search(r'^tier:\s*"?\s*([N CAP])\s*"?\s*$', text, re.MULTILINE)
+    return m.group(1) if m else None
+
+
+def audit_harness_tiers():
+    """Scan all harnesses; yield (harness_id, path, frontmatter_tier, max_source_tier)
+    for harnesses whose frontmatter tier exceeds their max source tier.
+
+    This detects harness-level tier inflation (the bug fixed in commit 046319d
+    for layering-and-dip). Distinct from per-review tier-mismatch detection,
+    which catches a reviewer mis-tagging an item tier in a report.
+    """
+    SKIP_DIRS = {".git", ".claudine", "archive", "templates", "docs", ".github"}
+    for md_path in ROOT.rglob("*.md"):
+        rel = md_path.relative_to(ROOT)
+        if rel.parts[0] in SKIP_DIRS:
+            continue
+        text = md_path.read_text(encoding="utf-8")
+        # Must be a harness with frontmatter
+        if not text.startswith("---"):
+            continue
+        if not re.search(r'^type:\s*"?harness"?', text, re.MULTILINE):
+            continue
+        fm_tier = parse_harness_frontmatter_tier(md_path)
+        if not fm_tier or fm_tier not in TIER_RANK:
+            continue
+        _, source_tiers = parse_harness_items(md_path)
+        if not source_tiers:
+            continue  # no sources to compare against
+        max_src = max(TIER_RANK[t] for t in source_tiers)
+        if TIER_RANK[fm_tier] > max_src:
+            # Resolve harness id from frontmatter
+            id_m = re.search(r'^id:\s*"([^"]+)"', text, re.MULTILINE)
+            hid = id_m.group(1) if id_m else str(rel)
+            yield (hid, str(rel).replace("\\", "/"), fm_tier, max_src)
+
+
 def detect_signals(report_text, harness_files):
     """Yield (harness_id, signal_type, item_ref, detail) tuples."""
     # Collect inline signal markers first (AI judgement signals)
@@ -182,10 +222,35 @@ def hid_to_log_id(harness_path):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    ap.add_argument("review_report", help="Path to the review report markdown file")
+    ap.add_argument("review_report", nargs="?", help="Path to the review report markdown file")
     ap.add_argument("--dry-run", action="store_true",
                     help="Detect and print signals without writing to log")
+    ap.add_argument("--audit-harnesses", action="store_true",
+                    help="Scan all harnesses for frontmatter tier exceeding max source tier (harness-level tier inflation). No review report needed.")
     args = ap.parse_args()
+
+    if args.audit_harnesses:
+        findings = list(audit_harness_tiers())
+        if not findings:
+            print("No harness-level tier inflation detected.")
+            return 0
+        print(f"Detected {len(findings)} harness(es) with tier inflation:")
+        for hid, path, fm_tier, max_src in findings:
+            src_letter = next(k for k, v in TIER_RANK.items() if v == max_src)
+            print(f"  - {hid} ({path}): frontmatter tier ({fm_tier}) > max source tier ({src_letter})")
+        if args.dry_run:
+            print("\n(dry-run: not writing to log)")
+            return 1  # signal failure even in dry-run so check_all catches it
+        # Log as tier-mismatch signals
+        signals = [(hid, "tier-mismatch", "frontmatter",
+                    f"audit: frontmatter tier ({fm_tier}) exceeds max source tier ({src_letter}); path={path}")
+                   for hid, path, fm_tier, max_src in findings]
+        written = append_to_log(signals)
+        print(f"\nAppended {written} entr(y/ies) to {LOG_PATH.relative_to(ROOT)}")
+        return 1  # non-zero so check_all.py flags this as a failure to fix
+
+    if not args.review_report:
+        ap.error("review_report is required unless --audit-harnesses is given")
 
     report_path = Path(args.review_report)
     if not report_path.exists():
