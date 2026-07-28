@@ -144,8 +144,8 @@ Example conversation row (mixed): `| 1 | C | review-checklist | file.cpp:1193 | 
 
 After the verdict, mechanically scan the review report for harness-improvement signals. AI-only workflow: run one command, do not meta-cognitively judge.
 
-- [ ] Run `python scripts/check_review_signals.py <this-review-report.md>` → **(A)** the script auto-detects: gap (orphan FAIL), inoperable (N/A + keyword), tier-mismatch (item tier exceeds harness source tier). It auto-appends to `common/meta/harness-feedback-log.md`. [R1]
-- [ ] For misleading / under-coverage (not auto-detectable), if you judge one occurred, add an inline marker `<!-- signal: misleading -->` or `<!-- signal: under-coverage -->` at the relevant report line BEFORE running the script → **(A)** the script collects these markers. [R1]
+- [ ] Run `python scripts/check_review_signals.py <this-review-report.md>` → **(A)** the script auto-detects: gap (orphan FAIL), inoperable (N/A + keyword), tier-mismatch (item tier exceeds harness source tier). It auto-appends ONLY these to `common/meta/harness-feedback-log.md`. [R1]
+- [ ] For misleading / under-coverage (not auto-detectable), if you judge one occurred, add an inline marker `<!-- signal: misleading -->` or `<!-- signal: under-coverage -->` at the relevant report line BEFORE running the script → **(A)** the script surfaces the marker as a prompt but does NOT auto-log it (a bare marker carries no observation and would produce an empty-shell entry). You must then write a full log entry yourself with Scenario + Observation, or remove the marker. [R1]
 - [ ] Script reports "No signals detected" → **(A)** done. Do not force a log entry — routine PASS/FAIL is not an improvement signal. [R1]
 
 ---

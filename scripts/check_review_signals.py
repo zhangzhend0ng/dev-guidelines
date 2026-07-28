@@ -12,10 +12,16 @@ do NOT require meta-cognition:
   - inoperable: an item marked N/A with a reason containing keywords like
          "inoperable", "cannot evaluate", "too vague", "not applicable".
   - misleading / under-coverage: AI may flag inline via an HTML comment
-         <!-- signal: misleading --> or <!-- signal: under-coverage -->;
-         the script collects these. No auto-detection — AI judgement.
+         <!-- signal: misleading --> or <!-- signal: under-coverage -->.
+         The script SURFACES these markers as prompts for the AI to write a
+         full entry; it does NOT auto-log them. Auto-logging produced empty
+         shell entries (Scenario: "auto-detected", Observation: the marker
+         text itself), which violated the log's own rule that every entry
+         needs a real observation. See commit fixing this regression.
 
-Detected signals are appended to common/meta/harness-feedback-log.md.
+Inline markers and orphan FAILs are printed for review; only gap /
+inoperable / tier-mismatch signals are appended to
+common/meta/harness-feedback-log.md.
 
 Usage:
     python scripts/check_review_signals.py <review-report.md>
@@ -127,14 +133,14 @@ def audit_harness_tiers():
 
 
 def detect_signals(report_text, harness_files):
-    """Yield (harness_id, signal_type, item_ref, detail) tuples."""
-    # Collect inline signal markers first (AI judgement signals)
-    for m in INLINE_SIGNAL_RE.finditer(report_text):
-        sig = m.group(1).lower()
-        if sig in ("misleading", "under-coverage"):
-            # Attribute to the first harness if multiple; detail is the marker line
-            hid = harness_files[0][0] if harness_files else "unknown"
-            yield (hid, sig, "inline", f"inline marker: {m.group(0)}")
+    """Yield (harness_id, signal_type, item_ref, detail) tuples.
+
+    Only yields signals that are safe to auto-log: gap, inoperable,
+    tier-mismatch. Inline markers (misleading / under-coverage) are
+    handled separately by detect_inline_markers() — they surface as
+    prompts, not log entries, because the marker alone carries no
+    observation and auto-logging it produced empty-shell entries.
+    """
 
     # Per-item analysis
     lines = report_text.splitlines()
@@ -181,6 +187,21 @@ def detect_signals(report_text, harness_files):
                     if TIER_RANK[stated_tier] > max_src_tier:
                         yield (p, "tier-mismatch", f"item {item_num}",
                                f"item tier ({stated_tier}) exceeds max source tier ({max_src_tier})")
+
+
+def detect_inline_markers(report_text):
+    """Yield (signal_type, marker_text) for inline <!-- signal: ... --> markers.
+
+    These are AI-judgement placeholders, not findings. The marker says
+    "I think something is misleading/under-coverage here" but carries no
+    observation. We surface them as prompts so the AI can write a proper
+    log entry (with Scenario + Observation) or drop the marker — we do
+    NOT auto-log them.
+    """
+    for m in INLINE_SIGNAL_RE.finditer(report_text):
+        sig = m.group(1).lower()
+        if sig in ("misleading", "under-coverage"):
+            yield (sig, m.group(0))
 
 
 def append_to_log(signals):
@@ -271,13 +292,26 @@ def main():
         # Still scan inline markers
         harness_files = [("unknown", None)]
 
+    # Inline markers are surfaced as prompts, never auto-logged.
+    inline_markers = list(detect_inline_markers(report_text))
+    if inline_markers:
+        print(f"Found {len(inline_markers)} inline marker(s) — NOT auto-logged.")
+        print("Each marker is a placeholder you (the AI) left in the report. Either:")
+        print("  (a) write a full feedback-log entry with Scenario + Observation, or")
+        print("  (b) remove the marker if the signal does not hold up.")
+        for sig, marker in inline_markers:
+            print(f"  - {sig}: {marker}")
+
     signals = list(detect_signals(report_text, [(p, hp) for p, hp in harness_files if hp]))
 
     if not signals:
+        if inline_markers:
+            print("\nNo auto-loggable signals (gap / inoperable / tier-mismatch).")
+            return 0
         print("No signals detected.")
         return 0
 
-    print(f"Detected {len(signals)} signal(s):")
+    print(f"\nDetected {len(signals)} auto-loggable signal(s):")
     for hid, sig, item_ref, detail in signals:
         print(f"  - {hid} | {sig} | {item_ref} | {detail[:80]}")
 
