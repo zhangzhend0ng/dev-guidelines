@@ -22,6 +22,7 @@ related:
   - "cpp/correctness/interface-contracts.md"
   - "cpp/correctness/class-hierarchies.md"
   - "cpp/memory/ownership.md"
+  - "cpp/design/feature-design-prerequisites.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

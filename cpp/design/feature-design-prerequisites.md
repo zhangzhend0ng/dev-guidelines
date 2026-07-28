@@ -24,6 +24,7 @@ related:
   - "cpp/api/abi-compatibility.md"
   - "common/commits/conventional-commits.md"
   - "common/planning/task-decomposition.md"
+  - "common/code-review/harness-driven-review.md"
 supersedes: []
 changelog:
   - "2026.07: Initial draft"

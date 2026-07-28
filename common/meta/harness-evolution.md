@@ -26,6 +26,7 @@ related:
   - "concepts/02-authority-system.md"
   - "common/meta/prior-art-and-reuse.md"
   - "common/meta/harness-quality-standards.md"
+  - "common/code-review/harness-driven-review.md"
 supersedes: []
 changelog:
   - "2026.05: Initial draft"
