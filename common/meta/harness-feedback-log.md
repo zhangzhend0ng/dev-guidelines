@@ -36,12 +36,17 @@ Do NOT add entries for routine PASS / FAIL where the item behaved as designed. R
 Each entry is a markdown block with exactly these fields:
 
 ```
-### <YYYY-MM-DD> — <harness-id>, item <N> (or "general")
+### <YYYY-MM-DD> — <target>, item <N> (or "general")
 - **Signal:** gap | inoperable | misleading | under-coverage | tier-mismatch
 - **Scenario:** one sentence — project + change type + what was under review
 - **Observation:** what happened, with file:line if applicable
 - **Outcome:** improved (commit/PR ref) | recorded-pending | rejected (reason)
 ```
+
+**`<target>` may be one of:**
+
+- A **harness id** (e.g. `cpp-feature-design-prerequisites`, `common-harness-evolution`). This is the common case — feedback about a checklist item.
+- A **tooling path** prefixed with `tool/` (e.g. `tool/scripts/check_review_signals.py`, `tool/prompts/weak-model-workflow.md`). Use this when the finding concerns a script, prompt, or template — not a harness item. The `tool/` prefix distinguishes tooling targets from harness ids so readers (and `check_feedback_signals.py`) can tell them apart.
 
 Keep each entry under 8 lines. If the finding needs more space, it belongs in a linked commit message or issue, not in the log.
 
@@ -72,6 +77,12 @@ Keep each entry under 8 lines. If the finding needs more space, it belongs in a 
 - **Scenario:** ran check_review_signals.py on a real review report to validate the B6 closed loop; attempted to log a finding about the script itself
 - **Observation:** the log's entry schema and check_feedback_signals.py's ENTRY_RE assume entries target a harness (id format `[a-zA-Z0-9_-]+`). A finding about a script (`scripts/check_review_signals.py`) cannot be expressed — the `/` and `.` in the path break the regex. The schema has no concept of non-harness targets (scripts, prompts, templates).
 - **Outcome:** recorded-pending — schema needs extension to accept script/prompt paths as entry targets, or a separate "tooling feedback" log. Not yet fixed.
+
+### 2026-07-28 — tool/scripts/check_feedback_signals.py, general (schema extension for tooling targets)
+- **Signal:** under-coverage
+- **Scenario:** resolving the 2026-07-27 recorded-pending entry above — the log schema could not express feedback about scripts/prompts/templates, only harness ids.
+- **Observation:** extended the schema to accept tooling targets via a `tool/<rel-path>` prefix (e.g. `tool/scripts/check_review_signals.py`). Updated the schema section here to document both target kinds, and widened `ENTRY_RE` in check_feedback_signals.py to `tool/[a-zA-Z0-9_./-]+|[a-zA-Z0-9_-]+` so the reader parses both. Verified backward-compat (all existing harness-id entries still parse) and the new format end-to-end. This entry's own header (`tool/scripts/check_feedback_signals.py`) exercises the new schema.
+- **Outcome:** improved — resolves the 2026-07-27 entry above; see commit (this change).
 
 ---
 

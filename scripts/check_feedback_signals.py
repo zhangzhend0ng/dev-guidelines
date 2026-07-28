@@ -33,9 +33,17 @@ LOG_PATH = ROOT / "common" / "meta" / "harness-feedback-log.md"
 #   ### 2026-07-27 — cpp-feature-design-prerequisites, item 3 (entity classification)
 # or:
 #   ### 2026-07-27 — common-harness-evolution, general (tier)
+# or (tooling target, not a harness):
+#   ### 2026-07-28 — tool/scripts/check_review_signals.py, general (schema gap)
+#
+# The target may be a harness id ([a-zA-Z0-9_-]+) OR a tooling path prefixed
+# with tool/ (tool/...path). Tooling targets let the log record feedback about
+# scripts/prompts/templates, closing the gap where only harnesses were valid
+# targets (see harness-feedback-log.md 2026-07-27 inoperable entry).
+TARGET_RE = r"tool/[a-zA-Z0-9_./-]+|[a-zA-Z0-9_-]+"
 ENTRY_RE = re.compile(
     r"^###\s+(\d{4}-\d{2}-\d{2})\s+[—-]\s+"   # date + em-dash or hyphen
-    r"([a-zA-Z0-9_-]+)"                        # harness id (greedy on allowed chars)
+    rf"({TARGET_RE})"                          # harness id OR tool/<path>
     r"(?:,\s*(item\s+\d+|general))?"           # optional ", item N" or ", general"
     r"(?:\s*\(([^)]*)\))?\s*$"                 # optional "(detail)"
 )
