@@ -81,8 +81,20 @@ Keep each entry under 8 lines. If the finding needs more space, it belongs in a 
 ### 2026-07-28 — tool/scripts/check_feedback_signals.py, general (schema extension for tooling targets)
 - **Signal:** under-coverage
 - **Scenario:** resolving the 2026-07-27 recorded-pending entry above — the log schema could not express feedback about scripts/prompts/templates, only harness ids.
-- **Observation:** extended the schema to accept tooling targets via a `tool/<rel-path>` prefix (e.g. `tool/scripts/check_review_signals.py`). Updated the schema section here to document both target kinds, and widened `ENTRY_RE` in check_feedback_signals.py to `tool/[a-zA-Z0-9_./-]+|[a-zA-Z0-9_-]+` so the reader parses both. Verified backward-compat (all existing harness-id entries still parse) and the new format end-to-end. This entry's own header (`tool/scripts/check_feedback_signals.py`) exercises the new schema.
+- **Observation:** extended the schema to accept tooling targets via a `tool/<rel-path>` prefix (e.g. `tool/scripts/check_feedback_signals.py`). Updated the schema section here to document both target kinds, and widened `ENTRY_RE` in check_feedback_signals.py to `tool/[a-zA-Z0-9_./-]+|[a-zA-Z0-9_-]+` so the reader parses both. Verified backward-compat (all existing harness-id entries still parse) and the new format end-to-end. This entry's own header (`tool/scripts/check_feedback_signals.py`) exercises the new schema.
 - **Outcome:** improved — resolves the 2026-07-27 entry above; see commit (this change).
+
+### 2026-07-29 — cpp-wxwidgets-3-1-5, item 20/37 (alpha↔GCDC interaction)
+- **Signal:** under-coverage
+- **Scenario:** conversation-distillation mining of 117 ZCode sessions — a real wxMSW review hit black corners on a 32-bit alpha bitmap; the fix was `wxGCDC(wxAutoBufferedPaintDC)`.
+- **Observation:** #20 documents alpha-bitmap historical bugs and #37 documents `wxGraphicsContext` vs `wxDC`, but neither connects them: 32-bit bitmap RGB at alpha=0 is corrupted, FATAL on `wxDC::DrawBitmap` (black corners) yet HARMLESS via `wxGCDC` because alpha blending (`dst=src.rgb*src.a+dst.rgb*(1-src.a)`) never reads RGB when `src.a==0`. The causal bridge "switching to GCDC is both fix and reason" was missing.
+- **Outcome:** improved — added sub-item 20a bridging #20 and #37; commit `f23fdc0`.
+
+### 2026-07-29 — INDEX, general (missing config & requirements categories)
+- **Signal:** under-coverage
+- **Scenario:** conversation-distillation mining — recurring config-dimension-mismatch and PRD-vs-code gap-analysis patterns across the SnapmakerOrca sessions had no applicable harness or INDEX category.
+- **Observation:** INDEX had no `config` category and no requirements-gap-analysis harness; 117 sessions repeatedly exhibited config data-dimension misclassification (treated as registration, actually a design blocker) and memory-based gap-list inflation, with no harness framing these. prior-art check confirmed NONE coverage for both.
+- **Outcome:** improved — new `common-config-option-registration` (config category) and `common-planning-requirements-gap-analysis` harnesses; commits `8cbe9fd`, `501cc3b`; INDEX regenerated `91b1898`.
 
 ---
 
