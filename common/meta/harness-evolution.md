@@ -6,10 +6,10 @@ language: "common"
 category: "meta"
 tier: "A"
 scope: "Govern how coding guideline harnesses evolve through their lifecycle, from draft proposal to archival, ensuring authority integrity and cross-reference consistency"
-version: "2026.07.1"
+version: "2026.07.2"
 status: "draft"
 stable_since: ""
-last_validated: "2026-07-27"
+last_validated: "2026-07-29"
 review_cycle: "12m"
 tags:
   - harness-governance
@@ -32,6 +32,7 @@ changelog:
   - "2026.05: Initial draft"
   - "2026.07: Fix Item 6 — corrected false claim that validate.py catches one-way (non-bidirectional) related links. validate.py checks link existence only; bidirectionality is a human gate enforced by harness-quality-standards.md item 5."
   - "2026.07.1: Item 3 — added feedback-signal trigger. When check_feedback_signals.py reports a harness has accumulated ≥3 same-type signals in harness-feedback-log.md, trigger re-review within 4 weeks. Closes the evolution-side of the distillation->evolution bridge: review B6 writes signals, this item reads them."
+  - "2026.07.2: Item 6 — one-way related links now classified per quality-standards item 5: peer links (bidirectional, fix before merge) vs upstream references (one-way legitimate for foundational hubs, do NOT force back-link). Removes the blanket 'Fix before merge' that created 59 false debts against fan-in hubs."
 ---
 
 # Harness Evolution and Lifecycle Governance
@@ -121,7 +122,7 @@ When harness A links to harness B via `related`, how to keep them consistent?
 - [ ] Harness B is created or modified → **(A)** Check that A's `related` field still accurately describes the relationship. Run `validate.py`. [R1]
 - [ ] Harness B is deprecated → **(A)** Remove B from A's `related` within 30 days, or add a note that B is deprecated and point to the replacement. [R1]
 - [ ] Harness B is archived → **(A)** `validate.py` will error on the dead link. Remove B from `related` immediately. [R1]
-- [ ] Cross-reference is one-way (A links to B but B does not link back) → **(A)** `validate.py` does NOT catch this — it checks link existence only, not bidirectionality. Verify reciprocation manually, or apply `common/meta/harness-quality-standards.md` item 5. Fix before merge. [R1]
+- [ ] Cross-reference is one-way (A links to B but B does not link back) → **(A)** `validate.py` does NOT catch this — it checks link existence only, not bidirectionality. Classify the link per `common/meta/harness-quality-standards.md` item 5: if **peer** (A and B are near-neighbors on the same concern) → fix the back-link before merge; if **upstream reference** (B is a foundational hub A builds on, inbound degree ≥3) → one-way is legitimate, do NOT force a back-link. [R1]
 
 ### 7. Split vs. Merge Decision
 
@@ -198,3 +199,4 @@ Harness event occurs (new PR, review due, source update, challenge, etc.)
 ## Changelog
 
 - 2026.05: Initial draft
+- 2026.07.2: Item 6 — one-way `related` links now classified per quality-standards item 5: peer links bidirectional (fix before merge), upstream references legitimately one-way for foundational hubs (do not force back-link). Replaces the blanket "Fix before merge" that generated false debts against fan-in hubs (raii/UB/testing-strategy etc.).

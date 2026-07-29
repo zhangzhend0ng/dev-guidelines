@@ -6,10 +6,10 @@ language: "common"
 category: "meta"
 tier: "A"
 scope: "Validate the structural and naming quality of a harness: id/filename/directory/category consistency, scope-statement quality, checklist item shape (condition→action + tier + [Rx]), reference-source integrity, and anti-pattern structure"
-version: "2026.07"
+version: "2026.07.1"
 status: "draft"
 stable_since: ""
-last_validated: "2026-07-26"
+last_validated: "2026-07-29"
 review_cycle: "24m"
 tags: [meta, quality, naming, scope, checklist-shape, reference-integrity, anti-patterns]
 based_on:
@@ -21,6 +21,7 @@ related:
 supersedes: []
 changelog:
   - "2026.07: Initial draft — fills the missing meta harness referenced from INDEX.md Quick Lookup"
+  - "2026.07.1: Item 5 evolved — distinguish peer links (bidirectional) from upstream references (legitimately one-way). A foundational hub cited by many specialized harnesses (inbound degree >=3) stays one-way; forcing back-links would destroy navigability. Driven by a real audit: 59 of 62 one-way links were upper-layer->hub upstream references, 0 were peer-neighbor omissions."
 ---
 
 # Harness Quality Standards Checklist
@@ -42,7 +43,7 @@ This harness is invoked by the INDEX.md Quick Lookup row "Validate harness descr
 | `type`/`status`/`tier`/`language` valid enums | YES | — |
 | `id` unique repo-wide (non-deprecated) | YES | — |
 | `related` target file exists | YES | — |
-| `related` bidirectionality | NO (one-way links pass) | YES (item 5) |
+| `related` bidirectionality (peer links only) | NO (one-way links pass) | YES (item 5 — peer links bidirectional; upstream references legitimately one-way) |
 | id / filename / directory / language consistency | NO | YES (item 1) |
 | Scope statement quality | NO | YES (item 2) |
 | Checklist item shape (condition→action + tier + [Rx]) | NO | YES (item 3) |
@@ -82,10 +83,17 @@ This harness is invoked by the INDEX.md Quick Lookup row "Validate harness descr
 - [ ] Every Reference Sources row has a `Timeliness` cell of form `verified-YYYY` and a `Last Verified` cell of form `YYYY-MM` → **(A)** stale sources must be re-verified before use. [R1]
 - [ ] The `based_on` frontmatter list and the Reference Sources table are consistent (same sources, possibly different granularity) → **(A)** drift between them signals an incomplete edit. [R1]
 
-### 5. Cross-Reference Bidirectionality **(A)** [R1]
+### 5. Cross-Reference Bidirectionality (peer links) and Upstream References **(A)** [R1]
 
-- [ ] For every entry in `related`, the target harness's `related` field reciprocally lists this harness → **(A)** `validate.py` checks existence only; bidirectionality is a human gate. [R1]
-- [ ] The `See Also` body section lists each `related` target with a one-line description of the relationship → **(A)** the relationship description is what makes the link useful to a reader. [R1]
+The `related` field serves two distinct link kinds. Classify each entry and apply the matching rule:
+
+- **Peer link** — A and B are near-neighbors on the same concern (each is a primary navigation target for the other; e.g. `cpp-raii` ↔ `cpp-ownership`, or a new harness and the sibling it split from). Peer links MUST be bidirectional.
+- **Upstream reference** — A cites B because B is a more general/foundational harness that A builds on, but B has no reason to know A exists (e.g. `wxwidgets` → `cpp-raii`, `asyncio-cancellation` → `common-fix-verification`). Upstream references are legitimately one-way. Forcing a back-link would stuff a foundational hub's `related` with dozens of "referenced by" entries and destroy its navigability.
+
+- [ ] For every **peer** entry in `related`, the target harness's `related` field reciprocally lists this harness → **(A)** peer links are bidirectional; this is the human gate `validate.py` cannot enforce. [R1]
+- [ ] For every **upstream** entry in `related`, a reciprocal back-link is NOT required → **(A)** a foundational hub (e.g. `raii`, `undefined-behavior`, `testing-strategy`, typically with inbound degree ≥3) cited by many specialized harnesses stays one-way; the test is "would B's reader benefit from knowing A exists?" — if no, it is upstream. [R1]
+- [ ] When classifying a link, ask: are A and B near-neighbors on the same concern (peer), or is B a general foundation A happens to build on (upstream)? → **(A)** misclassifying an upstream link as peer creates needless back-link churn; misclassifying a peer link as upstream orphans a genuine neighbor. [R1]
+- [ ] The `See Also` body section lists each `related` target with a one-line description of the relationship → **(A)** the relationship description (and, implicitly, whether the link reads peer-like or upstream-like) is what makes the link useful to a reader. [R1]
 - [ ] Cross-references use repo-relative forward-slash paths in frontmatter (`cpp/correctness/interface-contracts.md`), not display-relative paths → **(A)** frontmatter paths are validated; body `See Also` paths may use `../` for readability. [R1]
 
 ### 6. Anti-Pattern Structure **(A)** [R1]
@@ -110,7 +118,8 @@ Harness drafted — quality gate before PR
   │
   ├─ [4] Every [Rx] in Reference Sources? sources registered in sources.md?
   │
-  ├─ [5] related bidirectional? See Also has relationship descriptions?
+  ├─ [5] Classify each related link: peer (bidirectional) or upstream (one-way OK)?
+  │      └─ peer links reciprocated? See Also has relationship descriptions?
   │
   └─ [6] Anti-patterns: 4-field structure, ≥2 entries, real-world?
 ```
@@ -162,3 +171,4 @@ Harness drafted — quality gate before PR
 ## Changelog
 
 - 2026.07: Initial draft — 6 items covering naming/placement, scope quality, checklist item shape, reference-source integrity, cross-reference bidirectionality, and anti-pattern structure. Fills the missing meta harness referenced from INDEX.md Quick Lookup; documents what `validate.py` enforces vs. what is convention-only.
+- 2026.07.1: Item 5 evolved — `related` links now classified as peer (bidirectional required) or upstream reference (legitimately one-way). Foundational hubs cited by many specialized harnesses (e.g. `raii`, `undefined-behavior`, `testing-strategy`) stay one-way; forcing back-links would dilute their `related` into a "referenced-by" list and destroy navigability. Driven by a real cross-reference audit: of 62 one-way links, 59 were upper-layer→hub upstream references and 0 were peer-neighbor omissions. Prerequisites table and decision tree updated to match.

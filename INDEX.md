@@ -142,8 +142,8 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
-| common-harness-evolution | [Harness Evolution and Lifecycle Governance](common\meta\harness-evolution.md) | common | A | draft | 2026.07.1 |
-| common-harness-quality-standards | [Harness Quality Standards Checklist](common\meta\harness-quality-standards.md) | common | A | draft | 2026.07 |
+| common-harness-evolution | [Harness Evolution and Lifecycle Governance](common\meta\harness-evolution.md) | common | A | draft | 2026.07.2 |
+| common-harness-quality-standards | [Harness Quality Standards Checklist](common\meta\harness-quality-standards.md) | common | A | draft | 2026.07.1 |
 | common-prior-art-and-reuse | [Prior Art and Reuse Checklist](common\meta\prior-art-and-reuse.md) | common | A | draft | 2026.07 |
 
 ### naming

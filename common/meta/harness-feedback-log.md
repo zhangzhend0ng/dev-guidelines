@@ -96,6 +96,12 @@ Keep each entry under 8 lines. If the finding needs more space, it belongs in a 
 - **Observation:** INDEX had no `config` category and no requirements-gap-analysis harness; 117 sessions repeatedly exhibited config data-dimension misclassification (treated as registration, actually a design blocker) and memory-based gap-list inflation, with no harness framing these. prior-art check confirmed NONE coverage for both.
 - **Outcome:** improved — new `common-config-option-registration` (config category) and `common-planning-requirements-gap-analysis` harnesses; commits `8cbe9fd`, `501cc3b`; INDEX regenerated `91b1898`.
 
+### 2026-07-29 — common-harness-quality-standards, item 5 (bidirectionality vs hub-fan-in)
+- **Signal:** misleading
+- **Scenario:** full-repo cross-reference audit after the new-harness work — ran a bidirectionality check expecting to find peer-neighbor omissions like the prior dogfood (4 fixed in `6c4b701`).
+- **Observation:** item 5's blanket "every `related` link must be bidirectional" was misleading: of 62 one-way links, 59 were upper-layer→foundational-hub upstream references (e.g. `wxwidgets→raii`, `asyncio→fix-verification`) and 0 were peer-neighbor omissions. Forcing back-links would stuff hubs (`raii` inbound=13, `undefined-behavior`=14, `testing-strategy`=17) with dozens of "referenced-by" entries, destroying navigability. The real `related` semantics in this repo is mixed: peer (bidirectional) + upstream reference (one-way).
+- **Outcome:** improved — item 5 evolved to distinguish peer links (bidirectional) from upstream references (legitimately one-way for inbound-degree≥3 hubs); harness-evolution item 6 synced to classify one-way links instead of blanket "fix before merge". See commits (this change).
+
 ---
 
 ## Maintenance
