@@ -26,6 +26,7 @@ related:
   - "common/planning/risk-and-verification-plan.md"
   - "common/testing/test-doubles.md"
   - "cpp/testing/property-based-testing.md"
+  - "common/testing/differential-oracle-testing.md"
   - "cpp/testing/mutation-testing.md"
   - "cpp/testing/fuzzing.md"
   - "cpp/testing/static-analysis.md"

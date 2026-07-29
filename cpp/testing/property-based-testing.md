@@ -24,6 +24,7 @@ related:
   - "cpp/testing/googletest-patterns.md"
   - "cpp/testing/catch2-patterns.md"
   - "cpp/serialization/parsing-and-validation.md"
+  - "common/testing/differential-oracle-testing.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

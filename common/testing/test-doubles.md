@@ -20,6 +20,7 @@ related:
   - "common/testing/testing-strategy.md"
   - "cpp/testing/catch2-patterns.md"
   - "cpp/testing/googletest-patterns.md"
+  - "common/testing/differential-oracle-testing.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"
