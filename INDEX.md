@@ -69,6 +69,12 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 |----|-------|----------|------|--------|---------|
 | python-asyncio-cancellation | [Python asyncio Cancellation Checklist](python\concurrency\asyncio-cancellation.md) | python | C | draft | 2026.06 |
 
+### config
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| common-config-option-registration | [Configuration Option Registration and Dimension Classification Checklist](common\config\option-registration-and-dimension.md) | common | A | draft | 2026.07 |
+
 ### correctness
 
 | ID | Title | Language | Tier | Status | Version |
@@ -157,6 +163,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | common-change-scope-control | [Change Scope Control Checklist](common\planning\change-scope-control.md) | common | A | draft | 2026.06 |
+| common-planning-requirements-gap-analysis | [Requirements-vs-Implementation Gap Analysis Checklist](common\planning\requirements-gap-analysis.md) | common | C | draft | 2026.07 |
 | common-risk-verification-plan | [Risk and Verification Plan Checklist](common\planning\risk-and-verification-plan.md) | common | C | draft | 2026.06 |
 | common-rollback-migration-plan | [Rollback and Migration Plan Checklist](common\planning\rollback-and-migration-plan.md) | common | C | draft | 2026.06 |
 | common-task-decomposition | [Task Decomposition Checklist](common\planning\task-decomposition.md) | common | A | draft | 2026.06 |
@@ -211,6 +218,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | cpp-property-based-testing | [C++ Property-Based Testing Checklist](cpp\testing\property-based-testing.md) | cpp | C | draft | 2026.06 |
 | cpp-static-analysis | [C++ Static Analysis Checklist](cpp\testing\static-analysis.md) | cpp | C | draft | 2026.06 |
 | cpp-catch2 | [Catch2 Testing Patterns Checklist](cpp\testing\catch2-patterns.md) | cpp | C | draft | 2026.06 |
+| common-testing-differential-oracle | [Differential Oracle and Characterization Testing Checklist](common\testing\differential-oracle-testing.md) | common | A | draft | 2026.07 |
 | cpp-googletest | [GoogleTest and GMock Patterns Checklist](cpp\testing\googletest-patterns.md) | cpp | C | draft | 2026.06 |
 | cpp-sanitizers | [Sanitizer Integration and Usage Checklist](cpp\testing\sanitizers.md) | cpp | N | draft | 2026.06 |
 | common-test-doubles | [Test Doubles Taxonomy and Selection Checklist](common\testing\test-doubles.md) | common | C | draft | 2026.06 |
@@ -239,6 +247,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | Tooling/Process | CI/CD, code review workflow, Git conventions, build system |
 | Third-Party | Known pitfalls, limitations, and best practices for specific libraries/frameworks |
 | Cross-Language | Language-agnostic design principles applicable to all projects |
+| Config | Configuration/setting/preset option registration, data-dimension classification, serialization-name immutability, override precedence |
 
 ## Harness Status Definitions
 
