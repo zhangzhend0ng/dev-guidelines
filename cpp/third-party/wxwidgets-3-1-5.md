@@ -907,6 +907,19 @@ if (image.GetAlpha() != nullptr) { /* has alpha */ }
 wxBitmap bmp(wxBITMAP(logo));  // XPM: no transparency or alpha
 ```
 
+**20a. 32-bit alpha-bitmap RGB corruption is fatal on `wxDC::DrawBitmap` but harmless via `wxGCDC`/`wxGraphicsContext`.** When a 32-bit `wxBitmap` carries per-pixel alpha, the RGB channels of fully-transparent pixels (alpha=0) are often corrupted (commonly zero/black). Drawing this bitmap through `wxDC::DrawBitmap(..., useMask=false)` (or `wxMemoryDC::DrawBitmap`) **reads those corrupted RGB values and renders them as black corners/edges**. Drawing the *same* bitmap through `wxGCDC`/`wxGraphicsContext` is harmless, because alpha blending computes `dst = src.rgb * src.a + dst.rgb * (1 - src.a)` — when `src.a == 0` the corrupted RGB is never read and the background shows through. So: **the RGB-at-alpha-0 corruption only bites on the `wxDC::DrawBitmap` path; switching to `wxGCDC` is both the fix and the reason the corruption stops mattering** (see also #37).
+
+```cpp
+// Bad — wxDC::DrawBitmap renders alpha=0 RGB (corrupted) as black corners
+wxAutoBufferedPaintDC dc(this);
+dc.DrawBitmap(alphaBitmap, x, y, false);  // black corners on wxMSW
+
+// Good — wxGCDC blends; alpha=0 pixels discard RGB, background shows through
+wxAutoBufferedPaintDC pbdc(this);
+wxGCDC dc(pbdc);                          // wraps the DC in a graphics context
+dc.DrawBitmap(alphaBitmap, x, y, false);  // correct transparency, no black corners
+```
+
 ### 21. Clipboard and wxDataObject  **(P)** [R16]
 
 Clipboard operations with non-ASCII/Unicode text have known crash bugs: copying Unicode text crashes on macOS (#13442), multibyte text to clipboard crashes (#4381).
