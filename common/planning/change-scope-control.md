@@ -20,6 +20,7 @@ related:
   - "common/planning/task-decomposition.md"
   - "common/planning/risk-and-verification-plan.md"
   - "common/ai/model-capability-and-instruction-adherence.md"
+  - "common/planning/requirements-gap-analysis.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

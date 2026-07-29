@@ -18,7 +18,7 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | N6 | NIST SP 800-53 | Security and privacy controls | NIST | Periodic revision |
 | N7 | ISO 26262 / IEC 61508 | Functional safety | ISO/TC22, IEC | Infrequent |
 | N8 | Conventional Commits 1.0.0 | Commit message specification | Community | Stable |
-| N9 | ISO/IEC/IEEE 29148:2018 | Systems and software engineering — life cycle processes — requirements engineering (RTM/VCRM, traceability; supersedes IEEE 830-1998) | ISO/IEC/IEEE | Periodic revision |
+| N9 | ISO/IEC/IEEE 29148:2018 | Systems and software engineering — life cycle processes — requirements engineering (requirements traceability, coverage analysis; supersedes IEEE 830-1998) | ISO/IEC/IEEE | Periodic revision |
 
 ## C-Tier: Consensus (Industry Guidelines)
 

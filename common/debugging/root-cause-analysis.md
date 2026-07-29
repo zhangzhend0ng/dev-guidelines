@@ -21,6 +21,7 @@ related:
   - "common/debugging/reproduction-and-minimization.md"
   - "common/debugging/fix-verification.md"
   - "cpp/debugging/sanitizer-triage.md"
+  - "common/planning/requirements-gap-analysis.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"
