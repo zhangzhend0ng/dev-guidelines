@@ -2,7 +2,7 @@
 
 Central registry of all sources cited across harnesses. Harness reference tables reference entries here by Source ID. **Single source of truth for tier classification, review cycles, and verification status.**
 
-**Last updated:** 2026-07-26
+**Last updated:** 2026-07-29
 
 ---
 
@@ -18,6 +18,7 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | N6 | NIST SP 800-53 | Security and privacy controls | NIST | Periodic revision |
 | N7 | ISO 26262 / IEC 61508 | Functional safety | ISO/TC22, IEC | Infrequent |
 | N8 | Conventional Commits 1.0.0 | Commit message specification | Community | Stable |
+| N9 | ISO/IEC/IEEE 29148:2018 | Systems and software engineering — life cycle processes — requirements engineering (RTM/VCRM, traceability; supersedes IEEE 830-1998) | ISO/IEC/IEEE | Periodic revision |
 
 ## C-Tier: Consensus (Industry Guidelines)
 
@@ -50,6 +51,7 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | C25 | Python Packaging User Guide | pyproject.toml, packaging, dependency metadata, distribution guidance | PyPA | Continuous |
 | C26 | pytest Documentation | pytest fixtures, assertions, parametrization, test discovery | pytest-dev | Continuous |
 | C27 | mypy Documentation | static type checking, configuration, gradual typing | mypy project | Continuous |
+| C28 | Confluent Schema Registry / Apache Avro Schema Evolution | Serialization name/format immutability, backward/forward compatibility rules | Confluent / Apache | Continuous |
 
 ## A-Tier: Advisory (Expert Literature & Org Standards)
 
@@ -77,6 +79,7 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | A20 | Clean Architecture | SOLID, dependency rule, layering, component boundaries | Robert C. Martin | 2017 | Low — principles stable |
 | A21 | Domain-Driven Design | Value object vs entity, bounded contexts, ubiquitous language | Eric Evans | 2003 | Low — principles timeless |
 | A22 | Object-Oriented Software Construction (2/e) | Open-Closed Principle (origin), Design by Contract, inheritance taxonomy | Bertrand Meyer | 1997 (1/e 1988) | Low — OCP origin, principles timeless |
+| A23 | Working Effectively with Legacy Code | Characterization tests, seams, breaking dependencies to enable testing | Michael Feathers | 2004 | Low — principles timeless |
 
 ## Deprecated Sources
 
