@@ -24,6 +24,7 @@ related:
   - "cpp/correctness/type-safety.md"
   - "cpp/testing/fuzzing.md"
   - "cpp/testing/property-based-testing.md"
+  - "common/config/option-registration-and-dimension.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

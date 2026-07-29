@@ -25,6 +25,7 @@ related:
   - "common/commits/conventional-commits.md"
   - "common/planning/task-decomposition.md"
   - "common/code-review/harness-driven-review.md"
+  - "common/config/option-registration-and-dimension.md"
 supersedes: []
 changelog:
   - "2026.07: Initial draft"
