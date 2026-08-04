@@ -13,7 +13,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-from pack_utils import installed_paths_for, read_installed
+from pack_utils import installed_paths_for, read_installed, HARNESS_SKIP_DIRS
 
 ROOT = Path(__file__).resolve().parent.parent
 INDEX_PATH = ROOT / "INDEX.md"
@@ -40,11 +40,10 @@ def parse_frontmatter(filepath):
 
 
 def find_harnesses():
-    skip_dirs = {".git", ".claudine", "archive", "templates", "docs", ".github"}
     harnesses = []
     for md_path in ROOT.rglob("*.md"):
         parts = md_path.relative_to(ROOT).parts
-        if parts[0] in skip_dirs:
+        if parts[0] in HARNESS_SKIP_DIRS:
             continue
         fm = parse_frontmatter(md_path)
         if fm and fm.get("type") == "harness":

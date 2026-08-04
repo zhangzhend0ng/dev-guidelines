@@ -42,11 +42,50 @@ def make_zip(source_dir, zip_path):
                 archive.write(path, path.relative_to(source_dir))
 
 
+def _is_safe_out_dir(out_dir):
+    """Reject output directories whose deletion would be catastrophic.
+
+    export_pack() may rmtree out_dir/<packids> when re-exporting. Refuse paths
+    that are the repo root, the user's home, the current working directory, or
+    any ancestor of the repo — a typo like `--out .` or `--out ~` must not
+    reach shutil.rmtree.
+    """
+    resolved = out_dir.resolve()
+    forbidden = {Path.cwd().resolve(), Path.home(), ROOT.resolve()}
+    for danger in forbidden:
+        try:
+            if resolved == danger or danger in resolved.parents:
+                return False
+        except (OSError, ValueError):
+            continue
+    # Also refuse if resolved IS an ancestor of ROOT (would delete the repo).
+    try:
+        if resolved in ROOT.resolve().parents or resolved == ROOT.resolve():
+            return False
+    except (OSError, ValueError):
+        pass
+    return True
+
+
+# A prior export always writes export.yml at its root. Requiring it before
+# rmtree proves the directory was created by this tool, not by the user.
+EXPORT_SENTINEL = "export.yml"
+
+
 def export_pack(pack_ids, out_dir, zip_output=False):
     resolved = resolve_packs(pack_ids)
     export_id = "-".join(pack_ids)
     export_root = out_dir / export_id
     if export_root.exists():
+        # Only rmtree a directory we previously wrote (sentinel present).
+        # Refusing to delete user content prevents `export --out <dir>` from
+        # destroying an unrelated <dir>/<packids>.
+        if not (export_root / EXPORT_SENTINEL).exists():
+            raise RuntimeError(
+                f"refusing to overwrite {export_root}: it exists but is not a "
+                f"prior pack export (no {EXPORT_SENTINEL} sentinel). Remove it "
+                "manually if you intended to replace it."
+            )
         shutil.rmtree(export_root)
     export_root.mkdir(parents=True)
 
@@ -104,7 +143,17 @@ def main():
     parser.add_argument("--zip", action="store_true", help="Create a zip archive")
     args = parser.parse_args()
 
-    result = export_pack(args.packs, Path(args.out), args.zip)
+    out_dir = Path(args.out)
+    if not _is_safe_out_dir(out_dir):
+        parser.error(
+            f"--out '{args.out}' resolves to a protected location "
+            "(repo root, home, or working directory). Choose a dedicated "
+            "output directory."
+        )
+    try:
+        result = export_pack(args.packs, out_dir, args.zip)
+    except RuntimeError as exc:
+        parser.error(str(exc))
     print(f"Exported directory: {result['directory']}")
     if "zip" in result:
         print(f"Exported zip: {result['zip']}")

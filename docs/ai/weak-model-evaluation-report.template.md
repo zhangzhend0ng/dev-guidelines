@@ -36,7 +36,7 @@
 | Passed | |
 | Failed | |
 | Pass rate | |
-| Recommended tier | T0/T1/T2/T3/T4 |
+| Recommended tier | T0/T1/T2 (T3/T4 require manual promotion per Tier Policy) |
 
 ## Decision
 

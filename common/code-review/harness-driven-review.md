@@ -25,6 +25,7 @@ related:
   - "common/ai/ai-assisted-cpp-development.md"
   - "common/ai/tool-calling-and-agent-control.md"
   - "common/code-review/review-checklist.md"
+  - "common/code-review/ai-generated-code-failure-modes.md"
   - "common/meta/harness-evolution.md"
   - "cpp/design/feature-design-prerequisites.md"
 supersedes: []
