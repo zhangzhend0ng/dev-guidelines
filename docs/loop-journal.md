@@ -954,3 +954,83 @@ flag(方向1 review 可能无 diff)但**没核实就继续**。REFUTE subagent �
   存在性 + skip-warn 语义。
 - [低] 方向2 narrow 版同上,待语法冻结。
 - iter 1-10 backlog 不变。
+
+---
+
+## 迭代 13 — Phase 6 eval 基础设施(run_eval.py 渲染器)+ REFUTE 推翻原方案
+
+### 触发
+用户:能力缺口诊断后选 "①真实 eval 跑一次(Phase 6 最小闭环)"。决定先搭基础设施(不跑真模型)。
+
+### grep journal(Step 1)
+Phase 6(`ai-task-checklist.md:89-100`)承诺 `docs/ai/evals/runs/<model>/<date>/` 但目录不存在。
+`evaluate_ai_protocol.py`(check→tier→report)+ `update_model_registry.py`(写 registry)已完整,
+CI 已测。唯一真空缺:无脚本填 prompt 模板占位符。ENUMERATE:8 个真实占位符(非 9,无 {GOAL})。
+
+### 合法 shape 清单(prompt 占位符 × 时序依赖)
+| Mode | 模板 | 占位符 | 静态可填? |
+|---|---|---|---|
+| plan | harness-selection | {TASK},{FILES} | ✓ |
+| patch | cpp-patch | {EDIT_SCOPE},{HARNESSES},{PATCH_PLAN},{COMMANDS} | 部分({PATCH_PLAN} 需 plan 输出) |
+| review | cpp-review | {HARNESSES},{DIFF} | 部分({DIFF} 需 patch 输出) |
+| verification | verification-report | {COMMANDS},{COMMANDS_RUN} | 部分({COMMANDS_RUN} 需实跑) |
+
+### 退化输入×消费者矩阵(关键陷阱)
+| 输入＼消费者 | infer_mode | evaluate | check_budget |
+|---|---|---|---|
+| `prompt-plan.md`(原方案命名) | **误匹配 plan 模式**(blocker b) | 污染 tier | prompt 超 6 行预算→假失败 |
+| `prompt-plan.txt`(采纳) | None(不匹配) | 不发现 | n/a |
+| 空 output stub | n/a | n/a | 超 plan 6 行预算→过不了(blocker c) |
+
+### 初版方案(被推翻点)
+原方案:prompt 用 `.md` 后缀 + `--evaluate` flag + 一次渲染全 4 prompt + 预生成空 output stub + 列 9 占位符(含 {GOAL})。
+**REFUTE subagent 抓 2 blocker + 5 major**:
+- [blocker b] `prompt-plan.md` 以 `.plan.md` 结尾 → infer_mode 误匹配 → 污染 evaluate
+- [blocker c] 空 output stub 超 plan 6 行预算 → 过不了 checker
+- [major a] {GOAL} 是臆造占位符(4 模板均无);4 模板有时序依赖,不能一次渲染全
+- [major h] --evaluate 违背"纯渲染器"选择 + 因 (b) 而坏
+- [major i] 无 ground truth/checker 是结构性的
+
+### 对抗审查结论
+REFUTE 全采纳。逐条核实:`infer_mode` 对 `prompt-plan.md` 确实匹配(blocker b 坐实);
+4 模板占位符已读,确认无 {GOAL}(blocker a 坐实);plan LINE_BUDGET=6=REQUIRED_SECTIONS 数,stub 必超(blocker c 坐实)。
+
+### 修订方案(v2,采纳)
+1. prompt 文件用 `.txt` 后缀(彻底避 infer_mode)。
+2. 砍 `--evaluate`(用户填完 output 直接跑既有 evaluate_ai_protocol.py)。
+3. 砍 `{GOAL}`;按 8 真实占位符。
+4. 承认时序依赖:plan prompt 全填;patch/review/verification 标 UNFILLED note + 保留占位符。
+5. 不预生成 output stub(blocker c);改打印指引。
+6. README 诚实声明:scaffolding 非 evidence;checker 结构性非语义;debug mode 不在本期。
+
+### 数据流 hops
+| Hop | 写者→读者 | ✓/✗ |
+|-----|-----------|-----|
+| 1 task spec → run_eval 渲染 | spec → prompt-*.txt | ✓ |
+| 2 prompt-*.txt 不被 infer_mode 发现 | .txt 后缀 → infer_mode None | ✓(blocker b 隔离) |
+| 3 用户填 output → evaluate | .output.md → evaluate_ai_protocol | ✓(端到端 T2) |
+| 4 evaluate report → registry(可选) | report.json → update_model_registry | ✓(既有链路) |
+
+### 改动文件
+- `scripts/run_eval.py`(新,纯模板渲染器,~140 行)
+- `docs/ai/evals/runs/README.md`(新,目录约定 + 命名红线 + 诚实声明)
+
+### 测试证据
+- 渲染默认 param-validation task:4 prompt-*.txt + task-spec.yml ✓
+- plan prompt 全填(0 残留 `{`)✓
+- patch/review/verification UNFILLED note + 保留占位符 ✓
+- **blocker b 隔离**:runs/ 目录所有文件 infer_mode 返回 None ✓
+- **端到端**:填 good-runs 内容作 output → evaluate 推荐 T2 / 4 case 全 pass / report.json 生成 ✓
+- 自定义 --task spec:正确填 + 回写 task-spec.yml ✓
+- idempotency guard:重跑同目录 exit 1(refused)✓
+- 回归:validate / gen_index / check_all / ai / plan_debug 全 PASS ✓
+
+### 过程意外 / 与预期偏差
+1. **REFUTE 抓到的 blocker b 是真救命**:原方案 `prompt-plan.md` 会让 evaluate 把 prompt 当 output 检查 → tier 永远 T0/T1 → 假信号。若不 REFUTE 直接 ship,所有未来 eval 都被污染。
+2. **空 run 的 evaluate 返回 T0 + exit 0**:既有 `recommend_tier()` 的 `if not results: return "T0"` 把空输入当"差"而非"不可评估"。是 evaluate 既有行为(非本次引入),记 backlog [中]。我的 run_eval 已打印诚实 NOTE 缓解。
+3. **shell 末端信号陷阱第 4 次**:`cmd | head; echo $?` 报 head 的 exit。idempotency guard 误报 exit=0,直接跑才见 exit=1。
+
+### 遗留 backlog
+- [中] evaluate_ai_protocol.py recommend_tier 空输入返 T0(假信号)→ 应区分"无数据"vs"差"。
+- [低] Phase 6 debug mode(check_debug_report.py)未接入 run_eval。
+- iter 1-12 backlog 不变。
