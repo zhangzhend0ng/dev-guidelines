@@ -64,9 +64,14 @@ def check_exact_shape(lines):
 
 
 def has_command_signal(value):
+    # Match a build/test tool name as a command. Trailing boundary is
+    # (?=\s|[/.=]|$): a space, a path/flag char, or end of string. We cannot
+    # use \b here because g++ ends in non-word chars (+) and \b won't fire
+    # after them — so "g++ main.cpp" and bare "g++" both need to match.
     return bool(
         re.search(
-            r"\b(python|pytest|cmake|ctest|ninja|clang|gcc|g\+\+|msbuild|lldb|gdb)\b",
+            r"\b(python|pytest|cmake|ctest|ninja|clang|gcc|g\+\+|msbuild|lldb|gdb)"
+            r"(?=\s|[/.=]|$)",
             value.lower(),
         )
     )

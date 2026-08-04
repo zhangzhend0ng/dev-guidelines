@@ -15,6 +15,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 REGISTRY = ROOT / "docs" / "ai" / "model-registry.md"
 
+# The weak-model eval (evaluate_ai_protocol.py) only ever emits T0/T1/T2.
+# T3/T4 are definitionally human-gated (strong-model scope + repo-specific eval
+# + approval gates, per docs/ai/model-registry.md Tier Policy) and reach this
+# script only via a manually-edited report JSON or a hand-authored registry row.
+# The T3/T4 branches in approved_tasks()/blocked_tasks() render those manual
+# assignments — they are forward-compat, not dead code; do not remove.
+VALID_TIERS = {"T0", "T1", "T2", "T3", "T4"}
+
 
 def approved_tasks(tier):
     if tier == "T0":
@@ -71,6 +79,12 @@ def main():
 
     report = json.loads(Path(args.report).read_text(encoding="utf-8"))
     tier = report.get("recommended_tier", "T0")
+    if tier not in VALID_TIERS:
+        parser.error(
+            f"recommended_tier '{tier}' is not a valid tier "
+            f"(expected one of {sorted(VALID_TIERS)}). "
+            "Weak-model eval emits at most T2; T3/T4 are manual promotions."
+        )
     content = REGISTRY.read_text(encoding="utf-8")
     updated = upsert_row(content, args.model, args.version, tier, str(date.today()), args.notes)
     REGISTRY.write_text(updated, encoding="utf-8")

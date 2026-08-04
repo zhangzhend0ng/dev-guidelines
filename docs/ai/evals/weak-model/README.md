@@ -11,9 +11,13 @@ python scripts/check_ai_protocol.py --mode review < output.md
 python scripts/check_ai_protocol.py --mode verification < output.md
 ```
 
-Promotion rule:
-- T1 -> T2 requires passing all plan cases and at least one bounded patch case.
-- T2 -> T3 requires passing patch and review cases with verification evidence.
+Promotion rule (what THIS weak-model eval can certify):
+- T0 -> T1 requires a passing plan case (harness selection + bounded plan).
+- T1 -> T2 requires passing all four modes (plan + patch + review + verification).
+- The weak-model eval **caps at T2**. `evaluate_ai_protocol.py recommend_tier()` never
+  returns T3/T4 — those tiers require strong-model scope, repository-specific eval, and
+  human approval gates per the Tier Policy in `docs/ai/model-registry.md`. They are
+  assigned by manual registry edits, not by this eval.
 - Any skipped harness, fake verification, or progress spam blocks promotion.
 - Verification outputs must include command evidence or explicit NOT VERIFIED.
 

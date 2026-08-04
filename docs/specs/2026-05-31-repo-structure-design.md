@@ -393,25 +393,23 @@ cpp/correctness/exception-safety.md                ← C++ specific: exception g
 ### 6.1 `scripts/validate.py`
 
 ```
-Usage: python scripts/validate.py [--stale] [--dead-links] [--json]
+Usage: python scripts/validate.py [--stale] [--json]
 
 Performs:
   1. Frontmatter completeness check (all required fields present)
   2. Tier consistency check (no deprecated sources without replacement)
   3. Category consistency (file path matches frontmatter category)
   4. Cross-reference bidirectionality (related links go both ways)
-  5. Harness ID uniqueness (no two active harnesses share the same id;
+  5. Harness ID uniqueness (no two active harnesses share an id;
      no new harness reuses an id from the archive/ directory)
   6. --stale: Report all citations past their review window
-  7. --dead-links: Check all external URLs return 200
-  8. --json: Machine-readable output for CI integration
+  7. --json: Machine-readable output for CI integration
 
 Exit codes:
   0 = all clear
   1 = frontmatter errors (hard fail in CI)
   2 = cross-reference errors (hard fail in CI)
   3 = stale citations (warn in CI; only when --stale)
-  4 = dead links (warn in CI; only when --dead-links)
 
 The script collects ALL errors before exiting (does not stop on first error).
 Dependencies: Python 3.10+, PyYAML, requests (pinned in requirements.txt).

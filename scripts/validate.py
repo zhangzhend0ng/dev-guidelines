@@ -3,14 +3,13 @@
 cross-reference integrity, ID uniqueness, and source timeliness.
 
 Usage:
-    python scripts/validate.py [--stale] [--dead-links] [--json]
+    python scripts/validate.py [--stale] [--json]
 
 Exit codes:
     0 = all clear
     1 = frontmatter errors (hard fail)
     2 = cross-reference errors (hard fail)
     3 = stale citations (warn; only with --stale)
-    4 = dead links (warn; only with --dead-links)
 """
 
 import argparse
@@ -23,10 +22,10 @@ from pathlib import Path
 
 import yaml
 
-from pack_utils import installed_paths_for, read_installed
+from pack_utils import installed_paths_for, read_installed, HARNESS_SKIP_DIRS
 
 ROOT = Path(__file__).resolve().parent.parent
-SKIP_DIRS = {".git", ".claudine", "archive", "templates", "docs", ".github"}
+SKIP_DIRS = HARNESS_SKIP_DIRS
 ARCHIVE_DIR = ROOT / "archive"
 
 REQUIRED_FIELDS = [
@@ -190,7 +189,6 @@ def selected_paths_from_args(args):
 def main():
     parser = argparse.ArgumentParser(description="Validate harness files")
     parser.add_argument("--stale", action="store_true")
-    parser.add_argument("--dead-links", action="store_true")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--pack", action="append", help="Validate pack and dependencies")
     parser.add_argument("--installed", action="store_true", help="Validate installed pack set")
@@ -229,11 +227,15 @@ def main():
         if all_errors:
             print(f"\n{len(all_errors)} error(s) found.")
 
+    # Exit-code precedence: hard errors (1/2) override warnings (3).
+    # Code 3 is advisory; CI's --stale step uses continue-on-error, so a non-zero
+    # exit only surfaces as a warning there — but the documented contract must
+    # still be honored locally. Only --stale can populate warnings today.
     if all_errors:
         has_cross_ref = any("related link" in e for e in all_errors)
         sys.exit(2 if has_cross_ref else 1)
-    if warnings and not args.stale:
-        sys.exit(0)
+    if warnings:
+        sys.exit(3)
     sys.exit(0)
 
 

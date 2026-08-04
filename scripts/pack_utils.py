@@ -9,6 +9,12 @@ ROOT = Path(__file__).resolve().parent.parent
 PACKS_DIR = ROOT / "packs"
 INSTALLED_PATH = ROOT / ".dev-guidelines-installed.yml"
 
+# Directories under ROOT that never contain harnesses. Shared by every script
+# that walks the repo for harness files (validate.py, generate_index.py,
+# check_review_signals.py) so a single edit stays consistent across all of them.
+# Drift here would let one script see a harness another skips (or vice versa).
+HARNESS_SKIP_DIRS = {".git", ".claudine", "archive", "templates", "docs", ".github"}
+
 
 def load_pack(pack_id):
     path = PACKS_DIR / pack_id / "pack.yml"
