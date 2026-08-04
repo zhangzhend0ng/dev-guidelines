@@ -3718,6 +3718,39 @@ void OnPaint(wxPaintEvent&) {
 
 ---
 
+### 137. Child Window Background Colour Inheritance (wxStaticText / wxPanel / wxStaticBitmap)  **(P)** [R13][R23]
+
+When a wxStaticText, wxStaticBitmap, or wxPanel child is placed inside a coloured container (e.g. a white card StaticBox sitting on a gray dialog), the child does NOT inherit the parent's background colour on wxMSW. On wxOSX the child often picks up the parent bg transparently, so the bug only manifests on Windows — making it easy to miss during macOS-centric development.
+
+- [ ] Always pair `SetForegroundColour()` with `SetBackgroundColour()` for every label placed inside a coloured container → **(P)** [R23]
+- [ ] Do NOT assume a child `wxPanel` / `wxStaticText` inherits the card's `SetBackgroundColor()` — set it explicitly on each child → **(P)** [R23]
+- [ ] `StaticBox` does NOT propagate its background colour to children — every child window needs its own `SetBackgroundColour()` call → **(P)** [R23]
+- [ ] Wrap colours in `StateColor::darkModeColorFor(wxColour("#RRGGBB"))` (Snapmaker_Orca convention) or `wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)` so the card stays theme-aware — see §17 → **(P)** [R13]
+- [ ] Test card/label rendering on wxMSW explicitly: a bug that looks fine on macOS will leak the dialog bg through on Windows → **(P)** [R13]
+- [ ] Audit existing card-building functions when adding a new label row — easy to remember for the title, easy to forget for inline labels ("Plate", "View", row captions, etc.) → **(P)** [R23]
+
+```cpp
+// Good — every label in the card gets an explicit bg
+auto* card = new StaticBox(parent, ...);
+card->SetBackgroundColor(StateColor(std::pair(wxColour("#FFFFFF"), static_cast<int>(StateColor::Normal))));
+
+auto* lbl = new wxStaticText(card, wxID_ANY, _L("Plate"));
+lbl->SetFont(Label::Body_12);
+lbl->SetForegroundColour(StateColor::darkModeColorFor(wxColour("#4A4A4A")));
+lbl->SetBackgroundColour(StateColor::darkModeColorFor(wxColour("#FFFFFF")));  // REQUIRED on wxMSW
+```
+
+```cpp
+// Bad — label shows the dialog's gray bg through on Windows (looks fine on macOS)
+auto* lbl = new wxStaticText(card, wxID_ANY, _L("Plate"));
+lbl->SetForegroundColour(StateColor::darkModeColorFor(wxColour("#4A4A4A")));
+// missing SetBackgroundColour — leaks #F8F7F7 through on wxMSW
+```
+
+**Rationale:** Snapmaker_Orca `MixedFilamentBatchDialog.cpp` (`build_preview_card`, `build_manual_card`, `build_recommended_card`) had this bug — the "Plate" and "View" labels inside the preview card were missing `SetBackgroundColour()` and rendered with the dialog bg (#F8F7F7) showing through on Windows, while looking correct on macOS. The fix pattern (explicit bg on every label, wrapped in `StateColor::darkModeColorFor`) is now applied across all card-building functions in that file. See §17 for dark-mode colour handling and `wxSystemSettings::GetColour()`.
+
+---
+
 ## Anti-Patterns / Common Mistakes
 
 ### Anti-Pattern 1: Implicit wxString -> char* Conversion
@@ -3831,6 +3864,8 @@ void OnPaint(wxPaintEvent&) {
 ---
 
 ## Changelog
+
+- 2026.07: Added §137 (Child Window Background Colour Inheritance — wxStaticText/wxPanel/wxStaticBitmap do not inherit parent bg on wxMSW) based on a real Snapmaker_Orca bug in `MixedFilamentBatchDialog.cpp` ("Plate"/"View" labels missing `SetBackgroundColour()`, leaked #F8F7F7 through on Windows while looking correct on macOS). References R13 (dark mode) and R23 (control semantics) reused — no new reference added.
 
 - 2026.07: Adversarial audit (Phase 1-4) against wxWidgets v3.1.5 source. Corrected fabricated/nonexistent APIs in §52 (SetAppNapEnabled), §54b (MSWGetContentScaleFactor; GetDPIScaleFactor returns double not int), §61/§62 (FromDIP signatures), §92 (MSWEnableDarkMode — added only in 3.3/master), §96 (wxFD_USE_LEGACY_DIALOG does not exist). Corrected §131 wc_str/c_str build-conditional behavior and removed a fabricated `printf("%s", utf8_str().data())` quote; downgraded two items from (N) to (P). Fixed version attribution: wxBitmapBundle 3.1.5→3.1.6, wxActivityIndicator 3.1.5→3.1.0, wxEVT_DPI_CHANGED 3.1.5→3.1.6. Fixed §1 build option names: wxUSE_STL_BASE_WXSTRING→wxUSE_STL, wxUSE_UTF8_LOCALE→wxUSE_UTF8_LOCALE_ONLY. Filled empty Anti-Pattern 2; §134 tab/typo cleanup.
 
