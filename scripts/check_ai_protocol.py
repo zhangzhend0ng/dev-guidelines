@@ -177,18 +177,19 @@ def check_verification_claims(text, mode):
         line.lower().startswith("verification run:") and line.split(":", 1)[1].strip()
         for line in text.splitlines()
     )
-    has_command_signal = verification_line_has_value or any(
-        signal in lowered
-        for signal in [
-            "python ",
-            "cmake",
-            "ctest",
-            "ninja",
-            "clang",
-            "gcc",
-            "msbuild",
-        ]
+    # Command evidence: a tool name must look like an INVOCATION, not a prose
+    # mention or a line-ending name-drop. Require the tool to be followed on
+    # the SAME LINE by an argument/path char ( '/', '.', '=', or a space then
+    # more non-space content). This blocks "will use cmake" (name-drop at end
+    # of a residual-risk line) and "the cmake build" (bare prose mention) while
+    # accepting "python scripts/validate.py", "cmake --build", "ctest --test-dir".
+    # Note: \s in lookahead would match the trailing newline, so we require a
+    # space followed by at least one more character on the same line.
+    tool = r"(python|python3|pytest|cmake|ctest|ninja|clang|gcc|g\+\+|msbuild|lldb|gdb)"
+    command_re = re.compile(
+        rf"\b{tool}(?=(?:[/.=]| +\S))"
     )
+    has_command_signal = verification_line_has_value or bool(command_re.search(lowered))
 
     if has_success_claim and not has_command_signal and not has_not_verified:
         return ["success claim without command evidence or NOT VERIFIED"]

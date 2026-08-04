@@ -30,7 +30,9 @@ The review report must reference at least one harness path (cpp/.../*.md)
 so the script can locate the harness file for cross-checks.
 
 Exit codes:
-    0 = always (advisory; signals are logged, never blocking)
+    0 = the requested scan ran (advisory; findings printed, logged only when
+       writing is enabled). Matches check_feedback_signals.py's advisory contract.
+    1 = usage error (e.g. missing review-report input file).
 """
 
 import argparse
@@ -41,6 +43,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 LOG_PATH = ROOT / "common" / "meta" / "harness-feedback-log.md"
+
+# Re-exported from pack_utils so all harness-walking scripts share one definition.
+from pack_utils import HARNESS_SKIP_DIRS  # noqa: E402
 
 # A harness path mention, e.g. cpp/memory/raii.md or common/code-review/review-checklist.md
 # A harness path mention. Accepts three wrapping styles seen in real reports:
@@ -88,14 +93,18 @@ def parse_harness_items(harness_path):
     item_nums = [int(m.group(1)) for m in re.finditer(r"^###\s+(\d+)\.", text, re.MULTILINE)]
     item_count = max(item_nums) if item_nums else 0
     # Source tiers: rows in Reference Sources table, second column "| R1 | N | ..."
-    source_tiers = re.findall(r"\|\s*[A-Z]\d+\s*\|\s*([N CAP])\s*\|", text)
-    return item_count, [t for t in source_tiers if t in "NCAP"]
+    # NOTE: char class is [NCAP] (N/C/A/P only). Do NOT write [N CAP] — the space
+    # inside makes it match {N, space, C, A, P}, accepting an empty tier cell.
+    source_tiers = re.findall(r"\|\s*[A-Z]\d+\s*\|\s*([NCAP])\s*\|", text)
+    return item_count, source_tiers
 
 
 def parse_harness_frontmatter_tier(harness_path):
     """Return the frontmatter `tier` value of a harness, or None."""
     text = harness_path.read_text(encoding="utf-8")
-    m = re.search(r'^tier:\s*"?\s*([N CAP])\s*"?\s*$', text, re.MULTILINE)
+    # NOTE: [NCAP], not [N CAP] (space would match an empty tier value). See
+    # parse_harness_items for the same fix.
+    m = re.search(r'^tier:\s*"?\s*([NCAP])\s*"?\s*$', text, re.MULTILINE)
     return m.group(1) if m else None
 
 
@@ -107,10 +116,9 @@ def audit_harness_tiers():
     for layering-and-dip). Distinct from per-review tier-mismatch detection,
     which catches a reviewer mis-tagging an item tier in a report.
     """
-    SKIP_DIRS = {".git", ".claudine", "archive", "templates", "docs", ".github"}
     for md_path in ROOT.rglob("*.md"):
         rel = md_path.relative_to(ROOT)
-        if rel.parts[0] in SKIP_DIRS:
+        if rel.parts[0] in HARNESS_SKIP_DIRS:
             continue
         text = md_path.read_text(encoding="utf-8")
         # Must be a harness with frontmatter
@@ -174,7 +182,8 @@ def detect_signals(report_text, harness_files):
                 yield (hid, "inoperable", f"item {item_num}", f"N/A: {rest.strip()[:100]}")
 
         # tier-mismatch: item says (N) but harness sources max tier is lower
-        tier_m = re.search(r"\*\*\(([N CAP])\)\*\*|\(([N CAP])\)", rest)
+        # [NCAP], not [N CAP] — see parse_harness_items for the space-in-class trap.
+        tier_m = re.search(r"\*\*\(([NCAP])\)\*\*|\(([NCAP])\)", rest)
         if tier_m:
             stated_tier = tier_m.group(1) or tier_m.group(2)
             if stated_tier in TIER_RANK:
@@ -205,29 +214,51 @@ def detect_inline_markers(report_text):
 
 
 def append_to_log(signals):
-    """Append detected signals to the feedback log. Returns count written."""
+    """Append detected signals to the feedback log. Returns count written.
+
+    Deduplicates against same-day entries that are byte-identical on the
+    (harness_id, signal, item_ref, detail) tuple, so re-running the audit
+    (e.g. via check_all.py) does not grow the log with duplicate blocks.
+    """
     if not signals:
         return 0
     today = date.today().isoformat()
+    existing = LOG_PATH.read_text(encoding="utf-8") if LOG_PATH.exists() else ""
     blocks = []
+    skipped = 0
     for hid, sig, item_ref, detail in signals:
-        block = (
+        # Fingerprint matches the block layout exactly (header → Signal →
+        # Scenario → Observation). Observation wording is stable for
+        # auto-detected signals, so matching the full 4-line prefix catches
+        # re-runs of the same audit finding without false-dedup'ing a
+        # genuinely different detail on the same harness/signal/day.
+        fingerprint = (
+            f"### {today} — {hid_to_log_id(hid)}, {item_ref}\n"
+            f"- **Signal:** {sig}\n"
+            f"- **Scenario:** auto-detected by check_review_signals.py\n"
+            f"- **Observation:** {detail}\n"
+        )
+        if fingerprint in existing:
+            skipped += 1
+            continue
+        blocks.append(
             f"### {today} — {hid_to_log_id(hid)}, {item_ref}\n"
             f"- **Signal:** {sig}\n"
             f"- **Scenario:** auto-detected by check_review_signals.py\n"
             f"- **Observation:** {detail}\n"
             f"- **Outcome:** auto-logged — verify and amend outcome if acted upon\n"
         )
-        blocks.append(block)
-    # Insert before the "## Maintenance" section if present, else append
-    text = LOG_PATH.read_text(encoding="utf-8") if LOG_PATH.exists() else ""
+    if not blocks:
+        return 0
     marker = "\n---\n\n## Maintenance"
     insertion = "\n".join(blocks)
-    if marker in text:
-        new_text = text.replace(marker, insertion + marker, 1)
+    if marker in existing:
+        new_text = existing.replace(marker, insertion + marker, 1)
     else:
-        new_text = text.rstrip() + "\n\n" + insertion
+        new_text = existing.rstrip() + "\n\n" + insertion
     LOG_PATH.write_text(new_text, encoding="utf-8")
+    if skipped:
+        print(f"({skipped} duplicate entr(y/ies) already logged today, skipped)")
     return len(blocks)
 
 
@@ -266,14 +297,14 @@ def main():
             print(f"  - {hid} ({path}): frontmatter tier ({fm_tier}) > max source tier ({src_letter})")
         if args.dry_run:
             print("\n(dry-run: not writing to log)")
-            return 1  # signal failure even in dry-run so check_all catches it
-        # Log as tier-mismatch signals
+            return 0
+        # Log as tier-mismatch signals (advisory; deduped by append_to_log).
         signals = [(hid, "tier-mismatch", "frontmatter",
                     f"audit: frontmatter tier ({fm_tier}) exceeds max source tier ({src_letter}); path={path}")
                    for hid, path, fm_tier, max_src in findings]
         written = append_to_log(signals)
         print(f"\nAppended {written} entr(y/ies) to {LOG_PATH.relative_to(ROOT)}")
-        return 1  # non-zero so check_all.py flags this as a failure to fix
+        return 0  # advisory: findings printed + logged, but never blocks the caller
 
     if not args.review_report:
         ap.error("review_report is required unless --audit-harnesses is given")

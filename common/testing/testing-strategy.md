@@ -25,6 +25,7 @@ related:
   - "common/debugging/fix-verification.md"
   - "common/planning/risk-and-verification-plan.md"
   - "common/testing/test-doubles.md"
+  - "common/code-review/ai-generated-code-failure-modes.md"
   - "cpp/testing/property-based-testing.md"
   - "common/testing/differential-oracle-testing.md"
   - "cpp/testing/mutation-testing.md"
