@@ -27,6 +27,7 @@ related:
   - "common/ai/ai-assisted-cpp-development.md"
   - "common/ai/prompt-injection-and-llm-security.md"
   - "common/testing/testing-strategy.md"
+  - "common/code-review/ai-generated-code-failure-modes.md"
   - "common/ci-cd/pipeline-patterns.md"
   - "common/documentation/documentation-standards.md"
 supersedes: []
