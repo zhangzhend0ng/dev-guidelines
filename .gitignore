@@ -20,3 +20,6 @@ __pycache__/
 
 # ZCode agent working artifacts
 .zcode/
+
+# Playwright MCP session logs
+.playwright-mcp/
