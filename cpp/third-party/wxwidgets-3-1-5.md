@@ -14,13 +14,13 @@ tier: "P"
 
 scope: "Avoid known pitfalls and limitations when using wxWidgets 3.1.5 across wxMSW, wxGTK, and wxOSX ports"
 
-version: "2026.07"
+version: "2026.08"
 
 status: "draft"
 
 stable_since: ""
 
-last_validated: "2026-07-18"
+last_validated: "2026-08-26"
 
 review_cycle: "12m"
 
@@ -61,6 +61,16 @@ based_on:
   - "[P] wxWidgets GitHub Issues — wxWebView Edge backend (#19814, #16862, #21455)"
 
   - "[P] wxWidgets 3.1.5 docs/doxygen/classwx_display.h — wxDisplay::GetPPI(), GetScaleFactor(), and GetDPIScaleFactor() DPI query APIs"
+
+  - "[P] wxWidgets 3.1.5 docs/msw/install.md, docs/gtk/install.md, docs/osx/install.md — platform-specific build instructions"
+
+  - "[P] wxWidgets GitHub Issues #19278, #24454, #22227 — CMake find_package with MinGW-w64, Xcode 8.3 i386 build failure"
+
+  - "[P] Snapmaker/OrcaSlicer GitHub Actions 'Build all' runs #32856432114, #32696369649 — real-world wxWidgets 3.1.5 cross-toolchain compile failures (wxString ?: ambiguity; constexpr wxMediaState out-of-range)"
+
+  - "[P] Snapmaker/OrcaSlicer GitHub Actions 'Build all' runs #32143560654, #32025650653, #31679936598 — Flatpak builds: 'wxWindowUpdateLocker was not declared in this scope' (declared in <wx/wupdlock.h>, missing explicit include)"
+
+  - "[P] wxWidgets 3.2.0 docs/changes.txt (3.2.0 release section, 2022-07-07) — fixes since 3.1.5 used as reverse evidence of 3.1.5 build defects"
 related:
 
   - "cpp/concurrency/thread-safety.md"
@@ -71,11 +81,17 @@ related:
 
   - "cpp/build/cmake-include-hygiene.md"
 
+  - "cpp/build/toolchain-and-compiler-flags.md"
+
   - "common/security/input-validation.md"
 
 supersedes: []
 
 changelog:
+  - "2026.08: Added R38 (3.2.0 changes.txt reverse evidence) — items in §137/§139/§140: no CMake config file before 3.2.0, wxOSX i386-by-default + no arm64, newer-toolchain warnings (clang 13/gcc 11/MSVC C++20), older Cairo/glibc build fixes"
+  - "2026.08: Added Section 132 item + R37 — OrcaSlicer Flatpak CI evidence: wxWindowUpdateLocker not declared in scope; verified declaration lives in <wx/wupdlock.h> (not wx/window.h); added include-hygiene item (wx/treebook.h no longer includes wx/treectrl.h)"
+  - "2026.08: Added Section 141 with real-world CI compile-failure evidence from Snapmaker/OrcaSlicer Build all runs (wxString ?: ambiguity on GCC/Clang vs MSVC; constexpr wxMediaState out-of-range on Xcode 26 clang); added reference label R36"
+  - "2026.08: Added Sections 137-140 (multi-platform compilation: wxGTK/wxMSW/wxOSX build-time requirements; cross-platform wx-config/CMake/ABI integration) from official install docs and GitHub build issues; added reference labels R32-R35"
   - "2026.07: Adversarial audit (Phase 1-4) against wxWidgets v3.1.5 source — corrected fabricated/nonexistent APIs (§52 SetAppNapEnabled, §54b MSWGetContentScaleFactor + GetDPIScaleFactor semantics, §61/§62 FromDIP signatures, §92 MSWEnableDarkMode, §96 wxFD_USE_LEGACY_DIALOG); corrected §131 wc_str/c_str build-conditional behavior and removed fabricated printf quote (N→P tier fix); fixed version attribution (wxBitmapBundle 3.1.5→3.1.6, wxActivityIndicator 3.1.5→3.1.0, wxEVT_DPI_CHANGED 3.1.5→3.1.6); fixed §1 build option names (wxUSE_STL_BASE_WXSTRING→wxUSE_STL, wxUSE_UTF8_LOCALE→wxUSE_UTF8_LOCALE_ONLY); filled empty Anti-Pattern 2; §134 tab/typo cleanup"
   - "2026.07: Audit fixes — Section 3 wxPaintDC removed from wxGLCanvas; single-backtick code fences converted; Wayland detection improved (XDG_SESSION_TYPE); Section 5 workaround clarified; Section 50 wording fixed (multi-resolution); Section 54b added (fractional DPI, GetDPIScaleFactor, wxDisplay, X11 GDK_SCALE, MSWGetContentScaleFactor); R31 reference added for wxDisplay DPI APIs; R8 restored, R9 removed; based_on and Reference Sources table updated"
   - "2026.07: Sections 131-136 added (ToUTF8 buffer lifetime UB, Freeze/Thaw, Custom widget paint, wxPopupTransientWindow, wxWebView Edge backend, ImGui+wxGLCanvas)"
@@ -3538,7 +3554,7 @@ std::string file_name = dialog.GetPath().utf8_string();
 
 **Rationale:** wxScopedCharBuffer / wxCharBuffer are RAII buffers that free their memory when destroyed. The official wxWidgets 3.1.5 docs (interface/wx/string.h) document the return types as build-conditional temporaries and warn against passing the conversion results through C varargs.
 
-### 132. Freeze()/Thaw() Batch Update and wxWindowUpdateLocker  **(P)** [R30]
+### 132. Freeze()/Thaw() Batch Update and wxWindowUpdateLocker  **(P)** [R30][R37]
 
 ```cpp
 wxWindow::Freeze() prevents screen updates to a window and all its children. Thaw() re-enables them. They are a critical performance optimization for bulk UI modifications. However, they are **not universally implemented** across all platforms and controls, and misuse can leave a window permanently frozen.
@@ -3547,6 +3563,10 @@ wxWindow::Freeze() prevents screen updates to a window and all its children. Tha
 - [ ] Always pair Freeze() and Thaw() exactly — they are reference-counted (nested calls require matching number of Thaw() calls) → **(P)** [R30]
 
 - [ ] Prefer wxWindowUpdateLocker for RAII-based Freeze/Thaw — it guarantees Thaw() even on exception/early return → **(P)** [R30]
+
+- [ ] `wxWindowUpdateLocker` is declared in `<wx/wupdlock.h>` (which itself includes `wx/window.h`) — include `wx/wupdlock.h` explicitly; `wx/window.h` does NOT pull it in. Real evidence: OrcaSlicer Flatpak builds failed with `'wxWindowUpdateLocker' was not declared in this scope` (TimelapseDownloadPopup.cpp:492, MixedFilamentBatchDialog.cpp:2715) while the identical code compiled on the ubuntu/macos/windows jobs of the same runs → **(P)** [R37]
+
+- [ ] General include hygiene: include the header that declares the wx class you use — 3.1.5 removed several transitive includes (e.g. `wx/treebook.h` no longer includes `wx/treectrl.h`) → **(P)** [R1]
 
 - [ ] Call Layout() after Thaw() if children were added/removed/shown/hidden while frozen → **(P)** [R30]
 
@@ -3716,9 +3736,215 @@ void OnPaint(wxPaintEvent&) {
 
 **Rationale:** wxGLCanvas 3.1 uses physical pixels on HiDPI (Section 3). ImGui expects framebuffer coordinates. The SetCurrent->SwapBuffers flow must be atomic within a single paint event.
 
+### 137. Multi-Platform Compilation: wxGTK (Linux) — Build-Time Requirements  **(P)** [R33]
+
+Building wxWidgets 3.1.5 with the wxGTK port requires the GTK development headers (not just the runtime libraries) and GNU make. The official `docs/gtk/install.md` documents the canonical configure+make flow and the feature switches that control which optional backends (EGL, webview, media, OpenGL) are compiled in — backends compiled in **by default** are the ones that surface as runtime instability in Section 2.
+
+- [ ] Install GTK dev headers, not just the runtime library — verify with `pkg-config --modversion gtk+-3.0` → **(P)** [R33]
+
+- [ ] GTK 3 is the default toolkit (`--with-gtk=3`); use `--with-gtk=2` only when GTK2 is explicitly required → **(P)** [R33]
+
+- [ ] Use GNU make (GNU/BSD/Solaris make are supported; other make programs may fail) → **(P)** [R33]
+
+- [ ] Configure failures: read the generated `config.log` for the root cause → **(P)** [R33]
+
+- [ ] EGL backend for wxGLCanvas is enabled **by default** when EGL is available — `--disable-glcanvasegl` to opt out (ties into the Wayland/EGL instability of Section 2) → **(P)** [R33]
+
+- [ ] wxWebView requires `webkit2gtk` dev packages; `--disable-webview` drops the dependency → **(P)** [R33]
+
+- [ ] wxMediaCtrl requires GStreamer dev packages; `--disable-mediactrl` drops the dependency → **(P)** [R33]
+
+- [ ] `--without-opengl` disables wxGLCanvas OpenGL support entirely → **(P)** [R33]
+
+- [ ] Cross-compiling is supported via the `--host` configure option → **(P)** [R33]
+
+- [ ] Static libraries: `--disable-shared`; single monolithic library: `--enable-monolithic` → **(P)** [R33]
+
+- [ ] `--disable-sys-libs` forces the built-in libpng/libjpeg/libtiff/expat to minimize external dependencies → **(P)** [R33]
+
+- [ ] Build in a separate directory from the sources, never inside the source tree → **(P)** [R33]
+
+- [ ] 3.1.5 has known Unix build failures on older Cairo/glibc systems (build fixes landed in 3.2.0) — on legacy distros verify against the 3.2.0 fix list or upgrade → **(P)** [R38]
+
+- [ ] Immediate crashes at app start: the library was compiled with different flags/compiler than the program, or headers/libraries from two different wxWidgets versions are mixed — uninstall stale installs and rebuild → **(P)** [R33]
+
+```sh
+# Verify the GTK3 development headers are present
+pkg-config --modversion gtk+-3.0
+
+# Build in a separate directory (never inside the source tree)
+mkdir buildgtk && cd buildgtk
+../configure --with-gtk=3 --disable-glcanvasegl
+make -j8
+```
+
+**Rationale:** docs/gtk/install.md is the authoritative build reference for the wxGTK port; the GTK3-default and EGL-by-default behaviors directly determine which Section 2 runtime pitfalls can occur on a given machine.
+
+### 138. Multi-Platform Compilation: wxMSW (Windows) — Build-Time Requirements  **(P)** [R32]
+
+The official `docs/msw/install.md` documents the two supported Windows build routes — MSVC `makefile.vc` and MinGW-w64/Cygwin `makefile.gcc` — plus the per-config `setup.h` model that most "no such file" / mismatched-config link errors trace back to.
+
+- [ ] Never extract or build under a path containing spaces (e.g. "C:\Program Files") — breaks makefiles and command-line tools → **(P)** [R32]
+
+- [ ] MSVC: `nmake /f makefile.vc` from a VS command prompt — parameters `BUILD=release`, `SHARED=1`, `TARGET_CPU=X64|ARM64|IA64` (unset = 32-bit x86) → **(P)** [R32]
+
+- [ ] MinGW-w64/Cygwin: `mingw32-make -f makefile.gcc` from `cmd.exe` — the makefile.gcc route does not work under a Unix shell (use configure under MSYS/Cygwin instead) → **(P)** [R32]
+
+- [ ] MinGW parallel build (`-jN`): run the `setup_h` target once first, then the full make — works around a makefile bug → **(P)** [R32]
+
+- [ ] MinGW C++11 builds: use `-std=gnu++11`, NOT `-std=c++11` — wxWidgets relies on GNU extensions that strict `-std=c++11` disables → **(P)** [R32]
+
+- [ ] The master `setup.h` lives at `include/wx/msw/setup.h` and is copied per build config under `lib/` — app include paths must point at the **config-specific** directory, never a hardcoded path (see Section 10) → **(P)** [R32]
+
+- [ ] `RUNTIME_LIBS=static` must NOT be combined with `SHARED=1` (DLL build) → **(P)** [R32]
+
+- [ ] DLL names embed compiler + version + vendor (e.g. `wxmsw311u_core_vc_custom.dll`); keep multiple builds side-by-side with `CFG=` / `COMPILER_PREFIX=` / `VENDOR=` → **(P)** [R32]
+
+- [ ] Multiple MSVC versions on one machine: set `wxCompilerPrefix=vc$(PlatformToolsetVersion)` in `wx_local.props` so build directories do not collide → **(P)** [R32]
+
+- [ ] MSVC apps auto-link via `#pragma comment(lib)`; MinGW/Cygwin apps must link the wx libraries explicitly (e.g. `wxmsw31ud_core.lib wxbase31ud.lib wxpngd.lib ...`) → **(P)** [R32]
+
+- [ ] App-side preprocessor defines: `__WXMSW__`, `_UNICODE`, `NDEBUG` (release), and `WXUSINGDLL` for DLL builds → **(P)** [R32]
+
+- [ ] MSVC: prepend `$WXWIN\include\msvc` to the include paths; other compilers append `<wx-lib-dir>\mswu[d]` → **(P)** [R32]
+
+- [ ] Alternative: `vcpkg install wxwidgets` — the vcpkg port is kept up to date by the Microsoft team and community → **(P)** [R32]
+
+- [ ] Building 3.1.5 with newer MinGW-w64 headers: `wxDECL_FOR_MINGW32_ALWAYS(wcsnlen)` collides with the header's own `wcsnlen` declaration (`redundant redeclaration`) — patch the header or use the provided `makefile.gcc` → **(P)** [R35]
+
+```sh
+# MSVC — 64-bit release DLL
+cd $WXWIN\build\msw
+nmake /f makefile.vc BUILD=release SHARED=1 TARGET_CPU=X64
+
+# MinGW-w64 — release static (from cmd.exe, not bash)
+cd $WXWIN\build\msw
+mingw32-make -f makefile.gcc BUILD=release
+```
+
+**Rationale:** docs/msw/install.md documents all makefile parameters and the setup.h per-config copy model; the wcsnlen conflict is a documented 3.1.5 + new-MinGW-w64 incompatibility (Stack Overflow 67496624).
+
+### 139. Multi-Platform Compilation: wxOSX (macOS) — Build-Time Requirements  **(P)** [R34][R1]
+
+The official `docs/osx/install.md` covers the Cocoa (wxOSX/Cocoa) build; `docs/changes.txt` pins the SDK/toolchain floor. Distributing shared builds on macOS has its own mandatory bundling step.
+
+- [ ] Xcode is required; the canonical flow is a separate build dir: `mkdir build-cocoa-debug && cd build-cocoa-debug && ../configure --enable-debug && make` → **(P)** [R34]
+
+- [ ] Minimum SDK is 10.11 and Xcode must be ≥ 7.2.1; deployment target down to 10.10.5 is supported (see Section 10) → **(P)** [R1]
+
+- [ ] 3.1.5 does not build with Xcode 8.3 for the i386 (32-bit) architecture — `-Wc++11-narrowing` error in `src/osx/carbon/graphics.cpp:917` (`CGSize s = { f, f };` double→CGFloat), and i386 was effectively dropped by the maintainers; build x86_64/ARM64 targets only (#22227) → **(P)** [R35]
+
+- [ ] 3.1.5's wxOSX Xcode project includes i386 by default and has no arm64 target — on Apple Silicon build x86_64 under Rosetta or pass explicit `-arch arm64` to configure; 3.2.0 removed i386 and added arm64 (Xcode 12+) → **(P)** [R38]
+
+- [ ] Shared libraries (default) for distribution: copy the wx dylibs into the app bundle and fix their load paths with `install_name_tool`; static (`--disable-shared`) needs no bundling step → **(P)** [R34]
+
+- [ ] Skip `make install` on macOS — use the full path to `wx-config` under the build directory instead → **(P)** [R34]
+
+- [ ] `build/osx/wxcocoa.xcodeproj` builds the library from Xcode; wxrc has no Xcode project — build it from the command line → **(P)** [R34]
+
+```sh
+mkdir build-cocoa-debug && cd build-cocoa-debug
+../configure --enable-debug
+make
+# Distribution with shared libs: copy dylibs into <App>.app/Contents/Frameworks
+# and fix load paths, e.g.
+# install_name_tool -id @executable_path/../Frameworks/libwx_osx_cocoa-3.1.dylib ...
+```
+
+**Rationale:** docs/osx/install.md documents the Cocoa build and the install_name_tool bundling step; changes.txt (3.1.5) sets the SDK 10.11 / Xcode 7.2.1 floor; issue #22227 documents the Xcode 8.3 i386 failure.
+
+### 140. Cross-Platform Build Integration: wx-config, CMake, and ABI/Link Consistency  **(P)** [R1][R32][R33][R35]
+
+Cross-platform compilation fails most often not inside the library build itself but where the consuming application and the library disagree on configuration — toolchain, debug/release, Unicode, static/shared, or which wx-config tree the flags come from.
+
+- [ ] wxMSW 3.1.5 static build with a non-MSVC compiler (e.g. MinGW) **without** wx-config: link `uxtheme.lib`, `shlwapi.lib`, and `version.lib` yourself — only wx-config/MSVC add them automatically → **(P)** [R1]
+
+- [ ] `webview` is not part of the default `wx-config --libs` output — request it explicitly: `wx-config --libs std,webview` (see Sections 8 and 10) → **(P)** [R1]
+
+- [ ] wxGTK: always take `wx-config --cxxflags --libs` from the **same** build tree the library came from — flags from a different build/config produce start-up crashes → **(P)** [R33]
+
+- [ ] Program and library must share the same compiler and debug/optimise/Unicode settings — mismatches cause asserts, link errors, or runtime corruption → **(P)** [R33]
+
+- [ ] CMake `find_package(wxWidgets)` fails to locate a MinGW-w64-built 3.1.5 tree (#19278) — it works for MSVC and Linux GCC; fall back to `find_package(wxWidgets CONFIG)` and adjust `CMAKE_LIBRARY_PATH` for system libraries (#24454) → **(P)** [R35]
+
+- [ ] MinGW-w64 cross builds generate no `wx-config` (#24454) — do not rely on it when cross-compiling → **(P)** [R35]
+
+- [ ] 3.1.5 ships no CMake package config file — `find_package(wxWidgets CONFIG)` works only from 3.2.0; on 3.1.5 use the FindwxWidgets module (with the MinGW-w64 caveats above) → **(P)** [R38]
+
+- [ ] Building 3.1.5 with newer toolchains emits warnings (clang 13, gcc 11, MSVC C++20, `-std=c++20`) that a `-Werror` CI turns into hard failures — fixed in 3.2.0; pin toolchains or add suppressions → **(P)** [R38]
+
+- [ ] Cygwin shared build exports the API via explicit `__declspec(dllexport)` — a missed symbol produces link errors; workaround: `LDFLAGS=-Wl,--export-all-symbols` → **(P)** [R33]
+
+- [ ] MSVS 2019 16.6 changed STL internals and broke pre-3.1.5 builds; 3.1.5 contains the fix — verify the toolset when using VS2019 16.6+ → **(P)** [R1]
+
+- [ ] CMake library targets since 3.1.4 are `wx::core`, `wx::base`, ... — never hardcode `wx/setup.h` paths (see Section 10) → **(P)** [R1]
+
+```sh
+# wxGTK — flags must come from the same build tree as the library
+g++ myfoo.cpp `wx-config --cxxflags --libs` -o myfoo
+
+# MinGW static wxMSW (no wx-config): add the system libs 3.1.5 requires
+g++ myfoo.cpp -lwxmsw31u_core -lwxbase31u -luxtheme -lshlwapi -lversion
+```
+
+**Rationale:** changes.txt (3.1.5) documents the uxtheme/shlwapi/version and webview-in-wx-config changes; docs/gtk/install.md documents the same-tree/same-flags rule; issues #19278/#24454 document the CMake+MinGW-w64 find_package gap.
+
+### 141. Real-World CI Compile Failures: wxString ?: Ambiguity and wxMediaState constexpr (Snapmaker/OrcaSlicer)  **(P)** [R36]
+
+Two real production CI failures against wxWidgets 3.1.5 (static, unicode, `-DwxNO_UNSAFE_WXSTRING_CONV`) in the Snapmaker/OrcaSlicer "Build all" workflow demonstrate cross-toolchain compile discrepancies that MSVC-only validation cannot catch.
+
+**Failure 1 — `?:` conditional with mixed `wxEmptyString`/`wxString` operands** (`run #32856432114`, 2026-08-25):
+
+```cpp
+// src/slic3r/GUI/Plater.cpp:9462 — compiles on MSVC (windows-2022), FAILS on GCC and AppleClang
+diameter_combo->SetValue(diam_str.empty() ? wxEmptyString : wxString(diam_str) + "mm");
+```
+
+- GCC 13 (ubuntu-24.04): `error: operands to '?:' have different types 'const wxChar*' {aka 'const wchar_t*'} and 'wxString'`
+- AppleClang (macos-14 arm64): `error: conditional expression is ambiguous; 'const wxChar *' (aka 'const wchar_t *') can be converted to 'wxString' and vice versa`
+- MSVC (windows-2022): the same translation unit compiles and the build succeeds.
+
+- [ ] Never put a raw `wxEmptyString` (or any `const wxStringCharType*`) and a `wxString` as the two arms of a `?:` — GCC/Clang reject the ambiguous conversion, MSVC silently accepts → **(P)** [R36]
+
+- [ ] Fix: unify both operands to `wxString` — `diam_str.empty() ? wxString(wxEmptyString) : wxString(diam_str) + "mm"` (or `wxString{}`) → **(P)** [R36]
+
+- [ ] MSVC-only CI is insufficient: this exact failure passed Windows and broke Linux + macOS — every wxWidgets CI matrix must build at least one GCC or Clang port → **(P)** [R36]
+
+- [ ] Enforce unsafe wxString-conversion rejection at compile time with `-DwxNO_UNSAFE_WXSTRING_CONV` (as OrcaSlicer does) — turns the §1/§131 runtime hazards into hard build errors on all toolchains → **(P)** [R36]
+
+**Failure 2 — out-of-range value forced into a `constexpr` wx enum** (`run #32696369649`, 2026-08-24, macos-26 / Xcode 26.6):
+
+```cpp
+// src/slic3r/GUI/wxMediaCtrl2.h:39 — app-side extension of wxMediaState via C-style cast
+static constexpr wxMediaState MEDIASTATE_BUFFERING = (wxMediaState) 6;
+```
+
+- AppleClang (Xcode 26.6): `error: constexpr variable 'MEDIASTATE_BUFFERING' must be initialized by a constant expression` — `integer value 6 is outside the valid range of values [0, 3] for the enumeration type 'wxMediaState'`
+- The project's `-Wno-error=enum-constexpr-conversion` flag is **GCC-only**: clang reports `warning: unknown warning option '-Werror=enum-constexpr-conversion'` and still emits the error.
+
+- [ ] Do not inject out-of-range values into a wx enum (`wxMediaState`, `wxKeyCode`, etc.) via C-style casts inside `constexpr` — newer AppleClang rejects what older compilers tolerated; store the extension as `static constexpr int` or a non-constexpr variable → **(P)** [R36]
+
+- [ ] `-Wno-error=enum-constexpr-conversion` is a GCC-only flag (GCC 13+): clang does not recognize it and treats the same condition as a hard error — never rely on it for cross-toolchain suppression → **(P)** [R36]
+
+```cpp
+// Bad — ambiguous ?: (GCC/Clang reject, MSVC accepts)
+diameter_combo->SetValue(diam_str.empty() ? wxEmptyString : wxString(diam_str) + "mm");
+
+// Good — both operands wxString
+diameter_combo->SetValue(diam_str.empty() ? wxString(wxEmptyString) : wxString(diam_str) + "mm");
+
+// Bad — out-of-range enum value in constexpr (Xcode 26 clang errors)
+static constexpr wxMediaState MEDIASTATE_BUFFERING = (wxMediaState) 6;
+
+// Good — keep the extension out of the enum's value space
+static constexpr int MEDIASTATE_BUFFERING = 6;   // compared via static_cast if needed
+```
+
+**Rationale:** both failures are reproduced in the public Snapmaker/OrcaSlicer "Build all" workflow logs (runs #32856432114 and #32696369649) against the wxWidgets 3.1.5 deps build (`found suitable version "3.1.5"`), compiled with `-std=gnu++17`, `-DwxNO_UNSAFE_WXSTRING_CONV`, static unicode, on wxGTK3/wxOSX ports. They are direct evidence for the toolchain-divergence warnings of Sections 1 and 140.
+
 ---
 
-### 137. Child Window Background Colour Inheritance (wxStaticText / wxPanel / wxStaticBitmap)  **(P)** [R13][R23]
+### 142. Child Window Background Colour Inheritance (wxStaticText / wxPanel / wxStaticBitmap)  **(P)** [R13][R23]
 
 When a wxStaticText, wxStaticBitmap, or wxPanel child is placed inside a coloured container (e.g. a white card StaticBox sitting on a gray dialog), the child does NOT inherit the parent's background colour on wxMSW. On wxOSX the child often picks up the parent bg transparently, so the bug only manifests on Windows — making it easy to miss during macOS-centric development.
 
@@ -3791,6 +4017,8 @@ lbl->SetForegroundColour(StateColor::darkModeColorFor(wxColour("#4A4A4A")));
 
 - [C++ Build System and Include Hygiene](../build/cmake-include-hygiene.md) — CMake + wxWidgets integration
 
+- [C++ Toolchain and Compiler Flags](../build/toolchain-and-compiler-flags.md) — compiler matrix, warning policy, reproducible toolchains
+
 - [C++ Const Correctness](../correctness/const-correctness.md) — wxString const correctness
 
 ---
@@ -3861,11 +4089,33 @@ lbl->SetForegroundColour(StateColor::darkModeColorFor(wxColour("#4A4A4A")));
 
 | R31 | P | wxWidgets 3.1.5 docs/doxygen/classwx_display.h; wxWindow::GetDPIScaleFactor() documentation | wxDisplay::GetPPI(), wxDisplay::GetScaleFactor(), GetDPIScaleFactor() per-monitor DPI queries | verified-2026 | 2026-07 |
 
+| R32 | P | wxWidgets 3.1.5 docs/msw/install.md | wxMSW build: makefile.vc/makefile.gcc, setup.h per-config copy, RUNTIME_LIBS/TARGET_CPU, app-side defines and linking | verified-2026 | 2026-08 |
+
+| R33 | P | wxWidgets 3.1.5 docs/gtk/install.md | wxGTK build: GTK3 default, dev packages, configure options (glcanvasegl/webview/mediactrl/opengl), GNU make, config.log, same-tree wx-config | verified-2026 | 2026-08 |
+
+| R34 | P | wxWidgets 3.1.5 docs/osx/install.md | wxOSX build: Cocoa, Xcode, separate build dir, bundle + install_name_tool for shared libs, wxcocoa.xcodeproj | verified-2026 | 2026-08 |
+
+| R35 | P | wxWidgets GitHub Issues #19278, #24454, #22227; Stack Overflow 67496624 | CMake find_package vs MinGW-w64, missing wx-config on mingw-cross, Xcode 8.3 i386 build failure, wcsnlen redeclaration | verified-2026 | 2026-08 |
+
+| R36 | P | Snapmaker/OrcaSlicer GitHub Actions "Build all" runs #32856432114 (2026-08-25), #32696369649 (2026-08-24) | Real-world wxWidgets 3.1.5 compile failures: Plater.cpp:9462 wxString ?: ambiguity (GCC13/AppleClang vs MSVC); wxMediaCtrl2.h:39 constexpr wxMediaState out-of-range (Xcode 26 clang); wxNO_UNSAFE_WXSTRING_CONV usage | verified-2026 | 2026-08 |
+
+| R37 | P | Snapmaker/OrcaSlicer GitHub Actions "Build all" runs #32143560654, #32025650653, #31679936598 (Flatpak aarch64 jobs, 2026-08); wxWidgets 3.1.5 include/wx/wupdlock.h | 'wxWindowUpdateLocker was not declared in this scope' (TimelapseDownloadPopup.cpp:492, MixedFilamentBatchDialog.cpp:2715) — wxWindowUpdateLocker is declared in <wx/wupdlock.h> (which includes wx/window.h, not vice versa); same code compiles on ubuntu/macos/windows | verified-2026 | 2026-08 |
+
+| R38 | P | wxWidgets 3.2.0 docs/changes.txt (3.2.0 release section, 2022-07-07) | Reverse evidence of 3.1.5 build defects: no CMake package config file (CONFIG mode only from 3.2.0); wxOSX Xcode project targets i386 by default and lacks arm64; warning fixes for clang 13 / gcc 11 / MSVC C++20; Unix build fixes for older Cairo/glibc | verified-2026 | 2026-08 |
+
 ---
 
 ## Changelog
 
-- 2026.07: Added §137 (Child Window Background Colour Inheritance — wxStaticText/wxPanel/wxStaticBitmap do not inherit parent bg on wxMSW) based on a real Snapmaker_Orca bug in `MixedFilamentBatchDialog.cpp` ("Plate"/"View" labels missing `SetBackgroundColour()`, leaked #F8F7F7 through on Windows while looking correct on macOS). References R13 (dark mode) and R23 (control semantics) reused — no new reference added.
+- 2026.08: Added R38 (3.2.0 changes.txt reverse evidence) — §137 older Cairo/glibc build fixes; §139 wxOSX i386-by-default + no arm64 target (Rosetta or explicit -arch arm64); §140 no CMake CONFIG file before 3.2.0, newer-toolchain warning fixes (clang 13/gcc 11/MSVC C++20).
+
+- 2026.08: Added Section 132 item + R37 — OrcaSlicer Flatpak CI evidence: wxWindowUpdateLocker not declared in scope (TimelapseDownloadPopup.cpp:492, MixedFilamentBatchDialog.cpp:2715); verified via 3.1.5 source that the class is declared in <wx/wupdlock.h> (which includes wx/window.h, not vice versa); added include-hygiene item (3.1.5 removed wx/treebook.h→wx/treectrl.h transitive include).
+
+- 2026.08: Added Section 141 — real-world CI compile-failure evidence from Snapmaker/OrcaSlicer "Build all" runs (wxString ?: ambiguity: GCC 13 + AppleClang reject, MSVC accepts, Plater.cpp:9462; constexpr wxMediaState out-of-range on Xcode 26 clang, wxMediaCtrl2.h:39; GCC-only -Wno-error=enum-constexpr-conversion). Added reference label R36.
+
+- 2026.08: Added Sections 137-140 (multi-platform compilation) covering wxGTK/wxMSW/wxOSX build-time requirements and cross-platform build integration (wx-config/CMake/ABI consistency). Sources: official docs/msw|gtk|osx/install.md, changes.txt build notes, GitHub issues #19278/#24454/#22227, Stack Overflow 67496624. Added reference labels R32-R35 and related link to cpp/build/toolchain-and-compiler-flags.md.
+
+- 2026.07: Added §142 (Child Window Background Colour Inheritance — wxStaticText/wxPanel/wxStaticBitmap do not inherit parent bg on wxMSW) based on a real Snapmaker_Orca bug in `MixedFilamentBatchDialog.cpp` ("Plate"/"View" labels missing `SetBackgroundColour()`, leaked #F8F7F7 through on Windows while looking correct on macOS). References R13 (dark mode) and R23 (control semantics) reused — no new reference added. Renumbered from §137 to §142 on merge to avoid collision with the multi-platform build sections.
 
 - 2026.07: Adversarial audit (Phase 1-4) against wxWidgets v3.1.5 source. Corrected fabricated/nonexistent APIs in §52 (SetAppNapEnabled), §54b (MSWGetContentScaleFactor; GetDPIScaleFactor returns double not int), §61/§62 (FromDIP signatures), §92 (MSWEnableDarkMode — added only in 3.3/master), §96 (wxFD_USE_LEGACY_DIALOG does not exist). Corrected §131 wc_str/c_str build-conditional behavior and removed a fabricated `printf("%s", utf8_str().data())` quote; downgraded two items from (N) to (P). Fixed version attribution: wxBitmapBundle 3.1.5→3.1.6, wxActivityIndicator 3.1.5→3.1.0, wxEVT_DPI_CHANGED 3.1.5→3.1.6. Fixed §1 build option names: wxUSE_STL_BASE_WXSTRING→wxUSE_STL, wxUSE_UTF8_LOCALE→wxUSE_UTF8_LOCALE_ONLY. Filled empty Anti-Pattern 2; §134 tab/typo cleanup.
 
