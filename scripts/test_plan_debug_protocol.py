@@ -88,6 +88,23 @@ def main():
         if result.returncode == 0:
             errors.append(f"bad inline fixture unexpectedly passed for {script.name}")
 
+    # iter 21 m2: leading-space section line must not self-contradict
+    # (shape passes on stripped lines; section_value used raw lines).
+    leading_space = chr(10).join([
+        u"Goal: Fix one bug", u" Harnesses: common/planning/task-decomposition.md", u"Scope: one file", u"Steps: edit", u"Verification: run test", u"Stop / escalate: if red",
+    ])
+    result = run_inline(PLAN_CHECK, leading_space)
+    if result.returncode != 0:
+        errors.append("leading-space section line rejected (strip inconsistency)")
+    if "empty required section" in result.stdout:
+        errors.append("self-contradicting empty-required-section error is back")
+
+    # iter 21 m1: budget error text is retired (shape check dominates).
+    seven_lines = leading_space.replace(" Harnesses:", "Harnesses:")
+    result = run_inline(PLAN_CHECK, seven_lines + chr(10) + "Extra: line")
+    if "budget" in result.stdout:
+        errors.append("retired budget error message still emitted")
+
     # BOM tolerance (iter 19): BOM before "Goal:" must not false-fail.
     with tempfile.TemporaryDirectory() as tmp:
         for script, source in GOOD:

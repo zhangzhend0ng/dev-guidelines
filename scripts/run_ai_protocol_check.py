@@ -6,9 +6,15 @@ Filename suffixes:
     *.patch.md, *.patch.output.md -> patch
     *.review.md, *.review.output.md -> review
     *.verification.md, *.verification.output.md -> verification
+
+--json output contract: exactly one file -> the checker's single JSON
+object (pass-through). Multiple files -> one JSON array of per-file
+objects. (Concatenating objects was invalid JSON — nothing could parse
+it, iter 21 m3.)
 """
 
 import argparse
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -38,6 +44,8 @@ def main():
 
     script = Path(__file__).resolve().parent / "check_ai_protocol.py"
     failures = 0
+    aggregate_json = args.json and len(args.files) > 1
+    payloads = []
 
     for file_name in args.files:
         path = Path(file_name)
@@ -45,15 +53,33 @@ def main():
         if not mode:
             print(f"ERROR: cannot infer mode from {path}", file=sys.stderr)
             failures += 1
+            if aggregate_json:
+                payloads.append(
+                    {"file": str(path), "mode": None, "pass": False,
+                     "errors": ["cannot infer mode from filename"]}
+                )
             continue
 
         cmd = [sys.executable, str(script), "--mode", mode, str(path)]
         if args.json:
             cmd.append("--json")
-        result = subprocess.run(cmd, check=False)
+        if aggregate_json:
+            result = subprocess.run(cmd, check=False, capture_output=True, text=True)
+            sys.stderr.write(result.stderr)
+            try:
+                payloads.append(json.loads(result.stdout))
+            except json.JSONDecodeError:
+                payloads.append(
+                    {"file": str(path), "mode": mode, "pass": False,
+                     "errors": ["invalid checker output"]}
+                )
+        else:
+            result = subprocess.run(cmd, check=False)
         if result.returncode != 0:
             failures += 1
 
+    if aggregate_json:
+        print(json.dumps(payloads, indent=2))
     sys.exit(1 if failures else 0)
 
 

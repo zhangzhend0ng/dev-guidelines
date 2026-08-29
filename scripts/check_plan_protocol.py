@@ -16,6 +16,10 @@ REQUIRED_SECTIONS = [
     "Stop / escalate:",
 ]
 
+# Design intent: plans are ≤8-line minimal documents
+# (docs/ai-evaluation-research-2026-08-04.md). The acceptance check is
+# stricter — check_exact_shape enforces exactly len(REQUIRED_SECTIONS)
+# lines — so no budget check exists in main() (iter 21 m1).
 LINE_BUDGET = 8
 FORBIDDEN_PATTERNS = [
     "chain of thought",
@@ -33,8 +37,11 @@ def read_input(path):
 
 
 def section_value(text, section):
+    # strip: shape checks operate on stripped lines (meaningful_lines); using
+    # raw lines here made "  Harnesses: x" pass the shape check yet report
+    # "empty required section" — a self-contradiction (iter 21 m2).
     for line in text.splitlines():
-        if line.startswith(section):
+        if line.strip().startswith(section):
             return line.split(":", 1)[1].strip()
     return ""
 
@@ -76,10 +83,10 @@ def main():
             errors.append(f"missing required section: {section}")
 
     lines = meaningful_lines(text)
-    if len(lines) > LINE_BUDGET:
-        errors.append(
-            f"{len(lines)} non-empty lines exceeds plan budget {LINE_BUDGET}"
-        )
+    # NOTE: no length-budget check here. LINE_BUDGET (8) is design intent,
+    # but check_exact_shape below enforces exactly 6 non-empty field lines
+    # and dominates any larger count — a budget error could never change the
+    # verdict, only add noise (iter 21 m1).
 
     errors.extend(check_exact_shape(lines))
 

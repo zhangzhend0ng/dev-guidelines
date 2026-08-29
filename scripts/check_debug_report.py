@@ -18,6 +18,9 @@ REQUIRED_SECTIONS = [
     "Residual risk:",
 ]
 
+# Design intent: debug reports stay small (≤12 lines). The acceptance check
+# is stricter — check_exact_shape's exact-line-count dominates — so no budget
+# check runs in main() (iter 21 m1, same fix as check_plan_protocol.py).
 LINE_BUDGET = 12
 FORBIDDEN_PATTERNS = [
     "probably fixed",
@@ -35,8 +38,10 @@ def read_input(path):
 
 
 def section_value(text, section):
+    # strip: shape checks operate on stripped lines; raw-line startswith made
+    # leading-space sections self-contradict (iter 21 m2, same as plan checker)
     for line in text.splitlines():
-        if line.startswith(section):
+        if line.strip().startswith(section):
             return line.split(":", 1)[1].strip()
     return ""
 
@@ -92,11 +97,9 @@ def main():
             errors.append(f"missing required section: {section}")
 
     lines = meaningful_lines(text)
-    if len(lines) > LINE_BUDGET:
-        errors.append(
-            f"{len(lines)} non-empty lines exceeds debug report budget {LINE_BUDGET}"
-        )
-
+    # NOTE: no length-budget check (see check_plan_protocol.py iter 21 m1) —
+    # check_exact_shape's exact-line-count dominates; a budget error could
+    # never change the verdict.
     errors.extend(check_exact_shape(lines))
 
     for pattern in FORBIDDEN_PATTERNS:

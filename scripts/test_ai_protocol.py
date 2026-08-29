@@ -4,6 +4,7 @@
 Good fixtures must pass. Bad fixtures must fail.
 """
 
+import json
 import subprocess
 import sys
 import tempfile
@@ -113,6 +114,48 @@ def test_bom(errors):
             errors.append("BOM'd good plan fixture failed protocol checks")
 
 
+WRAPPER = ROOT / "scripts" / "run_ai_protocol_check.py"
+
+
+def test_wrapper_json(errors):
+    """run_ai_protocol_check --json contract (iter 21 m3).
+
+    One file -> single JSON object (back-compat). Multiple files -> one
+    JSON array (concatenated objects were unparseable).
+    """
+    one = subprocess.run(
+        [sys.executable, str(WRAPPER), str(GOOD[0]), "--json"],
+        check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+    )
+    try:
+        payload = json.loads(one.stdout)
+    except json.JSONDecodeError:
+        errors.append("single-file --json is not a valid JSON object")
+    else:
+        if not isinstance(payload, dict):
+            errors.append("single-file --json must stay a single object")
+
+    many = subprocess.run(
+        [sys.executable, str(WRAPPER), *[str(p) for p in GOOD[:3]], "--json"],
+        check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+    )
+    try:
+        payload = json.loads(many.stdout)
+    except json.JSONDecodeError:
+        errors.append("multi-file --json is not a valid JSON document")
+    else:
+        if not (isinstance(payload, list) and len(payload) == 3):
+            errors.append("multi-file --json must be an array of 3 objects")
+
+    # aggregate mode must still count failures into the exit code
+    mixed = subprocess.run(
+        [sys.executable, str(WRAPPER), str(GOOD[0]), str(BAD[0]), "--json"],
+        check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+    )
+    if mixed.returncode != 1:
+        errors.append(f"aggregate --json with a bad fixture expected exit 1, got {mixed.returncode}")
+
+
 def main():
     errors = []
 
@@ -129,6 +172,7 @@ def main():
 
     test_evaluate(errors)
     test_bom(errors)
+    test_wrapper_json(errors)
 
     if errors:
         for error in errors:

@@ -1599,6 +1599,82 @@ patch PACKS_DIR+ROOT 后跑真 resolve_packs)。
 - m1/m2/m3(check_plan_protocol 判决死代码+strip 不一致;run_ai_protocol_check --json 多文档)
   → iter 21;m6 README 覆盖语义 → 文档轮。
 
+---
+
+## 迭代 21 — 判决死代码预算 + strip 自相矛盾 + --json 拼接非法 JSON(m1/m2/m3,双脚本同族)
+
+### 触发的理论缺口
+iter 17 扫描 minor×3。m1 在实施中升格:**LINE_BUDGET 判决死代码同族出现在两个脚本**
+(横向 grep:check_plan_protocol:79 与 check_debug_report:95 都被各自 check_exact_shape 的
+exact-行数支配,>6/>N 时 shape 必已报错 → budget 错误永不改变判决,只给弱模型消费者加噪声)。
+m2 同族双处:section_value 用裸行 startswith 而 shape 检查用 strip 后行 → 行首空格
+"shape 过但 empty section 报错"自相矛盾。
+
+### grep journal 结果(Step 1)
+`m1/m2/m3`(iter 17/20 backlog);iter 8(命令证据歧义——注意区分:LINE_BUDGET 判决死代码
+≠ 死代码不执行,它执行但产出永不起决定作用的错误消息;归类到"对称性/信号噪声"更准)。
+LINE_BUDGET=8 在 docs/ai-evaluation-research-2026-08-04.md:15 是设计意图(≤8 行极简)——
+历史冻结文档不改;代码里留常量+注释指向,删的是永不改变判决的检查。
+
+### 合法 shape 清单 + 覆盖状态(plan/debug 输入行)
+| Shape | 旧行为 | 新行为 |
+|-------|--------|--------|
+| 恰 N 行字段(合法) | pass | pass(不变) |
+| >N 行 | budget 错误 + shape 错误(双报) | 仅 shape 错误 |
+| 行首空格字段行 | **shape 过 + empty-section 错(自相矛盾)** | pass |
+| --json 单文件 | 单对象(合法) | 单对象(back-compat 保留) |
+| --json 多文件 | **拼接对象(非法 JSON,无消费者可解析)** | 单一 JSON 数组 |
+| 多文件含坏 fixture | exit 1 | exit 1(数组含 per-file 对象;回归断言) |
+
+### 初版方案(被推翻点)
+- 初版想"删 LINE_BUDGET 常量"→ 被 grep 推翻:研究文档引用它是设计意图,删常量=文档漂移。
+  改为:删检查、留常量+注释(设计意图与验收检查分离)。
+- run_ai_protocol_check 重构中写出 `if X if not Y else False:` 畸形条件(聚合模式漏计
+  failures)+ 丢 `result =` 赋值(UnboundLocalError)——**py_compile 抓不到逻辑错,套件抓到**。
+
+### 对抗审查结论(轻量自对抗,判据:机械+双套件覆盖)
+- 多文件 --json 数组、单文件单对象、聚合含坏 fixture exit 1:三断言进 test_ai_protocol。
+- 行首空格过 + 无 self-contradiction 文本 + 7 行计划无 "budget" 文本:进 test_plan_debug。
+
+### 数据流 hops(--json 输出)
+| Hop | 写者→读者 | ✓/✗ |
+|-----|-----------|-----|
+| 1 checker 单对象 | check_ai_protocol → wrapper 透传(单文件) | ✓ back-compat |
+| 2 wrapper 聚合 | 多文件 → JSON 数组 | ✓(json.loads 可解析,断言) |
+| 3 exit code | 任一文件失败 → 1 | ✓(含聚合模式,回归断言) |
+
+### 变种横向 grep
+LINE_BUDGET 全仓 3 处:check_ai_protocol:49(LINE_BUDGETS dict per-mode——**其 shape 是否
+exact?未在本轮核**记 backlog 一眼)、check_debug_report:21(同病已修)、check_plan_protocol:19
+(已修)。section_value 双处同修。
+
+### 改动文件
+- `scripts/check_plan_protocol.py`(删死检查 + section_value strip + 常量注释)
+- `scripts/check_debug_report.py`(同族三处)
+- `scripts/run_ai_protocol_check.py`(docstring 契约 + 聚合数组 + infer_mode None 也进数组)
+- `scripts/test_ai_protocol.py`(test_wrapper_json 3 组断言)
+- `scripts/test_plan_debug_protocol.py`(m1/m2 用例)
+
+### 测试证据(X/X,真实 exit code)
+- test_ai_protocol exit 0(含 wrapper-json 3 断言)✓;test_plan_debug exit 0(m1/m2 用例)✓
+- test_feedback / check_all / validate / gen_index 全 0 ✓
+
+### 过程意外 / 与预期偏差
+1. **Bash heredoc 写代码第 3 次事故**(`\\n` 被吃成真换行 → SyntaxError;`\\x` 同前)。
+   确立硬规则:**给 Python 文件写含转义的代码,只用 Edit 工具,不过 Bash heredoc**。
+   (iter 19 的 bytes([0xef...]) 规则扩展到 \n。)
+2. 初版 Edit 的注释与保留代码矛盾(说 "deliberately unused" 但检查还在)——回读自查抓到。
+   注释谎言比没注释更糟。
+3. 自己写的畸形条件表达式(聚合模式漏计 failures)——测试断言 exit 1 抓到。教训同 iter 16:
+   修复类断言必须覆盖"聚合模式仍计失败"这种跨分支语义。
+
+### Pattern Index 更新: 新增 dominated-check-removal | json-contract-array-vs-object
+### 遗留 backlog
+- [低] check_ai_protocol.py LINE_BUDGETS(:49)的 shape 是否 exact 行数支配(同族核实,一眼轮)。
+- [中] check_review_signals.py:172-174 orphan 误归因(producer 侧)。
+- m6 README 覆盖语义 → 文档轮。
+
+
 
 
 
