@@ -107,87 +107,101 @@ Keep each entry under 8 lines. If the finding needs more space, it belongs in a 
 - **Scenario:** harness-driven review of SnapmakerOrca PR #652 (mixed-filament dialog, GUI/preset changes) — two findings in one review where commit messages / PR Notes described content the commits did not actually contain.
 - **Observation:** (a) commit `78a15a001d` title/body claimed "add 0.2 Full Spectrum / Register new …0.2 nozzle preset" but `git show --stat` + `git ls-tree` proved the preset JSON was never staged (only an untracked `??` working-tree file) — feature's core deliverable missing. (b) merge commit `a0c9e5ca0c` stubbed `check_manual_filament_ratio()` to a no-op while the PR Notes claimed "the upstream …persistence was kept over this branch's earlier removal — upstream's version is more complete." review-checklist §3 (Correctness) and change-scope-control §4 (Review Boundary) caught the *symptom*, but no item frames the *root pattern*: verifying that stated diff content (commit msg / PR description) matches actual committed bytes. Reviewers who trust the description skip the `git show`/`ls-tree` check.
 - **Outcome:** recorded-pending — candidate new item ("commit message ↔ tree content consistency") for review-checklist §3 or workflow-standards; two distinct occurrences in one PR suggests non-rare. Not yet added.
-### 2026-08-06 — AGENTS, orphan
+### 2026-08-06 — orphan, orphan
 - **Signal:** gap
 - **Scenario:** auto-detected by check_review_signals.py
 - **Observation:** FAIL without Item framing: - **FAIL #1 (N)** 阻断：注释含事实性错误（竞争论证错误 + 失效行引用 + 臆造 dev-guidelines 章节号），会误导后续维护者。虽不改变运行时行为，但 harness 规
 - **Outcome:** auto-logged — verify and amend outcome if acted upon
+- **Outcome:** corrected 2026-08-30 (iter 23): misattributed by producer (harness_files[0]); real target unknown — unframed FAIL from a multi-harness review
 
-### 2026-08-06 — AGENTS, orphan
+### 2026-08-06 — orphan, orphan
 - **Signal:** gap
 - **Scenario:** auto-detected by check_review_signals.py
 - **Observation:** FAIL without Item framing: - **FAIL #2 (C)** 需处理：`tests/gui/` 忽略是架构决策，需明确文档化或改为入库。
 - **Outcome:** auto-logged — verify and amend outcome if acted upon
+- **Outcome:** corrected 2026-08-30 (iter 23): misattributed by producer (harness_files[0]); real target unknown — unframed FAIL from a multi-harness review
 
-### 2026-08-06 — AGENTS, orphan
+### 2026-08-06 — orphan, orphan
 - **Signal:** gap
 - **Scenario:** auto-detected by check_review_signals.py
 - **Observation:** FAIL without Item framing: - **FAIL #3 (C)** 需处理：行为变更需补充测试或 PR 手动验证说明。
 - **Outcome:** auto-logged — verify and amend outcome if acted upon
-### 2026-08-07 — AGENTS, orphan
+- **Outcome:** corrected 2026-08-30 (iter 23): misattributed by producer (harness_files[0]); real target unknown — unframed FAIL from a multi-harness review
+### 2026-08-07 — orphan, orphan
 - **Signal:** gap
 - **Scenario:** auto-detected by check_review_signals.py
 - **Observation:** FAIL without Item framing: - **FAIL #1 (C)**: 注释对 `darkModeColorFor` 的排他性声称失实（实现 + 既有用法三重反证），误导维护者。修注释即可。
 - **Outcome:** auto-logged — verify and amend outcome if acted upon
+- **Outcome:** corrected 2026-08-30 (iter 23): misattributed by producer (harness_files[0]); real target unknown — unframed FAIL from a multi-harness review
 
-### 2026-08-07 — AGENTS, orphan
+### 2026-08-07 — orphan, orphan
 - **Signal:** gap
 - **Scenario:** auto-detected by check_review_signals.py
 - **Observation:** FAIL without Item framing: - **FAIL #2 (C)**: badge 移入圆角 clip 是行为变更，border case（大半径/badge 被裁）未评估且注释动机薄弱。建议回退该步或补约束说明 + 实测。
 - **Outcome:** auto-logged — verify and amend outcome if acted upon
-### 2026-08-07 — common-code-review-checklist, orphan
+- **Outcome:** corrected 2026-08-30 (iter 23): misattributed by producer (harness_files[0]); real target unknown — unframed FAIL from a multi-harness review
+### 2026-08-07 — orphan, orphan
 - **Signal:** gap
 - **Scenario:** auto-detected by check_review_signals.py
 - **Observation:** FAIL without Item framing: - **FAIL (C)**: PR 描述没有附带 self-check 结果,也没有说明 `extract_model_colors` / `load_model_colors` 的调用方状态。从改
 - **Outcome:** auto-logged — verify and amend outcome if acted upon
+- **Outcome:** corrected 2026-08-30 (iter 23): misattributed by producer (harness_files[0]); real target unknown — unframed FAIL from a multi-harness review
 
-### 2026-08-07 — common-code-review-checklist, orphan
+### 2026-08-07 — orphan, orphan
 - **Signal:** gap
 - **Scenario:** auto-detected by check_review_signals.py
 - **Observation:** FAIL without Item framing: - **FAIL (C)** [R1]:
 - **Outcome:** auto-logged — verify and amend outcome if acted upon
+- **Outcome:** corrected 2026-08-30 (iter 23): misattributed by producer (harness_files[0]); real target unknown — unframed FAIL from a multi-harness review
 
-### 2026-08-07 — common-code-review-checklist, orphan
+### 2026-08-07 — orphan, orphan
 - **Signal:** gap
 - **Scenario:** auto-detected by check_review_signals.py
 - **Observation:** FAIL without Item framing: - **FAIL (C)**: 无新增单元测试。PR 引入了一个有状态的三分支(Level-2)决策与一个新的层重映射 Level-3,这些都是可被纯函数化的逻辑(类似 PR 此前 `build_mi
 - **Outcome:** auto-logged — verify and amend outcome if acted upon
+- **Outcome:** corrected 2026-08-30 (iter 23): misattributed by producer (harness_files[0]); real target unknown — unframed FAIL from a multi-harness review
 
-### 2026-08-07 — common-code-review-checklist, orphan
+### 2026-08-07 — orphan, orphan
 - **Signal:** gap
 - **Scenario:** auto-detected by check_review_signals.py
 - **Observation:** FAIL without Item framing: - **FAIL (A)**: Level-2 三分支注释存在 **误导** —— "Subsequent inheriting volumes that also need a (different
 - **Outcome:** auto-logged — verify and amend outcome if acted upon
+- **Outcome:** corrected 2026-08-30 (iter 23): misattributed by producer (harness_files[0]); real target unknown — unframed FAIL from a multi-harness review
 
-### 2026-08-07 — common-code-review-checklist, orphan
+### 2026-08-07 — orphan, orphan
 - **Signal:** gap
 - **Scenario:** auto-detected by check_review_signals.py
 - **Observation:** FAIL without Item framing: - **FAIL (C) — [Item 3] `extruder_remap`/`state_map` 的下标无显式上界守卫对 Level-2/3**:`state_map` 是 `std::map
 - **Outcome:** auto-logged — verify and amend outcome if acted upon
+- **Outcome:** corrected 2026-08-30 (iter 23): misattributed by producer (harness_files[0]); real target unknown — unframed FAIL from a multi-harness review
 
-### 2026-08-07 — common-code-review-checklist, orphan
+### 2026-08-07 — orphan, orphan
 - **Signal:** gap
 - **Scenario:** auto-detected by check_review_signals.py
 - **Observation:** FAIL without Item framing: - **FAIL (C)**: `extruder_remap` 声明为 `unordered_map<int, unsigned int>`(key=int,value=unsigned)。Leve
 - **Outcome:** auto-logged — verify and amend outcome if acted upon
+- **Outcome:** corrected 2026-08-30 (iter 23): misattributed by producer (harness_files[0]); real target unknown — unframed FAIL from a multi-harness review
 
-### 2026-08-07 — common-code-review-checklist, orphan
+### 2026-08-07 — orphan, orphan
 - **Signal:** gap
 - **Scenario:** auto-detected by check_review_signals.py
 - **Observation:** FAIL without Item framing: - **FAIL (A)**: PR 声称修两个 bug,但未声明 in-scope 函数清单,导致把死代码一并改了。
 - **Outcome:** auto-logged — verify and amend outcome if acted upon
+- **Outcome:** corrected 2026-08-30 (iter 23): misattributed by producer (harness_files[0]); real target unknown — unframed FAIL from a multi-harness review
 
-### 2026-08-07 — common-code-review-checklist, orphan
+### 2026-08-07 — orphan, orphan
 - **Signal:** gap
 - **Scenario:** auto-detected by check_review_signals.py
 - **Observation:** FAIL without Item framing: - **FAIL (A)** [R3]: diff 把"行为修复"(apply_batch_match_to_model 的 live 改动)与"对死代码的同步修改"(extract_model_co
 - **Outcome:** auto-logged — verify and amend outcome if acted upon
+- **Outcome:** corrected 2026-08-30 (iter 23): misattributed by producer (harness_files[0]); real target unknown — unframed FAIL from a multi-harness review
 
-### 2026-08-07 — common-code-review-checklist, orphan
+### 2026-08-07 — orphan, orphan
 - **Signal:** gap
 - **Scenario:** auto-detected by check_review_signals.py
 - **Observation:** FAIL without Item framing: - **FAIL (A) [R1] — 未使用参数**:`Print& print` 参数在 `apply_batch_match_to_model` 内完全未使用(函数用 `wxGetApp().m
 - **Outcome:** auto-logged — verify and amend outcome if acted upon
+- **Outcome:** corrected 2026-08-30 (iter 23): misattributed by producer (harness_files[0]); real target unknown — unframed FAIL from a multi-harness review
 
 ### 2026-08-26 — cpp-wxwidgets-3-1-5, general (multi-platform compilation under-coverage)
 - **Signal:** under-coverage

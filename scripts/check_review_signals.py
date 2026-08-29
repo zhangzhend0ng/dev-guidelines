@@ -163,15 +163,27 @@ def detect_signals(report_text, harness_files):
         except Exception:
             harness_meta[p] = (0, [])
 
+    def attribution_target():
+        """Target for signals whose report line names no harness.
+
+        Two-state honesty (iter 23): the SIGNAL is real, but the TARGET is
+        only known when the review scopes exactly one harness. Multi/empty
+        scope must not pin the finding to harness_files[0] — that forged
+        14 log entries (5 on "AGENTS", 9 on common-code-review-checklist)
+        and drove false re-review flags.
+        """
+        if len(harness_files) == 1:
+            return harness_files[0][0]
+        return "orphan"  # pseudo-target: parser-safe log id, means "unattributed"
+
     for line in lines:
         m = ITEM_LINE_RE.match(line)
         if not m:
             # Orphan FAIL check (no Item prefix)
             if ORPHAN_FAIL_RE.match(line):
-                # Only flag if there's at least one harness in scope
                 if harness_files:
-                    hid = harness_files[0][0]
-                    yield (hid, "gap", "orphan", f"FAIL without Item framing: {line.strip()[:100]}")
+                    yield (attribution_target(), "gap", "orphan",
+                           f"FAIL without Item framing: {line.strip()[:100]}")
             continue
 
         item_num, status, rest = m.group(1), m.group(2).upper(), m.group(3)
@@ -180,9 +192,8 @@ def detect_signals(report_text, harness_files):
         # inoperable: N/A with keyword
         if status in ("N/A", "NA", "N\\A"):
             if any(k in rest_lower for k in INOPERABLE_KEYWORDS):
-                # Attribute to nearest harness; we don't track per-line harness, use first
-                hid = harness_files[0][0] if harness_files else "unknown"
-                yield (hid, "inoperable", f"item {item_num}", f"N/A: {rest.strip()[:100]}")
+                yield (attribution_target(), "inoperable", f"item {item_num}",
+                       f"N/A: {rest.strip()[:100]}")
 
         # tier-mismatch: item says (N) but harness sources max tier is lower
         # [NCAP], not [N CAP] — see parse_harness_items for the space-in-class trap.

@@ -1754,6 +1754,85 @@ doc-drift 家族)。此为 iter 3 backlog [中] 的完整闭环。
 - [中] check_review_signals.py:172-174 orphan 误归因。
 - m6 README 覆盖语义。
 
+---
+
+## 迭代 23 — producer 误归因修复:orphan FAIL 不再伪造 target(两态决策,含历史改写)
+
+### 触发的理论缺口
+iter 18 backlog [中]。两态决策:misattributed 信号的 **SIGNAL 真实**(确有未按 Item 框架的
+FAIL)、**TARGET 未知**(报告行不点名 harness)——旧代码硬钉到 `harness_files[0][0]`,
+伪造了 14 条日志(5 条挂"AGENTS"——非 harness;9 条挂 ccc——实为协议级发现非其内容缺口),
+驱动假 re-review 旗标。同族第二处:inoperable N/A(:185,注释自承"use first")。
+
+### grep journal 结果(Step 1)
+`two-state-empty-input`(iter 16——同原则不同位点:这里是"目标不可观测"而非"数据不可观测");
+iter 18 F2 预留("修生产者归因使计数下降时,测试反向断裂"——本轮兑现测试同步)。
+
+### 合法 shape 清单 + 覆盖状态(信号 target 可知性)
+| Shape | 判别 | UNDERSTOOD? | 方案覆盖? |
+|-------|------|-------------|-----------|
+| 单 harness scope 报告 | len==1 | ✓(归因可靠推理) | ✓ 归因到该 harness |
+| 多 harness scope | len>1 | ✓ | ✓ "orphan" 伪目标 |
+| 空 scope | len==0 | ✓ | ✓ 维持跳过(既有行为,不扩) |
+| tier-mismatch 多目标 yield(:195-200) | 保守过归因,语义不同 | ✓ | 显式不动(逐 harness tier 比较是其价值) |
+
+### 退化输入×消费者矩阵
+| 退化输入＼消费者 | feedback-log | check_feedback summary | harness-evolution Item 3 决策 |
+|----------------|--------------|------------------------|------------------------------|
+| 旧:multi-scope orphan | 14 条假 target | ccc 9×/AGENTS 5× 假旗标 | 假 re-review 建议 |
+| 新:orphan 伪目标 | target 诚实未知 | orphan 14×gap 旗标(真) | 人可挖的未归因信号池 |
+
+### 初版方案(被推翻点)
+- 初版想"只修 producer,历史日志不动"→ 推翻:假旗标是**活跃误导输出**(summary 驱动
+  Item 3 决策),留着=继续撒谎。改:14 条历史条目 retarget(`— AGENTS, orphan` /
+  `— ccc, orphan` → `— orphan, orphan`)+ Outcome 更正注记。
+- Outcome 注记是否破坏 dedup 指纹?核实:fingerprint = header+Signal+Scenario+Observation
+  四行(:238-241),**Outcome 不在指纹内** → 注记安全(实证:audit dry-run 无重写)。
+- 逐条判读后才改:AGENTS 5 条观察全是 GUI PR FAIL(与 AGENTS.md 无关);ccc 9 条是协议级
+  发现(其中 2 条嵌了 [Item 3]/[R1] 引用却没匹配 ITEM_LINE_RE——FAIL 行格式变体,记 backlog)。
+  **没有机械批量改**,每条读过。
+
+### 对抗审查结论(轻量自对抗)
+- hid_to_log_id("orphan") 路径核实:文件不存在 → stem 分支 → "orphan" ✓ parser 安全。
+- retarget 后 producer 重跑同输入:新 header `— orphan, orphan` 与旧条目日期不同 → 无假去重。
+- 单 harness scope 保留归因:合理推断并注释理由(报告只覆盖一个 harness 时,未框架 FAIL
+  大概率属于它)。
+
+### 数据流 hops(信号 target)
+| Hop | 写者→读者 | ✓/✗ |
+|-----|-----------|-----|
+| 1 detect_signals yield | attribution_target() → append_to_log | ✓ |
+| 2 log 条目 header | producer → check_feedback parser | ✓(orphan 可解析) |
+| 3 summary 旗标 | summary → Item 3 决策 | ✓(假旗标清除) |
+| 4 历史条目 | 14 条 retarget + 注记 | ✓(audit dry-run 零重写) |
+
+### 变种横向 grep
+harness_files[0] 全仓出现:仅 detect_signals 两处(均已改);hid_to_log_id 的 tool/ 前缀分支
+不受影响。FAIL 行格式变体(嵌 Item 引用不匹配 ITEM_LINE_RE)= 新 backlog [低]。
+
+### 改动文件
+- `scripts/check_review_signals.py`(attribution_target() 两态规则 + 注释)
+- `common/meta/harness-feedback-log.md`(14 条 retarget + Outcome 更正注记)
+- `scripts/test_feedback_signals.py`(orphan>=10 / AGENTS 绝迹 / 旗标名断言更新)
+
+### 测试证据(X/X,真实 exit code)
+- check_feedback:orphan **14×gap FLAGGED**,ccc/AGENTS 无旗标 ✓;total 24 守恒 ✓
+- audit --dry-run:无 tier inflation、零重写 ✓;test_feedback exit 0(新断言)✓
+- ai/pd/check_all/validate/gen_index 全 0 ✓;--related 57(守恒)✓
+
+### 过程意外 / 与预期偏差
+1. Edit 遇 "File has been modified since read"(本会话首次)——前一轮 pack_utils Edit 改过
+   同文件的行号状态。重读后再改,**冲突检测是保障不是阻碍**。
+2. Retarget 后 summary 的 re-review 建议从"ccc/AGENTS(假)"变为"orphan:14×(真)"——
+   修复让旗标数没变少但语义翻转:给人挖的信号池,不是给 harness 定罪的判决。
+
+### Pattern Index 更新: 新增 unknown-target-two-state | forged-attribution
+### 遗留 backlog
+- [低] FAIL 行格式变体(嵌 [Item N]/[R1] 引用不匹配 ITEM_LINE_RE → 误判 orphan)——观察 2 例。
+- [中] 57 条单向 related 清偿。
+- m6 README 覆盖语义;[低] LINE_BUDGETS 支配性。
+
+
 
 
 

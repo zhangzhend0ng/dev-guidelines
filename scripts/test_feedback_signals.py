@@ -123,11 +123,15 @@ def main():
     # covered by the synthetic sample above instead.
     if "orphan" not in orphan_items:
         errors.append(f"real log missing orphan qualifier; got {sorted(orphan_items)}")
-    ccc = [e for e in entries
-           if e["harness"] == "common-code-review-checklist" and e["signal"] == "gap"]
-    if len(ccc) < 3:
-        errors.append(f"common-code-review-checklist gap signals {len(ccc)} < 3 "
-                      "(re-review trigger must fire on current log)")
+    # iter 23: orphan signals are retargeted to the "orphan" pseudo-target
+    # (unframed FAILs from multi-harness reviews); ccc/AGENTS no longer
+    # receive misattributed entries. Lower bound: append-only log.
+    orphan_e = [e for e in entries if e["harness"] == "orphan" and e["signal"] == "gap"]
+    if len(orphan_e) < 10:
+        errors.append(f"orphan pseudo-target gap signals {len(orphan_e)} < 10 "
+                      "(retargeted entries lost by the parser?)")
+    if any(e["harness"] == "AGENTS" for e in entries):
+        errors.append("misattributed 'AGENTS' target resurfaced in the log")
     flagged = subprocess.run(
         [sys.executable, str(SCRIPT), "--json"],
         check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
@@ -138,8 +142,10 @@ def main():
     if payload.get("unparsed_headers") != 0:
         errors.append("CLI JSON reports unparsed headers on healthy log")
     names = {f["harness"] for f in payload.get("flagged_for_rereview", [])}
-    if "common-code-review-checklist" not in names:
-        errors.append("common-code-review-checklist not flagged_for_rereview")
+    if "orphan" not in names:
+        errors.append("orphan pseudo-target not flagged_for_rereview")
+    if "common-code-review-checklist" in names or "AGENTS" in names:
+        errors.append("misattributed re-review flag resurfaced (ccc/AGENTS)")
 
     if errors:
         for error in errors:
