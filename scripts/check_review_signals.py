@@ -120,7 +120,10 @@ def audit_harness_tiers():
         rel = md_path.relative_to(ROOT)
         if rel.parts[0] in HARNESS_SKIP_DIRS:
             continue
-        text = md_path.read_text(encoding="utf-8")
+        # utf-8-sig: a leading BOM would fail the startswith("---") gate below
+        # and silently exclude the harness from the audit (see validate.py
+        # parse_frontmatter for the same fix).
+        text = md_path.read_text(encoding="utf-8-sig")
         # Must be a harness with frontmatter
         if not text.startswith("---"):
             continue

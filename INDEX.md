@@ -126,6 +126,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | common-documentation-standards | [Documentation Standards Checklist](common/documentation/documentation-standards.md) | common | C | draft | 2026.06 |
+| common-output-language | [Output Language Convention](common/documentation/output-language.md) | common | P | draft | 2026.07 |
 
 ### functions
 
@@ -225,6 +226,14 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | common-test-doubles | [Test Doubles Taxonomy and Selection Checklist](common/testing/test-doubles.md) | common | C | draft | 2026.06 |
 | common-testing-strategy | [Testing Strategy Checklist](common/testing/testing-strategy.md) | common | C | draft | 2026.06 |
 | python-pytest-patterns | [pytest Patterns Checklist](python/testing/pytest-patterns.md) | python | C | draft | 2026.06 |
+
+### third-party
+
+| ID | Title | Language | Tier | Status | Version |
+|----|-------|----------|------|--------|---------|
+| cpp-qt6-core | [Qt 6 C++ Core Pitfalls, Limitations, and Best Practices Checklist](cpp/third-party/qt6-core.md) | cpp | P | draft | 2026.07 |
+| cpp-qt6-qml | [Qt 6 QML Pitfalls, Limitations, and Best Practices Checklist](cpp/third-party/qt6-qml.md) | cpp | P | draft | 2026.07 |
+| cpp-wxwidgets-3-1-5 | [wxWidgets 3.1.5 Pitfalls, Limitations, and Best Practices Checklist](cpp/third-party/wxwidgets-3-1-5.md) | cpp | P | draft | 2026.08 |
 
 ### tooling-process
 

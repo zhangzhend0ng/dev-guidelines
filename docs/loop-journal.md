@@ -1132,3 +1132,79 @@ replace 先例;check_review_signals.py:120 仅用 parts[0](OS 无关 tuple)。**
 - iter 15 必做:BOM 容错(utf-8-sig)→ INDEX 78→82 行 + validate 首次真实检查 4 个 BOM harness。
 - iter 1-13 backlog 不变。
 
+---
+
+## 迭代 15 — BOM frontmatter:4 个 harness 在所有 OS 上被静默排除(validate+index 双盲区)
+
+### 触发的理论缺口
+死代码/假满分(iter 14 REFUTE [major-2] 移交):BOM 在 `---` 前 → `re.match(r"^---...")`
+锚定 pos 0 永不匹配 → wxwidgets-3-1-5/qt6-core/qt6-qml/output-language 四个 harness
+**从未被 validate 校验、从未进 INDEX**。f99ab5a 的 255 行 wxwidgets 内容在 INDEX 里不可见,
+`--check` 还绿——双重假象。
+
+### grep journal 结果(Step 1)
+`bom-frontmatter-exclusion`(iter 14 Pattern Index 新增,立即兑现)。Producer 全集 grep:
+全仓恰 3 处 frontmatter 解析/门控(validate.py:43、generate_index.py:31、
+check_review_signals.py:125),无第 4 处;check_review_signals.py:91/104 的正则
+(`^###\d`/`^tier:` MULTILINE)本身 BOM 免疫。
+
+### 合法 shape 清单(harness .md frontmatter 可解析性)
+| Shape | 判别 | UNDERSTOOD? | 方案覆盖? |
+|-------|------|-------------|-----------|
+| plain `---` 开头 | 多数 78 文件 | ✓ | ✓(行为不变) |
+| BOM+`---` | 4 文件 | ✓ | ✓(utf-8-sig 收编) |
+| 无 frontmatter/坏 YAML | 非 harness 文件 | ✓ | ✓(设计内排除,不变) |
+| CRLF 行尾 | `\s*\n` 兼容 | ✓ | ✓(不受影响) |
+| UTF-16 文件 | 无此 shape | n/a | 显式不处理(无实例) |
+
+### 初版方案(被推翻点)
+无独立 REFUTE——iter 14 的 REFUTE 已对 BOM 修法做过对抗审查("唯一值得加的正确性扩展,
+须显式决策"),本轮按其触点清单执行 + 实证协议。**自证风险已知**(skill 已知结构局限),
+实证兜底:改动前/后 harness 计数 78→82、4 文件逐个进入 validate、全 suite 真实 exit code。
+
+### 对抗审查结论(实证协议代替)
+- utf-8-sig 是超集解码:BOM 无文件逐字节一致 → 78 个既有文件零回归(实测 validate 0)。
+- REFUTE 预警"4 文件首次受检可能冒新 error"→ 实测 **0 新 error**(四文件干净)。
+- 无 MATH-no-op 风险:读入侧单点改,无下游重映射。
+
+### 修订方案(采纳)
+3 处读入点 `encoding="utf-8-sig"` + 注释(不strip BOM 写回——文件保持原样,解析容错,
+避免无谓 diff 噪声;未来编辑器再写 BOM 也不再复发)。
+
+### 数据流 hops(harness 文件 → 解析 → 消费)
+| Hop | 写者→读者 | ✓/✗ |
+|-----|-----------|-----|
+| 1 parse_frontmatter(validate) | harness → 校验集 | ✓(82) |
+| 2 parse_frontmatter(generate_index) | harness → INDEX 行 | ✓(82) |
+| 3 startswith("---") gate(check_review_signals audit) | harness → tier 通胀审计 | ✓(utf-8-sig) |
+
+### 变种横向 grep
+其他 BOM 产物:INDEX.md 自身带 BOM(生成器 read/write utf-8 原样透传,GitHub 渲染无碍,
+**显式不改**——改它会制造无谓 diff,且无消费者受损)。scripts/*.py 无 BOM。
+
+### 改动文件
+- `scripts/validate.py`(parse_frontmatter utf-8-sig + 注释)
+- `scripts/generate_index.py`(同上)
+- `scripts/check_review_signals.py`(audit 循环 read_text utf-8-sig + 注释)
+- `INDEX.md`(重生成,82 行,+third-party/qt6/wxwidgets/output-language)
+
+### 测试证据(X/X,真实 exit code)
+- py_compile 3 脚本 OK ✓
+- find_harnesses 78 → **82** ✓;4 文件逐个确认在 keys ✓
+- validate exit 0(4 文件首次受检,0 新 error)✓
+- `gen_index --check` exit 0 ✓;check_all exit 0 ✓;meta-tests 0/0 ✓
+- INDEX autogen rows **82**;wxwidgets 行出现(posix 链接)✓;反斜杠计数 0 ✓
+
+### 过程意外 / 与预期偏差
+1. **Edit 工具吞行事故**:改 check_review_signals 时 old_string 含 `if not text.startswith("---"):`
+   而 new_string 漏掉该行 → 门控被删、孤儿 `continue`(若不回读核实,audit 对所有文件
+   无条件 continue = 新假满分)。**回读抓到,立即修复**。教训:多行 Edit 后必须回读关键
+   控制流区域(不能只信"edit 成功")。
+2. REFUTE 预警的新 error 未出现(4 文件干净)——预警属实但方向偏保守,如实记录。
+
+### Pattern Index 更新: N/A(bom-frontmatter-exclusion 已于 iter 14 登记,本轮为该条目的修复落地)
+### 遗留 backlog
+- iter 16 起按计划(recommend_tier 两态决策)。
+- INDEX.md 自身 BOM:显式不改(无消费者受损;改=无谓 diff)。
+
+

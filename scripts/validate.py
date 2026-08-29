@@ -40,7 +40,10 @@ VALID_LANGUAGES = {"common", "cpp", "python", "go", "rust"}
 
 
 def parse_frontmatter(filepath):
-    with open(filepath, "r", encoding="utf-8") as f:
+    # utf-8-sig: strip UTF-8 BOM if present. A BOM before the opening "---"
+    # makes the ^--- anchor fail => harness silently excluded from ALL
+    # validation. BOM-less files decode identically.
+    with open(filepath, "r", encoding="utf-8-sig") as f:
         content = f.read()
     match = re.match(r"^---\s*\n(.*?)\n---\s*\n", content, re.DOTALL)
     if not match:
