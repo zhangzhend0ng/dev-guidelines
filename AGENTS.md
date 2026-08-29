@@ -11,7 +11,7 @@ You are in the `dev-guidelines` repository. Cross-project shared development gui
 | Create a new harness | [Template](templates/harness.template.md) + [Contributing Guide](CONTRIBUTING.md) |
 | Understand the methodology | [concepts/](concepts/01-harness-methodology.md) — harness philosophy + tier system |
 | Govern harness lifecycle & evolution | [common/meta/harness-evolution.md](common/meta/harness-evolution.md) — when to promote, deprecate, split, or challenge |
-| Look up an authoritative source | [references/sources.md](references/sources.md) — N/C/A registry (29 entries) |
+| Look up an authoritative source | [references/sources.md](references/sources.md) — N/C/A registry |
 | Use a prompt template | [prompts/](prompts/code-review-with-harness.md) — AI code review + harness creation |
 | Use a weak/local/domestic model | [Weak Model Workflow](prompts/weak-model-workflow.md) + [Model Capability](common/ai/model-capability-and-instruction-adherence.md) |
 | Validate all harnesses | `python scripts/validate.py --json` |

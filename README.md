@@ -4,7 +4,7 @@ Cross-project shared development guidelines and checklists, for use across all c
 
 ## What's Inside
 
-**65 harnesses** live in the tree today, covering C++ correctness, testing, debugging, planning, and language-agnostic security/error-handling.
+Harnesses live in the tree covering C++ correctness, testing, debugging, planning, and language-agnostic security/error-handling — see [INDEX.md](INDEX.md) for the generated, always-current count and catalog.
 **5 more** are scheduled for Phase 2 (undefined behavior, exception safety, move semantics, concurrency, object lifetime).
 
 Each harness is a focused decision document that breaks down a single topic into 5-10 actionable checklist items.
@@ -18,7 +18,7 @@ dev-guidelines/
 ├── cpp/              C++ specific (functions, memory, correctness, lifetime, concurrency, ...)
 ├── concepts/         Harness methodology and authority system explainers
 ├── prompts/          AI prompt templates (code review with harness, create new harness)
-├── references/       Authoritative source registry (29 entries)
+├── references/       Authoritative source registry (N/C/A tiers)
 ├── scripts/          Validation and index generation (Python 3.10+)
 ├── templates/        Harness and language-pack templates
 ├── docs/specs/       Design specifications

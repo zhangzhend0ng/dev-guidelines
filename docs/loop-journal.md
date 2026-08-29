@@ -2082,6 +2082,38 @@ item 2/3)全部靠对抗循环撞见。结构性缓解留给 harness-evolution �
 - [信息] staleness 主波 2027-05/06。
 - [低] spec 6.3 CI 步骤清单未含 --related advisory 步骤(workflow 文件为准,收益低不追)。
 
+---
+
+## 迭代 31 — 宣称 vs 现实:AGENTS/README 数字宣称全数腐烂(去计数化修复)
+
+### 触发的理论缺口
+skill Rationalization Table:"journal 里写了 X,那就是 X —— 数字类陈述复核一手源"。
+本轮把该规则指向**导航文档**:AGENTS.md 宣称 registry "29 entries"(实际 **37** 行,漂移 8);
+README 宣称 "**65 harnesses**"(实际 **82**——BOM 修复后 +4,历史增量 +13)。
+
+### 审计结果(全量)
+| 宣称 | 一手源 | 裁决 |
+|------|--------|------|
+| INDEX static 8 链接 | 8/8 存在 | ✓ |
+| AGENTS "29 entries" | sources.md 37 行 | **DRIFT → 去计数** |
+| README "65 harnesses" | find_harnesses=82 | **DRIFT → 去计数**(指向 INDEX 生成目录,天然保鲜) |
+| README "(29 entries)" 树注 | 37 | **DRIFT → 去计数** |
+| README Python 3.10+ | CI pins 3.10 | ✓ |
+| harness 82 vs INDEX autogen 82 | generator | ✓ MATCH |
+| journal "75 harness"(iter 0) | 冻结史志 | 不改(史志不是宣称) |
+
+### 修复原则
+**导航文档不写会腐烂的数字**——计数留给生成物(INDEX.md autogen zone,由 --check 守护)。
+指针保留,数字删除;README 的 harness 计数改指向 INDEX。
+
+### 测试证据
+- validate/gen_index/check_all exit 0 ✓(AGENTS/README 非受检对象,无回归面)
+
+### Pattern Index 更新: 新增 prose-counts-rot
+### 遗留 backlog
+- [信息] staleness 主波 2027-05/06;[低] spec 6.3 步骤清单。
+
+
 
 
 
