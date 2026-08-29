@@ -2019,6 +2019,36 @@ CI(全步骤序列)+ eval 操作员工作流(run_eval scaffold → 填输出 →
 ### 遗留 backlog
 - [信息] staleness 主波 2027-05/06(见 iter 26)。
 
+---
+
+## 迭代 29 — 元审查:用仓库自己的 harness(ai-generated-code-failure-modes)审本会话自己的 diff
+
+**Part A(适用 harness)**:common/code-review/ai-generated-code-failure-modes.md(tier A,
+iter 12 新增,scope 正是"AI 写的、编译过、测试绿、但可能错"的代码——本会话 15 个 commit
+全是 AI 写的,完美适用)。**Part B 逐项**:
+
+| 项 | tier | 判定 | 证据(file:line / 实测) |
+|----|------|------|------------------------|
+| 1 假满分/退化输入 | (N) | **PASS** | 每轮 shape 表入账;新增成功样输出反向追源:related [] (validate.py check_related_bidirectionality)、warnings_count=0、attribution_target——均为真实成功非伪装;iter 14/16/18 的三个旧假满分已修 |
+| 2 单层修复 | (N) | **FAIL→已补救** | iter 15 BOM 修 3 处漏同语义兄弟 → iter 17 扫描抓到 → iter 19 补 9 处 + 8 处免疫有因。**诚实记录:本会话真实发生过单层修复,批内被自己的扫描轮抓获** |
+| 3 承诺契约不兑现 | (N) | **FAIL→本轮修** | evaluate docstring 承诺 exit 1(有 case 失败)但**无测试覆盖**;补:坏 fixture 单 case 目录 → exit 1 断言(test_ai_protocol test_evaluate)。argparse flag 全被读 ✓;check_feedback docstring 契约 iter 18 已同步 ✓ |
+| 4 阈值无出处 | (C) | **PASS** | 新常量均带注释(LINE_BUDGET 指向研究文档、threshold≥1 守卫带理由、orphan 伪目标带两态说明);check_stale 360 天月为既有近似,iter 26 记录 |
+| 5 不可失败测试 | (C) | **FAIL→本轮补证** | iter 25 leading-space 测试是**修后才加**,缺 red-state 证据;本轮补:旧提取函数在 fixture 上返 ''(实证输出 repr '')→ 旧代码必发 empty-section 错 → 测试判别性成立。其余新测试逐一过变异审问(空目录 exit 2/registry 拒绝/数组契约/BOM——变异任一对应修复即红) |
+| 6 状态描述漂移 | (A) | **PASS(带事故)** | 本会话 3 次现状描述错(iter 16 rglob、iter 22 grep 姿势、iter 14 oracle)——全被 REFUTE/实证当轮拦截并记录;流程现状:关键现状主张一律实测 |
+
+**Verdict:PASS with remediations**——两项 FAIL 均为本轮修补;一项单层修复事故批内自查捕获。
+元结论:harness 抓到了循环自己的真实漏洞(exit 1 无测试、判别性证据缺失)——**产品在
+自己的生产者身上有效**。
+
+### 测试证据
+- test_ai_protocol exit 0(+evaluate exit-1 断言)✓;旧提取函数反证实验(repr '')✓
+- check_all exit 0 ✓
+
+### Pattern Index 更新: 新增 dogfood-harness-on-own-diff | red-state-retro-evidence
+### 遗留 backlog
+- [信息] staleness 主波 2027-05/06(见 iter 26)。
+
+
 
 
 

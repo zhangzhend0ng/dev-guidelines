@@ -96,6 +96,19 @@ def test_evaluate(errors):
         if reg.returncode != 2 or "recommended_tier" not in reg.stderr:
             errors.append(f"registry update with tier-less report expected exit 2, got {reg.returncode}")
 
+    # exit 1 = cases evaluated, at least one failed (documented contract,
+    # iter 29 item-3 audit found it untested). Copy one bad fixture into an
+    # otherwise-empty dir so evaluate has exactly one case, which fails.
+    with tempfile.TemporaryDirectory() as tmp:
+        case_dir = Path(tmp) / "cases"
+        case_dir.mkdir()
+        (case_dir / BAD[0].name).write_bytes(BAD[0].read_bytes())
+        failing = run_eval(case_dir, "--json")
+        if failing.returncode != 1:
+            errors.append(f"eval with a failing case expected exit 1, got {failing.returncode}")
+        if '"pass": false' not in failing.stdout:
+            errors.append("eval JSON must carry the failing case (pass: false)")
+
 
 def test_bom(errors):
     """A UTF-8 BOM before the content must not fail protocol checks (iter 19).
