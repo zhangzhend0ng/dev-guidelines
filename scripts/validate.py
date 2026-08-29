@@ -186,10 +186,16 @@ def selected_paths_from_args(args):
         if not installed:
             print("ERROR: .dev-guidelines-installed.yml not found", file=sys.stderr)
             sys.exit(1)
-        return set(installed.get("installed_paths", []) or [])
-    if args.pack:
-        return set(installed_paths_for(args.pack))
-    return None
+        selected = set(installed.get("installed_paths", []) or [])
+    elif args.pack:
+        selected = set(installed_paths_for(args.pack))
+    else:
+        return None
+    if not selected:
+        # vacuous subset would silently validate zero harnesses and pass
+        print("ERROR: selected pack/installed set resolves to zero paths", file=sys.stderr)
+        sys.exit(1)
+    return selected
 
 
 def main():

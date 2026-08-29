@@ -1525,6 +1525,81 @@ BOM 用例)。自证风险由"改前红/改后绿"实证兜底:扫描 agent 已�
 ### 遗留 backlog
 - iter 20 = pack 工具链(m4 环检测/m5 干净报错/m7 .gitignore/m11 list_packs + m8 空集守卫)。
 
+---
+
+## 迭代 20 — pack 工具链卫生:环递归/裸 KeyError/vacuous 安装/空集假满分/gitignore
+
+### 触发的理论缺口
+iter 17 扫描 m4/m5/m7/m8/m11。核心是**退化输入假满分家族**(skill 目标缺口清单):
+- m4:`resolve_packs` 只有 `seen`,requires 环 → RecursionError(用户自制 pack 即触达);
+- m8:空 `installed_paths` 记录 → validate --installed 过滤后 0 harness、0 error、exit 0
+  (与 iter 16 空 eval 同族;iter 14 修的是 OS 不匹配型空集,本轮修真·空集型);
+- m5/m11:CLI 报错形态不对称(兄弟 validate.py 用干净 ERROR,这里裸 traceback)。
+
+### grep journal 结果(Step 1)
+`vacuous pass`/`two-state-empty-input`(iter 16)命中;`misleading-success`(多次)命中;
+iter 14(subset 过滤位点 = 本轮消费者守卫的同一函数)。
+
+### 合法 shape 清单 + 覆盖状态(resolve_packs 依赖图)
+| Shape | 判别 | UNDERSTOOD? | 方案覆盖? |
+|-------|------|-------------|-----------|
+| 无依赖/链式/菱形共享依赖 | 正常 pack | ✓ | ✓(seen 语义不变) |
+| requires 环 A→B→A | m4 | ✓(沙箱实证) | ✓ in_flight 守卫,KeyError 带环成员 |
+| 未知 pack id | m5 | ✓ | ✓ install_pack 捕 KeyError → parser.error exit 2 |
+| 空 includes 且无依赖 | m8 | ✓ | ✓ install 拒绝 + 两消费者守卫 exit 1 |
+
+### 退化输入×消费者矩阵
+| 退化输入＼消费者 | install_pack | validate --pack/--installed | generate_index --pack/--installed |
+|----------------|--------------|------------------------------|----------------------------------|
+| 环(旧/新) | RecursionError / KeyError 干净报错 | 同 resolve 路径 | 同 |
+| 空 installed_paths(旧) | 静默写入 | **PASS 0 harness(假满分)** | **空索引 + --check 绿** |
+| 空 installed_paths(新) | 拒绝(exit 2) | exit 1 + ERROR | exit 1 + ERROR |
+
+### 初版方案(被推翻点)
+无独立 REFUTE——机械卫生轮,判据:守卫型单分支、无阈值、有 CI smoke(CI "Harness pack
+smoke checks" 直接跑这些命令)+ 沙箱实证(环检测仿 iter 17 扫描 agent 的 temp 沙箱法,
+patch PACKS_DIR+ROOT 后跑真 resolve_packs)。
+
+### 对抗审查结论(实证代替)
+- 环:clean KeyError "circular dependency involving pack: cpp-testing"(旧 RecursionError)✓
+- unknown pack:exit 2 干净 error(旧裸 KeyError traceback)✓
+- 正常 install/list/--pack 流全 0(无回归)✓
+- .gitignore 生效(git check-ignore 验证)✓
+
+### 数据流 hops(installed_paths)
+| Hop | 写者→读者 | ✓/✗ |
+|-----|-----------|-----|
+| 1 install_pack 写 | pack.yml includes → installed yml | ✓(空集拒绝) |
+| 2 validate/generate_index 读 | yml → selected_paths | ✓(空集 exit 1,不再 vacuous) |
+
+### 变种横向 grep
+`resolve_packs`/`installed_paths_for` 消费者:install/export/validate/generate_index 全覆盖
+(export_pack 不受影响——它不经 selected_paths,直接用 includes 打包);list_packs 直接下标
+→ .get + stderr 警告。PACKS_DIR 缺失 → stderr 警告(lister 仍出空表,诚实表示"无 pack")。
+
+### 改动文件
+- `scripts/pack_utils.py`(resolve_packs in_flight 环守卫)
+- `scripts/install_pack.py`(KeyError → parser.error;空 installed_paths 拒绝)
+- `scripts/list_packs.py`(.get 兜底 + malformed/缺目录 stderr 警告)
+- `scripts/validate.py` / `generate_index.py`(selected_paths 空集守卫,对称)
+- `.gitignore`(+.dev-guidelines-installed.yml)
+
+### 测试证据(X/X,真实 exit code)
+- 环沙箱:KeyError 干净(旧 RecursionError)✓;unknown pack exit 2 ✓
+- install/list/--pack 正常流全 0 ✓;五套件 + check_all 全 0 ✓
+- git check-ignore 验证 ✓
+
+### 过程意外 / 与预期偏差
+沙箱首跑 ValueError(没 patch ROOT,_path 计算撞真仓库根)——**实验环境与生产路径的
+隐式耦合(ROOT 常量)本身就是一次小型现状描述错**,patch ROOT 后实证才成立。
+
+### Pattern Index 更新: 新增 vacuous-subset-guard | cycle-detection-in-flight
+### 遗留 backlog
+- [中] check_review_signals.py:172-174 orphan 误归因(iter 18 记录)。
+- m1/m2/m3(check_plan_protocol 判决死代码+strip 不一致;run_ai_protocol_check --json 多文档)
+  → iter 21;m6 README 覆盖语义 → 文档轮。
+
+
 
 
 

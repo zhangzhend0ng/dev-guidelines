@@ -39,13 +39,20 @@ def list_packs():
 def resolve_packs(pack_ids):
     resolved = []
     seen = set()
+    in_flight = set()
 
     def visit(pack_id):
         if pack_id in seen:
             return
+        if pack_id in in_flight:
+            # seen alone lets a requires-cycle recurse to RecursionError deep
+            # under the CLI; fail fast naming the cycle member instead.
+            raise KeyError(f"circular dependency involving pack: {pack_id}")
+        in_flight.add(pack_id)
         pack = load_pack(pack_id)
         for dep in pack.get("requires", []) or []:
             visit(dep)
+        in_flight.discard(pack_id)
         seen.add(pack_id)
         resolved.append(pack)
 

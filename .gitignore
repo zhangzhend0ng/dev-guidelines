@@ -23,3 +23,5 @@ __pycache__/
 
 # Playwright MCP session logs
 .playwright-mcp/
+# machine-local install record (install_pack.py) - never commit
+.dev-guidelines-installed.yml
