@@ -1961,6 +1961,37 @@ Quick Start 与 Modular Packs 两处的连续 install 示例读作累积;实际 
 - [信息] staleness 主波 2027-05/06:约 59 harness 同时 overdue——**届时 CI advisory 会一次性
   变吵**,建议 2027-04 前启动一轮批量 re-review(本条目即提醒)。
 
+---
+
+## 迭代 27 — FAIL 格式变体裁决:检测器无罪,协议"暗示格式"补显式(1 行 prompt 修复)
+
+### 触发的理论缺口
+iter 23 backlog:2 条日志条目嵌 [Item 3]/[R1] 引用却被判 orphan——是检测器误伤还是真违规?
+
+### 排查(证据链)
+1. ITEM_LINE_RE(:57):`^\s*Item\s+(\d+)\s*[—:\-]\s*(\w+)` —— 协议期望格式 `Item N: PASS/FAIL`。
+2. ORPHAN_FAIL_RE(:61):FAIL 开头且无 Item 前缀。
+3. 协议出处:code-review-with-harness.md:49 "item-by-item pass/fail"(**暗示**);
+   weak-model-cpp-review.md:11 "必须点名 harness 与 checklist item"(约定存在,行格式未给)。
+4. 那 2 条 FAIL 行(FAIL 在前、item 引用埋在自由文本)不匹配 ITEM_LINE_RE = **真格式违规**,
+   orphan 分类正确——信号本就是"未按协议框架的 finding"。
+
+**裁决:检测器无罪,zero 代码改动。** 可行动 residue:协议只暗示格式没明示——弱模型恰恰
+依赖显式格式 → review prompt Rules 补 1 行(含正例 + "无 Item 前缀会被记为协议 gap"警告)。
+
+### 测试证据
+- test_ai_protocol(review fixtures 含 good-review)exit 0(prompt 改动不破坏检查器)✓
+- check_all exit 0 ✓
+
+### 过程意外 / 与预期偏差
+grep "Item" prompts/weak-model-cpp-review.md 返回空(Git Bash grep 第 3 次不可靠),换
+Read 全文核实。**跨平台文本检索一律 Python/Read,已第 3 次证明。**
+
+### Pattern Index 更新: N/A(裁决入档;protocol-format-explicit 教训并入本条目)
+### 遗留 backlog
+- [信息] staleness 主波 2027-05/06(见 iter 26)。
+
+
 
 
 
