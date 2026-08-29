@@ -1359,6 +1359,104 @@ run_ai_protocol_check 无 --diff(已知限制,iter 12 记录);advisory exit-0 �
 ### 遗留 backlog
 m1-m11 见扫描报告(逐轮消化);m6 README 覆盖语义明示。
 
+---
+
+## 迭代 18 — check_feedback_signals 解析器重写(B1 漏 15/24 条 + B2 合并腐蚀 + M1 阈值崩溃)
+
+### 触发的理论缺口
+iter 17 扫描 [blocker]×2 + [major]×1。**B1 是生产环境已生效的漏报**:ENTRY_RE 限定符闭集
+`item\s+\d+|general` 不认生产者词表(`orphan`/`frontmatter`/手写 `item 20/37`)→ 真实日志
+24 条只解析 9 条,ccc 9×gap 与 AGENTS 5×gap 的 re-review 触发全漏,exit 0 无警告。
+
+### grep journal 结果(Step 1)
+`parser-producer-drift`(iter 17 Pattern Index 新增,兑现);`exit-code 契约` 命中 iter 2/16
+(documented-but-unreachable 与 usage-error 语义族);`misleading-success` 命中(部分解析静默
+= B1 的危害形态,危害不在解析错误本身而在"summary 看起来健康")。
+
+### 合法 shape 清单 + 覆盖状态(### header 行)
+| Shape | 判别 | UNDERSTOOD? | 方案覆盖? |
+|-------|------|-------------|-----------|
+| `### date — target, item N (detail)` | 经典条目 | ✓ | ✓ |
+| `### date — target, orphan` / `, frontmatter` | 生产者词表(iter 17 B1) | ✓ | ✓ 开放限定符 |
+| `### date — target, <手写任意限定词>` | 手工条目 | ✓ | ✓ `[^()]+?` |
+| en-dash `–` 分隔符 | m9 | ✓ | ✓ `[—–-]` |
+| `### date — target 散文无逗号` | F3 宽接受面 | ✓(REFUTE 实测) | 不解析,计 unparsed |
+| `#### ...` 4+# 行 | F4(真实日志从未出现) | ✓ | 同 flush 规则,防未来漂移 |
+| `## Log` 之前的 schema 模板 `### <YYYY...>` | F1 假阳性源 | ✓(REFUTE 实测恒=1) | 不计 unparsed |
+| Signal 值加粗 `**gap**` | m10 前瞻 | ✓ | `.strip("*")` 归一 |
+
+### 退化输入×消费者矩阵
+| 退化输入＼消费者 | parse_log | summary/flagged | harness-evolution Item 3 决策 |
+|----------------|-----------|-----------------|------------------------------|
+| 真实日志(旧) | 9/24 | ccc 9×gap→not flagged(漏) | 无 re-review(错) |
+| 真实日志(新) | 24/24 | ccc 9×gap→FLAGGED | 触发 re-review(对) |
+| `--threshold 0`(旧) | IndexError→exit 1 | 崩溃 | 违约 |
+| `--threshold 0`(新) | parser.error exit 2 | — | usage error,契约自洽 |
+
+### 初版方案(被推翻点)
+**REFUTE subagent 实测驳回 2 major + 补 4 minor**:
+- [major-F1] unparsed 计数在健康日志恒=1(:39 schema 模板行)→ 漂移警报"出生即狼来了"。
+  修:只在 `## Log` 标记后计数。**方案的主打特性差点自身就是 bug**。
+- [major-F2] CI 断言 `==24` 写在活日志上必腐(append-only 但生产者会追加);ccc≥3 期望内嵌
+  生产者误归因噪声(orphan FAIL 记到 harness_files[0],AGENTS 条目全是 GUI PR FAIL)。
+  修:下界断言 + 测试注释局限;**生产者误归因记 backlog**(后轮)。
+- [minor] F3 开放限定符放宽假接受面(散文行形状匹配)——记录,可接受;F4 `####` 豁免保护
+  假想场景→并入 flush 规则;F5 测试补 frontmatter 词表;F8 :39 schema 模板同步;F9 CI 注册
+  点=validate.yml(check_all 仅本地),parse_log 签名改 tuple 安全(唯一消费者)。
+- (a)(c)(d) 全被 REFUTE 实测驳回(吞括号不存在/strip 安全/exit 2 自洽)。
+
+### 对抗审查结论
+解析核心经 REFUTE 复刻实测:真实日志 24/24 解析、ccc gap=9 触发。采纳全部修正后无保留意见。
+
+### 修订方案(采纳)
+ENTRY_RE 开放限定符+三 dash;HEADER_RE `^#{3,}\s` flush;unparsed 仅 `## Log` 后计数;
+Signal 归一;threshold<1 → parser.error;JSON+文本双通道 unparsed 警告;:39 模板行同步;
+新 test_feedback_signals.py 注册 CI+check_all。
+
+### 数据流 hops(日志条目)
+| Hop | 写者→读者 | ✓/✗ |
+|-----|-----------|-----|
+| 1 生产者追加(check_review_signals :248) | → 日志 | ✓(词表实测) |
+| 2 parse_log 解析 | 日志 → entries | ✓ 24/24(旧 9/24) |
+| 3 聚合触发 | summary → flagged_for_rereview | ✓ ccc/AGENTS |
+| 4 harness-evolution Item 3 | 输出 → 人决策 | ✓(本轮起有真信号) |
+| 5 unparsed 警告 | parse_log → 漂移可见性 | ✓(F1 修正后健康日志=0) |
+
+### 变种横向 grep
+生产者词表全集 {item N(:185/200), orphan(:174), frontmatter(:305)} 全覆盖;M2(BOM 同语义
+兄弟位点,含本文件 :59)→ iter 19;m6/m8 等 pack 族 → iter 20。**生产者侧误归因**
+(:172-174 harness_files[0][0])= 新 backlog [中](属 check_review_signals,不与本读侧修复混)。
+
+### 改动文件
+- `scripts/check_feedback_signals.py`(重写 :32-80 解析器 + main 守卫 + 双通道警告)
+- `scripts/test_feedback_signals.py`(新,10 组断言,CI+check_all 注册)
+- `.github/workflows/validate.yml`(+1 step)
+- `scripts/check_all.py`(+注册)
+- `common/meta/harness-feedback-log.md`(仅 :39 schema 模板行文档同步)
+
+### 测试证据(X/X,真实 exit code)
+- test_feedback_signals exit 0(10 组断言)✓;真实日志:total **24**(旧 9)、unparsed **0**、
+  flagged=[AGENTS, ccc] ✓
+- check_all exit 0(含新测试)✓;test_ai_protocol / plan_debug / validate / gen_index 全 0 ✓
+- YAML 合法 ✓
+
+### 过程意外 / 与预期偏差
+1. **我自己 fixture 三连错**(被自家测试抓到):`en-dash target` 带空格(harness id 语法
+   不允许)、可解析数错数 7(实 6)、真实日志断言要求当前数据不存在的 frontmatter 条目。
+   3 次迭代 fixture 才绿——fixture 敏感性纪律(改动前/后输出确实变)兑现,但也说明
+   测试作者需要先对齐被测语法再写样本。
+2. Edit 工具第 3 次粒度事故(main 守卫编辑带出一行垃圾),回读清理。**连续三轮 Edit 事故
+   ——跨行 old/new 必须自查后回读**,已成本轮固定动作。
+3. REFUTE 复刻实现这个动作(把方案正则逐字跑真实数据)是本轮最高价值步骤——F1 的恒=1
+   假阳性纯靠运行发现,读代码读不出来。
+
+### Pattern Index 更新: 新增 open-vocabulary-parser | living-file-assertions | false-alarm-fatigue
+### 遗留 backlog
+- [中] check_review_signals.py:172-174 orphan FAIL 误归因 harness_files[0][0](AGENTS 条目
+  实为 GUI PR FAIL)——生产者侧,后轮修(修后 ccc/AGENTS 计数会变,需同步测试注释)。
+- iter 19 = M2 BOM 补面;iter 20 = pack 工具链(m4/m5/m7/m11+m8)。
+
+
 
 
 

@@ -49,6 +49,8 @@ jobs:
           test -s /tmp/ai-eval-report.md
       - name: Planning and debugging protocol smoke checks
         run: python scripts/test_plan_debug_protocol.py
+      - name: Feedback signals regression checks
+        run: python scripts/test_feedback_signals.py
       - name: Harness pack smoke checks
         run: |
           python scripts/list_packs.py

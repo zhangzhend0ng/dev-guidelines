@@ -6,6 +6,7 @@ Combines:
   - generate_index.py --check (INDEX.md sync)
   - check_feedback_signals.py (feedback log accumulation)
   - check_review_signals.py --audit-harnesses (harness tier inflation)
+  - test_feedback_signals.py (feedback-log parser regression, iter 18)
 
 Exit code is non-zero if any sub-check fails. Output is prefixed per check
 so failures are easy to locate.
@@ -58,6 +59,7 @@ def main():
         ("validate.py", ["validate.py"]),
         ("generate_index.py --check", ["generate_index.py", "--check"]),
         ("check_feedback_signals.py", ["check_feedback_signals.py"]),
+        ("test_feedback_signals.py", ["test_feedback_signals.py"]),
         # --dry-run: a health check must not mutate a tracked file. The audit
         # is advisory (exit 0); we capture its stdout to surface findings in the
         # SUMMARY rather than only in scrollback.

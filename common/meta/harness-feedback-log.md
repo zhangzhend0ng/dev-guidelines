@@ -36,7 +36,7 @@ Do NOT add entries for routine PASS / FAIL where the item behaved as designed. R
 Each entry is a markdown block with exactly these fields:
 
 ```
-### <YYYY-MM-DD> — <target>, item <N> (or "general")
+### <YYYY-MM-DD> — <target>, item <N> (or "general" / "orphan" / "frontmatter" / other short qualifier)
 - **Signal:** gap | inoperable | misleading | under-coverage | tier-mismatch
 - **Scenario:** one sentence — project + change type + what was under review
 - **Observation:** what happened, with file:line if applicable

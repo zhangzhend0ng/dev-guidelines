@@ -16,7 +16,8 @@ Usage:
     python scripts/check_feedback_signals.py --json
 
 Exit codes:
-    0 = always (best-effort script; signals are advisory, not errors)
+    0 = always for signal findings (best-effort script; advisory, not errors)
+    2 = usage error (invalid --threshold, argparse errors)
 """
 
 import argparse
@@ -40,54 +41,92 @@ LOG_PATH = ROOT / "common" / "meta" / "harness-feedback-log.md"
 # with tool/ (tool/...path). Tooling targets let the log record feedback about
 # scripts/prompts/templates, closing the gap where only harnesses were valid
 # targets (see harness-feedback-log.md 2026-07-27 inoperable entry).
+#
+# The qualifier after the comma is an OPEN vocabulary: producer
+# check_review_signals.py writes "item N", "orphan" (:174) and "frontmatter"
+# (:305); manual entries may write anything ("item 20/37"). A closed list
+# here silently dropped 15/24 real log entries (iter 18 B1) — do not narrow
+# this back to a word list.
 TARGET_RE = r"tool/[a-zA-Z0-9_./-]+|[a-zA-Z0-9_-]+"
 ENTRY_RE = re.compile(
-    r"^###\s+(\d{4}-\d{2}-\d{2})\s+[—-]\s+"   # date + em-dash or hyphen
+    r"^###\s+(\d{4}-\d{2}-\d{2})\s+[—–-]\s+"   # date + em/en-dash or hyphen
     rf"({TARGET_RE})"                          # harness id OR tool/<path>
-    r"(?:,\s*(item\s+\d+|general))?"           # optional ", item N" or ", general"
+    r"(?:,\s*([^()]+?))?"                      # optional qualifier (open vocab)
     r"(?:\s*\(([^)]*)\))?\s*$"                 # optional "(detail)"
 )
+# Any ###-level header (3 or more #) flushes the pending entry, so a Signal
+# line after an UNPARSEABLE header can no longer overwrite the previous
+# entry (iter 18 B2 merge corruption). ####-deep lines were never seen in
+# the log but are covered by the same rule on purpose: a future drift to
+# #### headers must not silently bleed signals across entries.
+HEADER_RE = re.compile(r"^#{3,}\s")
+LOG_SECTION_MARK = "## Log"
 
 SIGNAL_TYPES = {"gap", "inoperable", "misleading", "under-coverage", "tier-mismatch"}
 SIGNAL_RE = re.compile(r"\*\*Signal:\*\*\s*(\S+)")
 
 
 def parse_log(path: Path):
-    """Yield dicts: {date, harness, item, detail, signal}."""
+    """Return (entries, unparsed_headers).
+
+    Each entry: {date, harness, item, detail, signal}. unparsed_headers
+    counts ###-level header lines AFTER the "## Log" marker that failed
+    ENTRY_RE — the format-drift alarm. Content before "## Log" (doc/schema
+    sections contain example headers like "### <YYYY-MM-DD> ...") is exempt,
+    otherwise the alarm would fire on every healthy run.
+    """
     if not path.exists():
-        return
-    text = path.read_text(encoding="utf-8")
+        return [], 0
+    text = path.read_text(encoding="utf-8-sig")
     lines = text.splitlines()
+    entries = []
     current = None
+    unparsed = 0
+    in_log = False
     for line in lines:
-        m = ENTRY_RE.match(line)
-        if m:
+        if line.startswith(LOG_SECTION_MARK):
+            in_log = True
+            continue
+        if HEADER_RE.match(line):
             if current:
-                yield current
-            date, harness, item, detail = m.groups()
-            current = {
-                "date": date,
-                "harness": harness,
-                "item": item or "general",
-                "detail": detail or "",
-                "signal": None,
-            }
+                entries.append(current)
+                current = None
+            m = ENTRY_RE.match(line)
+            if m:
+                date, harness, item, detail = m.groups()
+                current = {
+                    "date": date,
+                    "harness": harness,
+                    "item": item or "general",
+                    "detail": detail or "",
+                    "signal": None,
+                }
+            elif in_log:
+                unparsed += 1
         elif current and line.startswith("- **Signal:**"):
             sm = SIGNAL_RE.search(line)
             if sm:
-                current["signal"] = sm.group(1).rstrip(",")
+                # rstrip(","): trailing comma noise; strip("*"): markdown bold
+                # around the value ("**gap**") is formatting, not a new type.
+                current["signal"] = sm.group(1).rstrip(",").strip("*")
     if current:
-        yield current
+        entries.append(current)
+    return entries, unparsed
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--threshold", type=int, default=3,
-                    help="Signal count per harness that flags for re-review (default 3)")
+                    help="Signal count per harness that flags for re-review (default 3, min 1)")
     ap.add_argument("--json", action="store_true", help="Emit JSON instead of text")
     args = ap.parse_args()
+    if args.threshold < 1:
+        # threshold 0 would compare every empty Counter against 0 and crash
+        # on most_common(1)[0] — and flag every harness. Usage error, not an
+        # advisory finding, so exit 2 is contract-consistent (see docstring).
+        ap.error("--threshold must be >= 1")
 
-    entries = list(parse_log(LOG_PATH))
+    entries, unparsed = parse_log(LOG_PATH)
 
     # Aggregate
     per_harness = defaultdict(list)
@@ -111,7 +150,8 @@ def main():
             flagged.append((harness, total, top_signal, same_type_max))
 
     if args.json:
-        out = {"threshold": args.threshold, "total_entries": len(entries), "harnesses": summary}
+        out = {"threshold": args.threshold, "total_entries": len(entries),
+               "unparsed_headers": unparsed, "harnesses": summary}
         if flagged:
             out["flagged_for_rereview"] = [
                 {"harness": h, "total_signals": t, "top_signal": s, "count": c}
@@ -124,6 +164,11 @@ def main():
     print(f"# Harness Feedback Signal Summary")
     print(f"# Log: {LOG_PATH.relative_to(ROOT)}")
     print(f"# Total entries: {len(entries)}  |  Re-review threshold: ≥{args.threshold} same-type signals")
+    if unparsed:
+        # Partial-parse alarm: the B1 failure mode was 15/24 headers silently
+        # dropped while the summary still "looked" healthy. Never silent.
+        print(f"# WARNING: {unparsed} ### header(s) after '{LOG_SECTION_MARK}' did not parse")
+        print(f"#          — check ENTRY_RE in this script against the log format.")
     print()
 
     if not summary:
