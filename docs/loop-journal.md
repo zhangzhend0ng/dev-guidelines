@@ -1921,6 +1921,47 @@ check_ai_protocol(修,本轮)= 全部 3 处闭环;check_feedback_signals 无此�
 - [低] FAIL 行格式变体(嵌 [Item N]/[R1] 引用不匹配 ITEM_LINE_RE)。
 - m6 README 覆盖语义。
 
+---
+
+## 迭代 26 — --stale 悬崖预报(无罪)+ README install 语义歧义修复(m6)
+
+### 触发的理论缺口
+iter 2 让 exit 3 可达后,--stale 的 CI 步骤(continue-on-error)何时开始"失败"?**悬崖预报**:
+解析全部 (last_validated, review_cycle) 组合 → 下一次悬崖 **2026-11-26(1 harness)**,主波
+2027-05/06(59 个,12m 周期 cohort 集中于 2026-06 初检)。周期分布:12m×73、24m×9。
+**结论:机制正常,近期无误报风暴**——无罪释放,预报入档,不需要代码改动。
+(注:12m 按 360 天算,与日历月差 5 天——语义近似,可接受,记录在案。)
+
+### grep journal 结果(Step 1)
+`exit-code 契约`(iter 2);m6(iter 17/25 backlog)。检查消费方:check_stale 的
+"两者都有值才判"跳过语义——今天 0 个不可解析(82/82 有 cycle)。
+
+### 合法 shape 清单(review_cycle × last_validated)
+| Shape | 数量 | 处置 |
+|-------|------|------|
+| "12m" 周期 | 73 | 不动 |
+| "24m" 周期 | 9 | 不动 |
+| 缺 last_validated/cycle | 0 | (跳过分支今天不可达,保留——防未来漏字段) |
+
+### m6 修复(README 两处)
+Quick Start 与 Modular Packs 两处的连续 install 示例读作累积;实际 `install_pack.py` 每次
+**替换**记录(且 .dev-guidelines-installed.yml 已 gitignored,iter 20)。加显式说明 +
+"一次命令传全部 pack"提示 + 替换语义段落。
+
+### 测试证据(X/X,真实 exit code)
+- 悬崖脚本:输出预报(无代码改动)✓;validate --stale exit 0(现状无 overdue)✓
+- README 两处更新,validate/check_all 全 0 ✓
+
+### 过程意外 / 与预期偏差
+无。本轮是核查轮:两个怀疑(--stale 悬崖会炸、README 误导)一个无罪、一个坐实。
+
+### Pattern Index 更新: N/A(staleness-cliff 预报写入本条目备查)
+### 遗留 backlog
+- [低] FAIL 行格式变体(嵌 [Item N]/[R1] 引用不匹配 ITEM_LINE_RE)。
+- [信息] staleness 主波 2027-05/06:约 59 harness 同时 overdue——**届时 CI advisory 会一次性
+  变吵**,建议 2027-04 前启动一轮批量 re-review(本条目即提醒)。
+
+
 
 
 

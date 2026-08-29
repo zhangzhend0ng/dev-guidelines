@@ -116,6 +116,8 @@ python scripts/test_ai_protocol.py
 
 # List and install modular harness packs
 python scripts/list_packs.py
+# NOTE: each install REPLACES the previously recorded set (not cumulative).
+# Pass every pack you want installed in ONE command.
 python scripts/install_pack.py cpp-core cpp-testing ai-dev
 python scripts/install_pack.py python-core
 python scripts/validate.py --installed
@@ -130,6 +132,11 @@ Validation runs in CI on every PR. Requires Python 3.10+.
 ## Modular Packs
 
 Harnesses can be consumed as packs. See [Harness Pack Design](docs/specs/2026-06-15-harness-pack-design.md).
+
+Each `install_pack.py` run **replaces** the installed set recorded in
+`.dev-guidelines-installed.yml` (which is machine-local and gitignored);
+it does not add to it. `validate.py --installed` therefore validates only
+the most recent command's pack set.
 
 Common examples:
 
