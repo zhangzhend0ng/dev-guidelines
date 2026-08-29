@@ -198,9 +198,31 @@ def selected_paths_from_args(args):
     return selected
 
 
+def check_related_bidirectionality(harnesses):
+    """Return advisory findings: related links not reciprocated.
+
+    AGENTS.md rule 5: "If A links to B, B's related field lists A."
+    This is report-only (spec 6.1 item 4 as of iter 22): 65 pre-existing
+    one-way links must not hard-fail CI; they burn down incrementally.
+    """
+    findings = []
+    for path, fm in sorted(harnesses.items()):
+        for rel in fm.get("related") or []:
+            rel = str(rel)
+            if rel not in harnesses:
+                continue  # missing/dangling targets are check_cross_references' job
+            rfm = harnesses[rel]
+            rrel = [str(x) for x in (rfm.get("related") or [])]
+            if path not in rrel:
+                findings.append(f"one-way related link: {path} -> {rel} (no reverse entry)")
+    return findings
+
+
 def main():
     parser = argparse.ArgumentParser(description="Validate harness files")
     parser.add_argument("--stale", action="store_true")
+    parser.add_argument("--related", action="store_true",
+                        help="report non-bidirectional related links (advisory, report-only)")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--pack", action="append", help="Validate pack and dependencies")
     parser.add_argument("--installed", action="store_true", help="Validate installed pack set")
@@ -224,18 +246,28 @@ def main():
     if args.stale:
         warnings.extend(check_stale(harnesses))
 
+    related_findings = check_related_bidirectionality(harnesses) if args.related else []
+
     if args.json:
         result = {
             "pass": len(all_errors) == 0,
             "errors": all_errors,
             "warnings": warnings,
         }
+        if args.related:
+            result["related_advisories"] = related_findings
         print(json.dumps(result, indent=2))
     else:
         for e in all_errors:
             print(f"ERROR: {e}")
         for w in warnings:
             print(f"WARNING: {w}")
+        if args.related:
+            # report-only: never touches the exit code; burn down over time
+            for f in related_findings:
+                print(f"ADVISORY: {f}")
+            if not related_findings:
+                print("Related links are fully bidirectional.")
         if all_errors:
             print(f"\n{len(all_errors)} error(s) found.")
 

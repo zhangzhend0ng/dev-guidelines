@@ -399,7 +399,9 @@ Performs:
   1. Frontmatter completeness check (all required fields present)
   2. Tier consistency check (no deprecated sources without replacement)
   3. Category consistency (file path matches frontmatter category)
-  4. Cross-reference bidirectionality (related links go both ways)
+  4. --related: Report non-bidirectional related links (advisory,
+     report-only; never affects the exit code). Implemented iter 22 —
+     59+ pre-existing one-way links burn down incrementally.
   5. Harness ID uniqueness (no two active harnesses share an id;
      no new harness reuses an id from the archive/ directory)
   6. --stale: Report all citations past their review window
@@ -412,7 +414,7 @@ Exit codes:
   3 = stale citations (warn in CI; only when --stale)
 
 The script collects ALL errors before exiting (does not stop on first error).
-Dependencies: Python 3.10+, PyYAML, requests (pinned in requirements.txt).
+Dependencies: Python 3.10+, PyYAML (pinned in requirements.txt).
 The Python floor is reviewed annually and bumped when the oldest supported
 Python in Ubuntu LTS / Debian stable / macOS homebrew advances.
 ```
@@ -433,7 +435,7 @@ in INDEX.md. Run as a pre-commit hook and in CI.
 1. `python scripts/validate.py --json` — hard-fail on frontmatter errors (exit code 1-2)
 2. `python scripts/validate.py --stale` — warn-only on stale citations (exit code 3)
 3. `python scripts/generate_index.py --check` — fail if INDEX.md is out of sync
-4. Dead-link check runs weekly, not per-PR
+4. Feedback-signal and pack smoke checks run per-PR (validate.yml)
 
 ### 6.4 `requirements.txt`
 

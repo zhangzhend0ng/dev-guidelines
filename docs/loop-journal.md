@@ -1674,6 +1674,87 @@ exact?未在本轮核**记 backlog 一眼)、check_debug_report:21(同病已修)
 - [中] check_review_signals.py:172-174 orphan 误归因(producer 侧)。
 - m6 README 覆盖语义 → 文档轮。
 
+---
+
+## 迭代 22 — related 双向性:6/6 单向(wxwidgets)+ 65 条全仓系统性缺口 + spec:402 兑现
+
+### 触发的理论缺口
+f99ab5a 给 wxwidgets 加了 255 行 + related 链接,但该文件在 iter 15 之前对机器消费层完全
+隐形——新增内容从未被检查。审查发现:**6 个 related 目标全部无反向链接**(不止新加的
+toolchain-and-compiler-flags)。全仓 Python 审计:**79 harness / 419 条 related 中 65 条
+单向**——AGENTS 规则 5 明文要求双向,但 spec:402 item 4 "Cross-reference bidirectionality"
+是 documented-but-never-implemented(iter 3 backlog [中] 的实体)。
+
+### grep journal 结果(Step 1)
+`spec:402`(iter 3 backlog);`逐跳追踪避免误改正确代码`(iter 3 harness-evolution:122 先例
+——本轮先核实本地 R 表合规,别把"来源注册"误当缺口)。
+
+### 合法 shape 清单 + 覆盖状态(related 链接)
+| Shape | 判别 | UNDERSTOOD? | 方案覆盖? |
+|-------|------|-------------|-----------|
+| A→B 且 B related 列 A | 双向(合规) | ✓ | ✓ 保留 |
+| A→B,B 无回链 | 单向(违反规则 5) | ✓ 63 条基线 | ✓ --related 报告 + 增量清偿 |
+| A→B,B 文件不存在 | 悬挂 | ✓ | check_cross_references 已管(existence),不重复 |
+| 本地 R 表 [Rn] 标签 | 非 related 语义 | ✓(R32-R38 全带 verified-2026,合规) | 不动 |
+
+### 退化输入×消费者矩阵
+| 退化输入＼消费者 | validate(旧行为) | 跨 harness 导航 | AGENTS 规则 5 |
+|----------------|------------------|----------------|---------------|
+| 65 条单向链接 | 静默 PASS(假满分) | 断链导航 | 静默违反 |
+| 新增(本轮) | --related 报告 63→57(本轮修 6) | ✓ | ✓ 可审计 |
+
+### 初版方案(被推翻点)
+- 初版 grep sources.md 找 R32-R38 → **自己 grep 姿势错**(sources.md 是 N/C/A 来源族注册表,
+  [Rn] 是 harness 本地表)。核实后本地表合规,撤销该"缺口"。(Rationalization:"行号/现状
+  我记得是 X"的反面:核查工具的语义也要先核实。)
+- 方案 v1 想把检查做成 hard error(spec 原文承诺)→ 推翻:65 条存量会让 CI 全红,
+  内容清偿需要逐条语义判断(反向链接要有意义,不能机械互填)。改为**报告型 --related**
+  (仿 --stale 先例:CI continue-on-error,可见非阻塞),spec 同步为实际行为。
+
+### 对抗审查结论(轻量自对抗,判据:报告型检查无 verdict 副作用 + 内容修复由审计自证)
+- 审计函数输出即验证:63(基线)→ 57(修 6),wxwidgets 从 one-way 清单消失(grep=0)。
+- Git Bash 循环再次不可靠(FILE-MISSING 误报)——全仓审计坚持用 Python(iter 14 教训第 2 次)。
+
+### 数据流 hops(related 链接)
+| Hop | 写者→读者 | ✓/✗ |
+|-----|-----------|-----|
+| 1 harness frontmatter related | A → B | ✓ 既有 |
+| 2 反向 entry | B → A | ✓ 本轮补 6 条 |
+| 3 --related 审计 | validate → 报告/JSON | ✓(advisories 键) |
+| 4 CI 步骤(continue-on-error) | validate.yml → 可见性 | ✓ |
+
+### 变种横向 grep
+spec 同 block 顺藤摸出 **2 处 iter 3 遗留死文本**:"Dead-link check runs weekly"(功能 iter 3
+已删)+ "requests (pinned in requirements.txt)"(依赖 iter 3 已删)——一并修(同文件同族,
+doc-drift 家族)。此为 iter 3 backlog [中] 的完整闭环。
+
+### 改动文件
+- `scripts/validate.py`(+check_related_bidirectionality + --related flag + JSON 键)
+- 6 个目标 harness(反向 related entry:thread-safety/raii/const-correctness/
+  cmake-include-hygiene/toolchain-and-compiler-flags/input-validation)
+- `docs/specs/2026-05-31-repo-structure-design.md`(item 4 改实际行为 + 2 处 iter 3 死文本)
+- `.github/workflows/validate.yml`(+advisory step)
+
+### 测试证据(X/X,真实 exit code)
+- `validate --related`:63→**57** advisories;wxwidgets one-way **0** ✓
+- `validate --related --json`:advisories 数组 + pass:true(报告不伤 verdict)✓
+- validate 裸跑/--stale exit 0(退出码语义零变化)✓;check_all/gen_index/三套件全 0 ✓
+- YAML 合法 ✓
+
+### 过程意外 / 与预期偏差
+1. 我的全仓审计(65)与 validate --related(63 基线)差 2:审计脚本把"body 提及"算双向、
+   validate 只认 frontmatter——两个"审计器"口径不同。**以新 check 的口径为准**(AGENTS 规则 5
+   明文"related field lists A")。教训:同一规则的两个实现必须先对齐判据再比数。
+2. Python 写 frontmatter 注入(保 CRLF)一把过——但成功归功于逐文件 assert,非运气。
+
+### Pattern Index 更新: 新增 documented-but-unimplemented | advisory-burndown
+### 遗留 backlog
+- [中] 57 条存量单向 related(清单:`validate.py --related`)——增量清偿,后续轮每轮清一批。
+- [低] check_ai_protocol.py LINE_BUDGETS(:49)支配性核实。
+- [中] check_review_signals.py:172-174 orphan 误归因。
+- m6 README 覆盖语义。
+
+
 
 
 

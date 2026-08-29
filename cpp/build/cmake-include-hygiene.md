@@ -23,6 +23,7 @@ related:
   - "cpp/build/toolchain-and-compiler-flags.md"
   - "cpp/build/package-management.md"
   - "cpp/testing/static-analysis.md"
+  - "cpp/third-party/wxwidgets-3-1-5.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

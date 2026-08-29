@@ -38,6 +38,9 @@ jobs:
       - name: Stale citation check (warn only)
         run: python scripts/validate.py --stale
         continue-on-error: true
+      - name: Related-link bidirectionality (advisory)
+        run: python scripts/validate.py --related
+        continue-on-error: true
       - name: Index sync check
         run: python scripts/generate_index.py --check
       - name: AI protocol smoke checks
