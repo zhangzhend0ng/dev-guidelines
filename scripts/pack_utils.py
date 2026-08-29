@@ -21,7 +21,7 @@ def load_pack(pack_id):
     if not path.exists():
         raise KeyError(f"unknown pack: {pack_id}")
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
-    data["_path"] = str(path.relative_to(ROOT))
+    data["_path"] = path.relative_to(ROOT).as_posix()  # posix: goes into packs/index.yml (machine-crossing)
     return data
 
 
@@ -31,7 +31,7 @@ def list_packs():
         return packs
     for manifest in sorted(PACKS_DIR.glob("*/pack.yml")):
         data = yaml.safe_load(manifest.read_text(encoding="utf-8"))
-        data["_path"] = str(manifest.relative_to(ROOT))
+        data["_path"] = manifest.relative_to(ROOT).as_posix()  # posix: goes into packs/index.yml (machine-crossing)
         packs.append(data)
     return packs
 

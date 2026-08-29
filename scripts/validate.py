@@ -170,7 +170,10 @@ def find_harnesses():
         if err or not fm:
             continue
         if fm.get("type") == "harness":
-            harnesses[str(rel)] = fm
+            # posix keys: must match committed posix identifiers (pack.yml
+            # includes:, --pack/--installed subset filtering). OS-native
+            # str() silently filters out ALL harnesses on Windows.
+            harnesses[rel.as_posix()] = fm
     return harnesses
 
 

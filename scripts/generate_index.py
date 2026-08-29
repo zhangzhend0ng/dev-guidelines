@@ -42,12 +42,17 @@ def parse_frontmatter(filepath):
 def find_harnesses():
     harnesses = []
     for md_path in ROOT.rglob("*.md"):
-        parts = md_path.relative_to(ROOT).parts
-        if parts[0] in HARNESS_SKIP_DIRS:
+        rel = md_path.relative_to(ROOT)
+        if rel.parts[0] in HARNESS_SKIP_DIRS:
             continue
         fm = parse_frontmatter(md_path)
         if fm and fm.get("type") == "harness":
-            harnesses.append((str(md_path.relative_to(ROOT)), fm))
+            # posix paths: INDEX.md links render on GitHub / non-Windows
+            # clones only with forward slashes, and --pack/--installed
+            # subset filtering compares against committed posix
+            # identifiers (pack.yml includes:). OS-native str() emits
+            # backslashes on Windows (breaks links + empties subsets).
+            harnesses.append((rel.as_posix(), fm))
     return harnesses
 
 

@@ -1034,3 +1034,101 @@ REFUTE 全采纳。逐条核实:`infer_mode` 对 `prompt-plan.md` 确实匹配(b
 - [中] evaluate_ai_protocol.py recommend_tier 空输入返 T0(假信号)→ 应区分"无数据"vs"差"。
 - [低] Phase 6 debug mode(check_debug_report.py)未接入 run_eval。
 - iter 1-12 backlog 不变。
+
+---
+
+## 迭代 14 — INDEX 同步回归暴露 OS 相关路径标识符族(subset 假满分 + 反斜杠链接复发)
+
+### 触发的理论缺口
+baseline 复查(不信 journal 旧数字)发现 `gen_index --check` exit 1 / `check_all` exit 1——
+f99ab5a(wxwidgets +255 行)后未重生成 INDEX。深挖后真根因更大:**iter 1 只重生了产物没修 producer**。
+`str(Path.relative_to(ROOT))` 在 Windows 产反斜杠 → generator 每次在 Windows 重生成都会把
+144+ 反斜杠写回 INDEX(iter 1 修复在同一 OS 上复发);且 subset 模式(`--pack`/`--installed`)
+用 OS keys 比对提交的正斜杠标识符 → **静默过滤掉全部 harness(假满分,双脚本)**。
+
+### grep journal 结果(Step 1)
+关键词 `INDEX`/`backslash`/`sync` 命中 iter 1(同 producer 产物;iter 1 结论"重生成是唯一
+正确动作"被本轮推翻为不完整——产物级修复,producer 未修)。`shell 末端信号` 命中 4 次教训,
+本轮再次兑现(mktemp -d 的 /tmp 路径 Windows Python 不可见,export_pack 假 exit 2)。
+
+### 合法 shape 清单 + 覆盖状态(repo-relative path identifier)
+| Shape | 判别字段 | UNDERSTOOD? | 方案覆盖? |
+|-------|----------|-------------|-----------|
+| A 提交的正斜杠标识符(pack.yml includes/export.yml/INDEX 链接) | 机器跨产物 | ✓ | ✓ 产出点规范化 |
+| B 运行时 OS-native 字符串 | Windows 反斜杠 | ✓ | ✓ 不再进产物 |
+| C display-only console print(feedback/run_eval/review_signals 306/354) | 纯 print | ✓(REFUTE 逐处核实) | 不动(合法) |
+| D 混合比较位点(runtime B vs committed A) | bug 位点 | ✓ REFUTE 全仓扫描确认无第 5 处 | ✓ 3 处产出点 |
+
+### 退化输入×消费者矩阵
+| 退化输入＼消费者 | gen_index 默认 | gen_index --pack | validate --pack | packs/index.yml | GitHub 渲染 |
+|----------------|---------------|------------------|-----------------|-----------------|------------|
+| Windows 运行(旧) | 反斜杠链接 ✗ | **0 行空索引 ✗(假满分)** | **pass:true 0 校验 ✗** | 反斜杠进 manifest ✗ | 链接坏 ✗ |
+| Windows 运行(新) | 正斜杠 ✓ | 41 行 ✓ | 41 命中 ✓ | posix ✓ | ✓ |
+| Linux 运行 | 不变 ✓(as_posix≡str,REFUTE 核 (f)) | 不变 ✓ | 不变 ✓ | 不变 ✓ | 不变 ✓ |
+
+### 初版方案(被推翻点)
+方案 v1:3 处 as_posix + 重生成 + "修 12 处静态区" + 测试 oracle "==9 行"。
+**REFUTE subagent 抓 4 major**:
+- [major-1] oracle 错:installed_paths_for 递归解析依赖(cpp-testing→cpp-core→common-core)
+  =50 条 selected,正确 oracle **41**。按字面执行会诱导把正确实现"修坏"。
+- [major-2] **整个 shape 漏掉**:wxwidgets-3-1-5.md 带 UTF-8 BOM,parse_frontmatter 的
+  `^---` 锚定 pos 0 永不匹配 → 该 harness 在**所有 OS 上被静默排除出 INDEX 和 validate**
+  (全仓 4 个 BOM harness:wxwidgets-3-1-5/qt6-core/qt6-qml/output-language)。
+  validate 假满分有第二个独立根因,"重生成拿到 wxwidgets 行"不可达。
+- [major-3] `_path` 不进 export.yml;真实去向是 pack_index() → **packs/index.yml**。
+- [major-4] 静态区 6 链接(12 字符)非"12 处";autogen 78 非 72;84=78+6 巧合相等。
+
+### 对抗审查结论
+REFUTE 总评:三处代码修复正确、必要、位置精准,不推翻;方案 4 处事实错误必须先修。
+minor 全采纳(测试命名具体化/generate_index:45 变量复用/python-core 补测/过渡态顺序)。
+(g) 无更小修法:两处过滤点 replace 是单层修复;产出点规范化是每处必要、无冗余的最小根因修复。
+
+### 修订方案(逐条)
+- 采纳 major-1/3/4 + minor 全部。
+- major-2(BOM)→ **独立成 iter 15**(同族假满分第二根因;改 utf-8-sig 会改变 INDEX 规模
+  78→82 且 validate 将首次真正检查这 4 个文件,必须显式轮次,不顺手改)。
+- 数据流修正:_path → packs/index.yml(REFUTE 核实)。
+
+### 数据流 hops(path identifier)
+| Hop | 写者→读者 | ✓/✗ |
+|-----|-----------|-----|
+| 1 find_harnesses keys | generate_index/validate → subset 过滤 | ✓(posix) |
+| 2 build_index_table 链接 | generate_index → INDEX.md → GitHub/克隆 | ✓(posix) |
+| 3 _path | pack_utils → packs/index.yml(机器跨) | ✓(posix) |
+| 4 installed_paths(pack.yml includes,本就 posix) | → 过滤比对 | ✓(现已可匹配) |
+
+### 变种横向 grep
+`relative_to` 全仓 11 处逐一定性:7 处 display-only print(合法不动);export_pack.py:42
+archive.write(path, relpath) 用 Path 对象(OS 无关);check_review_signals.py:274/:140 已有
+replace 先例;check_review_signals.py:120 仅用 parts[0](OS 无关 tuple)。**无第 6 处需改**
+(REFUTE 独立全仓扫描交叉确认)。
+
+### 改动文件
+- `scripts/generate_index.py`(:44-55 rel 变量 + as_posix + 注释)
+- `scripts/validate.py`(:173-176 as_posix + 注释)
+- `scripts/pack_utils.py`(:24,:34 _path as_posix)
+- `INDEX.md`(重生成 78 行全 posix + 静态区 6 链接手修,共 12 字符清零)
+
+### 测试证据(X/X,真实 exit code,无管道末端)
+- `gen_index --check` exit 1 → **0** ✓;`check_all` exit 1 → **0** ✓;validate/meta-tests 全 0 ✓
+- `--pack cpp-testing` 生成区行数 **41**(REFUTE oracle)✓,反斜杠行 0 ✓(改前 0 行)
+- validate keys 78/78 posix;subset 命中 41(改前 0)✓;gen_index keys 78/78 posix ✓
+- export_pack --zip exit 0,zip+sha256 创建,packs/index.yml manifests 全 posix ✓
+- INDEX.md 反斜杠字符计数 **0** ✓(84→0)
+- wxwidgets 行仍 0(BOM,iter 15 输入)✓ 符合预期
+
+### 过程意外 / 与预期偏差
+1. **REFUTE 推翻方案的测试 oracle(major-1)**:初版 oracle 若被执行,正确实现会"测试失败"——
+   错误的验收线比没有验收线更危险(诱导修坏正确代码)。
+2. **BOM 排除是纯运气外发现的**:baseline 复查 → 反斜杠 → REFUTE 追问"wxwidgets 行去哪了"
+   才暴露。4 个 harness 从未被 validate 检查过(含 iter 26 计划审查的 wxwidgets 自己)。
+3. **Git Bash grep 静默漏报**:grep -r 反斜杠链接返回空(Python 扫描证实 INDEX.md 有 84)。
+   skill Rationalization Table"grep 静默=没有"再次兑现;跨平台扫描用 Python 才权威。
+4. **mktemp -d /tmp 陷阱(Git Bash 映射)**:Windows Python 收到 /tmp 路径 → export_pack 假
+   exit 2,差点误判回归。shell 末端/边界信号第 5 次教训。
+
+### Pattern Index 更新: 新增 posix-path-identifier | bom-frontmatter-exclusion
+### 遗留 backlog
+- iter 15 必做:BOM 容错(utf-8-sig)→ INDEX 78→82 行 + validate 首次真实检查 4 个 BOM harness。
+- iter 1-13 backlog 不变。
+
