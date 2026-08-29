@@ -1991,6 +1991,35 @@ Read 全文核实。**跨平台文本检索一律 Python/Read,已第 3 次证明
 ### 遗留 backlog
 - [信息] staleness 主波 2027-05/06(见 iter 26)。
 
+---
+
+## 迭代 28 — DOGFOOD(skill Step 5.5):CI 等价全序列 12/12 + 真实 eval 工作流链
+
+### 触发
+skill Step 5.5:每批必须用真实消费者流程跑一次,非仓库 fixture。本仓库的"真实消费者"=
+CI(全步骤序列)+ eval 操作员工作流(run_eval scaffold → 填输出 → evaluate → registry)。
+
+### 执行与结果
+1. **CI 等价全序列(Windows 腿;CI 是 Linux 腿)**:validate --json/--stale/--related →
+   gen_index --check → test_ai_protocol → eval good-runs → plan_debug → feedback →
+   list_packs → install → validate --installed → gen_index --pack:**12/12 exit 0** ✓
+2. **真实 eval 工作流链(dogfood-model 骨架,验后即删)**:
+   - run_eval scaffold:4 prompt + task-spec ✓;step-4 注记与实际行为一致 ✓
+   - evaluate 空 run:**exit 2 + "not assessable"** + report tier:null(iter 16 契约经
+     真实工作流兑现)✓
+   - update_model_registry 吃 tier-less report:**拒绝,消息含 empty/not-assessable**
+     (iter 16 registry 守卫经真实工作流兑现)✓;model-registry.md 零污染 ✓
+
+### 过程意外 / 与预期偏差
+**自己又踩管道末端陷阱**(2>&1 | tail 后 echo $? 量了 tail 的 exit,把 exit 2 看成 0)
+——本会话第 3 次主动记录此坑,skill 里它是被记录最多的 trap,依然会踩。修正:关键 exit
+一律裸跑测量。教训没有过时,只有暂时记住。
+
+### Pattern Index 更新: N/A(dogfood 全绿;pipeline-exit 陷阱再确认)
+### 遗留 backlog
+- [信息] staleness 主波 2027-05/06(见 iter 26)。
+
+
 
 
 
