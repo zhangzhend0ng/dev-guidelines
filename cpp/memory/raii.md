@@ -32,6 +32,10 @@ related:
   - "cpp/performance/optimization-patterns.md"
   - "cpp/memory/ownership.md"
   - "cpp/third-party/wxwidgets-3-1-5.md"
+  - "cpp/memory/move-semantics.md"
+  - "cpp/third-party/qt6-core.md"
+  - "cpp/third-party/qt6-qml.md"
+  - "projects/snapmaker-orca/coding-standards.md"
 supersedes: []
 changelog:
   - "2026.05: Initial draft"

@@ -28,6 +28,8 @@ related:
   - "cpp/testing/fuzzing.md"
   - "common/ci-cd/pipeline-patterns.md"
   - "cpp/third-party/wxwidgets-3-1-5.md"
+  - "projects/snapmaker-orca/coding-standards.md"
+  - "python/security/input-deserialization.md"
 supersedes: []
 changelog:
   - "2026.05: Initial draft"

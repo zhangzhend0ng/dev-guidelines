@@ -31,6 +31,7 @@ related:
   - "cpp/testing/sanitizers.md"
   - "cpp/correctness/compile-time-programming.md"
   - "cpp/correctness/integer-safety.md"
+  - "cpp/debugging/sanitizer-triage.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

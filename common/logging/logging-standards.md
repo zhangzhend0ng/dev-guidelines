@@ -23,6 +23,7 @@ related:
   - "common/ai/tool-calling-and-agent-control.md"
   - "cpp/runtime/observability-and-diagnostics.md"
   - "common/security/input-validation.md"
+  - "python/security/input-deserialization.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

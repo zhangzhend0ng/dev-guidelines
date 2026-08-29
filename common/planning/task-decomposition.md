@@ -25,6 +25,7 @@ related:
   - "cpp/design/feature-design-prerequisites.md"
   - "common/planning/requirements-gap-analysis.md"
   - "common/config/option-registration-and-dimension.md"
+  - "common/ai/ai-assisted-cpp-development.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

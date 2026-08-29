@@ -26,6 +26,10 @@ related:
   - "cpp/debugging/flaky-test-triage.md"
   - "cpp/testing/sanitizers.md"
   - "cpp/third-party/wxwidgets-3-1-5.md"
+  - "cpp/debugging/sanitizer-triage.md"
+  - "cpp/third-party/qt6-core.md"
+  - "cpp/third-party/qt6-qml.md"
+  - "projects/snapmaker-orca/coding-standards.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

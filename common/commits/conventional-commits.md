@@ -19,6 +19,7 @@ based_on:
   - "[A] Semantic Versioning 2.0.0"
 related:
   - "cpp/design/feature-design-prerequisites.md"
+  - "projects/snapmaker-orca/workflow-standards.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

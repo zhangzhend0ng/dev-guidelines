@@ -28,6 +28,7 @@ related:
   - "common/code-review/ai-generated-code-failure-modes.md"
   - "common/meta/harness-evolution.md"
   - "cpp/design/feature-design-prerequisites.md"
+  - "python/correctness/type-hints-and-mypy.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft, review-only"

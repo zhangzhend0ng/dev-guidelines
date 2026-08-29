@@ -27,6 +27,8 @@ related:
   - "cpp/testing/sanitizers.md"
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/correctness/type-safety.md"
+  - "cpp/build/toolchain-and-compiler-flags.md"
+  - "cpp/security/secure-coding.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

@@ -21,6 +21,8 @@ related:
   - "common/debugging/root-cause-analysis.md"
   - "common/debugging/fix-verification.md"
   - "common/planning/risk-and-verification-plan.md"
+  - "common/planning/task-decomposition.md"
+  - "cpp/debugging/crash-dump-analysis.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

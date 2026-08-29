@@ -22,6 +22,8 @@ related:
   - "common/debugging/fix-verification.md"
   - "cpp/debugging/sanitizer-triage.md"
   - "common/planning/requirements-gap-analysis.md"
+  - "common/ai/model-capability-and-instruction-adherence.md"
+  - "cpp/debugging/crash-dump-analysis.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

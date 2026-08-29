@@ -18,6 +18,7 @@ based_on:
 related:
   - "common/code-review/harness-driven-review.md"
   - "common/testing/testing-strategy.md"
+  - "python/security/input-deserialization.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

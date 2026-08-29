@@ -23,6 +23,8 @@ related:
   - "common/debugging/fix-verification.md"
   - "common/testing/testing-strategy.md"
   - "common/ci-cd/pipeline-patterns.md"
+  - "common/ai/model-capability-and-instruction-adherence.md"
+  - "common/debugging/bug-report-triage.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

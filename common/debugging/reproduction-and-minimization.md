@@ -21,6 +21,8 @@ related:
   - "common/debugging/root-cause-analysis.md"
   - "common/debugging/fix-verification.md"
   - "common/testing/testing-strategy.md"
+  - "cpp/debugging/flaky-test-triage.md"
+  - "cpp/debugging/sanitizer-triage.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

@@ -26,6 +26,7 @@ related:
   - "cpp/runtime/observability-and-diagnostics.md"
   - "common/ci-cd/pipeline-patterns.md"
   - "cpp/third-party/wxwidgets-3-1-5.md"
+  - "cpp/debugging/crash-dump-analysis.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

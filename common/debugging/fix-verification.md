@@ -23,6 +23,12 @@ related:
   - "common/testing/testing-strategy.md"
   - "common/planning/risk-and-verification-plan.md"
   - "cpp/debugging/crash-dump-analysis.md"
+  - "common/ai/ai-assisted-cpp-development.md"
+  - "common/ai/model-capability-and-instruction-adherence.md"
+  - "cpp/debugging/flaky-test-triage.md"
+  - "cpp/debugging/sanitizer-triage.md"
+  - "python/concurrency/asyncio-cancellation.md"
+  - "python/testing/pytest-patterns.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

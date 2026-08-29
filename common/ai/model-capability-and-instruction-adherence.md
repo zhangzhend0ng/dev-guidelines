@@ -35,6 +35,7 @@ related:
   - "common/debugging/fix-verification.md"
   - "common/testing/testing-strategy.md"
   - "common/ci-cd/pipeline-patterns.md"
+  - "common/planning/change-scope-control.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

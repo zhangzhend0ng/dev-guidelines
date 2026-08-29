@@ -21,6 +21,7 @@ related:
   - "cpp/runtime/observability-and-diagnostics.md"
   - "cpp/error-handling/result-vs-exception.md"
   - "cpp/correctness/exception-safety.md"
+  - "python/concurrency/asyncio-cancellation.md"
 supersedes: []
 changelog:
   - "2026.05: Initial draft"

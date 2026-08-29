@@ -29,6 +29,9 @@ related:
   - "cpp/testing/sanitizers.md"
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/concurrency/thread-safety.md"
+  - "common/ai/ai-assisted-cpp-development.md"
+  - "cpp/testing/catch2-patterns.md"
+  - "cpp/testing/googletest-patterns.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

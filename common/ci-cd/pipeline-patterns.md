@@ -27,6 +27,7 @@ related:
   - "common/security/input-validation.md"
   - "cpp/build/toolchain-and-compiler-flags.md"
   - "cpp/testing/static-analysis.md"
+  - "python/packaging/dependency-management.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

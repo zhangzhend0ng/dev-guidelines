@@ -20,6 +20,7 @@ based_on:
 related:
   - "common/code-review/harness-driven-review.md"
   - "common/code-review/ai-generated-code-failure-modes.md"
+  - "projects/snapmaker-orca/workflow-standards.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

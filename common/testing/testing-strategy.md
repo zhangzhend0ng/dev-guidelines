@@ -33,6 +33,10 @@ related:
   - "cpp/testing/static-analysis.md"
   - "cpp/testing/catch2-patterns.md"
   - "cpp/testing/googletest-patterns.md"
+  - "common/debugging/reproduction-and-minimization.md"
+  - "cpp/debugging/flaky-test-triage.md"
+  - "python/correctness/type-hints-and-mypy.md"
+  - "python/testing/pytest-patterns.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

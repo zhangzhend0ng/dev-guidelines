@@ -25,6 +25,8 @@ related:
   - "cpp/security/secure-coding.md"
   - "cpp/build/package-management.md"
   - "common/ci-cd/pipeline-patterns.md"
+  - "common/planning/rollback-and-migration-plan.md"
+  - "python/packaging/dependency-management.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

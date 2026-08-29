@@ -1832,6 +1832,43 @@ harness_files[0] 全仓出现:仅 detect_signals 两处(均已改);hid_to_log_id
 - [中] 57 条单向 related 清偿。
 - m6 README 覆盖语义;[低] LINE_BUDGETS 支配性。
 
+---
+
+## 迭代 24 — 存量 57 条单向 related 一次性清偿(全仓归零)
+
+### 触发的理论缺口
+iter 22 backlog 的清偿轮。AGENTS 规则 5((P) 约定):related 必须双向。57 条 across 31 个
+目标文件 —— 全部为 harness→harness 对(docs/ 目标无 frontmatter,check 里显式豁免)。
+
+### grep journal 结果(Step 1)
+`advisory-burndown`(iter 22);iter 22 的插入逻辑复用(6 文件版推广到 N 文件,含
+"已链接"幂等跳过)。
+
+### 方案(无对抗轮,判据:纯 frontmatter 追加 + 审计器自证归零)
+- 按 target 分组(31 文件 57 条),每文件一次插入;已有 related 字段的追加、缺失的新建。
+- 幂等保护:目标列表已含该条目则跳过(重复运行安全)。
+- 归零验证 + diff 纯净性抽检(31 files, 57 insertions, 零 body 改动)。
+
+### 语义权衡(显式记录)
+盲互惠可能产生语义噪声(细粒度 harness 挂到 hub harness 的反链)——但规则 5 是仓库自己
+立的 (P) 宪法,reciprocity 即标准;导航粒度粗不影响正确性。若未来觉得某反链无意义,
+按 harness-evolution 正常流程删**两端**。
+
+### 测试证据(X/X,真实 exit code)
+- `validate --related --json`:advisories **57→0**,pass:true ✓
+- 文本输出:"Related links are fully bidirectional." ✓
+- 六套件 + check_all + gen_index 全 0 ✓;diff stat:31 files / +57 / -0 ✓
+
+### 过程意外 / 与预期偏差
+管道 + heredoc 抢 stdin(`cmd | python - <<EOF` 把脚本源当数据)→ 空输入崩溃。改为脚本内
+subprocess 自取。**Shell 数据流第三种坑**(前有:管道末端 exit、/tmp 映射)。
+
+### Pattern Index 更新: 新增 heredoc-stdin-conflict
+### 遗留 backlog
+- [低] FAIL 行格式变体(嵌 [Item N]/[R1] 引用不匹配 ITEM_LINE_RE)。
+- m6 README 覆盖语义;[低] LINE_BUDGETS 支配性。
+
+
 
 
 

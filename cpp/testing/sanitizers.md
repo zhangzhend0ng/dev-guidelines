@@ -26,6 +26,7 @@ related:
   - "cpp/build/toolchain-and-compiler-flags.md"
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/concurrency/thread-safety.md"
+  - "cpp/debugging/flaky-test-triage.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"
