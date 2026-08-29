@@ -1310,5 +1310,55 @@ rglob 三版本行为)。
 - iter 17 起按计划(未审脚本扫描)。
 - argparse usage exit 2 与 not-assessable exit 2 共码(靠 stderr 文案区分)——可接受,显式记录。
 
+---
+
+## 迭代 17 — R1 模块级扩张:5 个未深扫脚本对抗扫描(产 iter 18-20 攻击面)
+
+### 触发
+R1 双向扩张:iter 14-16 全在已审维度纵深,本轮扩到从未深扫的 check_plan_protocol /
+run_ai_protocol_check / install_pack / list_packs / check_feedback_signals。
+R1 扫描 subagent 模式(iter 8 先例):一个扫描 agent 产分级清单,后续轮逐个修。
+
+### grep journal 结果(Step 1)
+关键词 `feedback-log`/`兄弟脚本`/`R1 扫描` 命中 iter 4(check_feedback 仅对比契约)、
+iter 8(R1-scan 先例 + 7.7M token 教训:本轮沿用 targeted,单 agent 单对象组)。
+
+### 扫描产出(全部带实测证据,详见 agent 报告;关键项)
+**[blocker]**
+- B1 check_feedback_signals.py:44-49+62-80:ENTRY_RE 限定符组只认 `, item N|general`,
+  生产者写 `, orphan`(check_review_signals.py:174)→ 真实日志 24 条只解析 9 条;
+  08-07 checklist 9×gap(应触发 ≥3 阈值)、AGENTS 5×gap 均漏报,exit 0。
+  **生产环境已生效的漏报。部分解析(非零丢失)完全静默(:130-133 只在零解析时提示)。**
+- B2 同文件 :62-80:不匹配的 `###` header 不重置 `current` → 后随 Signal 行覆写上一条目
+  (temp 复现:harness-a misleading 被覆写成 gap,harness-b 整体消失)。
+**[major]**
+- M1 :100-111 + 62-80:`--threshold 0` + 存在无 Signal 条目 → IndexError 崩溃 exit 1,
+  违反 docstring "exit 0 always"(:18-19)。temp 复现。
+- M2 **iter 15 BOM 修复是单层修复**(Step 4 横向 grep 没做全,扫描抓到):check_plan_protocol.py:31、
+  check_feedback_signals.py:59、pack_utils.py:23/33/71、check_ai_protocol read_input 均漏 utf-8-sig。
+  带 BOM 的合法 plan 被判假错;带 BOM 的反馈日志 total_entries: 0。
+**[minor] m1-m11**(详单见扫描报告):plan LINE_BUDGET=8 判决死代码+无出处;check_plan_protocol
+strip 语义不一致(自相矛盾报错);run_ai_protocol_check --json 多文件输出非单一合法 JSON;
+install_pack requires 环 RecursionError + 未知 pack 裸 KeyError;README 覆盖语义漂移;
+.dev-guidelines-installed.yml 不在 .gitignore;空 installed_paths → vacuous pass(iter 16 同族);
+en-dash header 静默丢弃;加粗信号值计入 UNKNOWN;list_packs 直接下标。
+
+### 设计取舍(核实后不改)
+run_ai_protocol_check 无 --diff(已知限制,iter 12 记录);advisory exit-0 契约本体正确;
+缺文件 traceback fail-closed 可接受;infer_mode None 已被唯一消费者守卫。
+
+### 本轮结论
+- iter 18 = B1+B2+M1(check_feedback_signals parser 重写 + 阈值守卫 + 未解析计数警告,
+  同一处 parser 重写顺带覆盖 m9/m10)。
+- iter 19 = M2 BOM 补面(机械;iter 15 同语义兄弟位点)。
+- iter 20 = pack 工具链卫生(m4 环检测/m5 干净报错/m7 .gitignore/m11 list_packs 守卫 +
+  m8 消费者空集守卫)。
+- m1/m2/m3 → iter 21;m6 → 文档轮。
+
+### Pattern Index 更新: 新增 parser-producer-drift | partial-parse-silence | single-layer-bom-fix
+### 遗留 backlog
+m1-m11 见扫描报告(逐轮消化);m6 README 覆盖语义明示。
+
+
 
 
