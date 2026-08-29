@@ -6,6 +6,7 @@ Good fixtures must pass. Bad fixtures must fail.
 
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 
@@ -39,6 +40,62 @@ def run(files):
     )
 
 
+EVALUATE = ROOT / "scripts" / "evaluate_ai_protocol.py"
+REGISTRY_TOOL = ROOT / "scripts" / "update_model_registry.py"
+GOOD_RUNS = EVALS / "good-runs"
+
+
+def run_eval(*args):
+    return subprocess.run(
+        [sys.executable, str(EVALUATE), *[str(a) for a in args]],
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+
+
+def test_evaluate(errors):
+    """evaluate_ai_protocol exit contract (iter 16).
+
+    0 = all pass; 1 = some fail; 2 = not assessable (empty/missing dir).
+    Empty input must NOT yield a fake "T0" + exit 0 (misleading success
+    that could flow into the persisted model registry).
+    """
+    ok = run_eval(GOOD_RUNS, "--json")
+    if ok.returncode != 0 or '"recommended_tier": "T2"' not in ok.stdout:
+        errors.append(f"good-runs eval expected T2/exit 0, got exit {ok.returncode}")
+
+    with tempfile.TemporaryDirectory() as tmp:
+        empty = Path(tmp) / "empty"
+        empty.mkdir()
+        result = run_eval(empty, "--json")
+        if result.returncode != 2:
+            errors.append(f"empty-dir eval expected exit 2 (not assessable), got {result.returncode}")
+        if '"recommended_tier": null' not in result.stdout:
+            errors.append("empty-dir eval JSON must carry recommended_tier: null (no fake T0)")
+        if "not assessable" not in result.stderr:
+            errors.append("empty-dir eval stderr must explain not-assessable")
+
+        missing = run_eval(Path(tmp) / "does-not-exist", "--json")
+        if missing.returncode != 2:
+            errors.append(f"missing-dir eval expected exit 2, got {missing.returncode}")
+        if "not a directory" not in missing.stderr:
+            errors.append("missing-dir eval stderr must say 'not a directory or does not exist'")
+
+        # update_model_registry: report missing recommended_tier must be
+        # rejected (old code silently defaulted to T0 and wrote a row).
+        # parser.error fires before REGISTRY is touched, so no cleanup needed.
+        report = Path(tmp) / "report.json"
+        report.write_text('{"results": []}', encoding="utf-8")
+        reg = subprocess.run(
+            [sys.executable, str(REGISTRY_TOOL), "--model", "t", "--version", "0", "--report", str(report)],
+            check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        )
+        if reg.returncode != 2 or "recommended_tier" not in reg.stderr:
+            errors.append(f"registry update with tier-less report expected exit 2, got {reg.returncode}")
+
+
 def main():
     errors = []
 
@@ -52,6 +109,8 @@ def main():
         result = run([bad])
         if result.returncode == 0:
             errors.append(f"bad fixture unexpectedly passed: {bad}")
+
+    test_evaluate(errors)
 
     if errors:
         for error in errors:

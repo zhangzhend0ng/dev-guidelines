@@ -30,6 +30,7 @@ After scaffolding, the workflow is:
   3. (human) write each output to <name>.<mode>.output.md in the run dir
      (see docs/ai/evals/weak-model/good-runs/ for the format)
   4. python scripts/evaluate_ai_protocol.py <run-dir> --json --output <run-dir>/report.json
+     (exit 2 "not assessable" while the run dir has no <mode>.output.md files yet)
   5. (optional) python scripts/update_model_registry.py --model <m> --version <v> --report <run-dir>/report.json
 
 Usage:
@@ -185,6 +186,7 @@ def main():
     print(f"  2. Feed each prompt to {args.model}, collect outputs")
     print(f"  3. Write outputs as <name>.<mode>.output.md here (see good-runs/ for format)")
     print(f"  4. python scripts/evaluate_ai_protocol.py {run_dir} --json --output {run_dir}/report.json")
+    print(f"     (step 4 exits 2 'not assessable' until outputs exist — do not register a tier from an empty run)")
     print()
     print("NOTE: this scaffolds a run only. Tier recommendation has no meaning until")
     print("outputs are filled and evaluate_ai_protocol.py passes. See")

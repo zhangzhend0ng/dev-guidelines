@@ -78,12 +78,15 @@ def main():
     args = parser.parse_args()
 
     report = json.loads(Path(args.report).read_text(encoding="utf-8"))
-    tier = report.get("recommended_tier", "T0")
+    # No default: a report without recommended_tier (e.g. an empty/not-
+    # assessable eval) must be rejected, never silently recorded as T0.
+    tier = report.get("recommended_tier")
     if tier not in VALID_TIERS:
         parser.error(
-            f"recommended_tier '{tier}' is not a valid tier "
+            f"recommended_tier {tier!r} is missing or not a valid tier "
             f"(expected one of {sorted(VALID_TIERS)}). "
-            "Weak-model eval emits at most T2; T3/T4 are manual promotions."
+            "An empty/not-assessable eval has no tier; weak-model eval emits "
+            "at most T2; T3/T4 are manual promotions."
         )
     content = REGISTRY.read_text(encoding="utf-8")
     updated = upsert_row(content, args.model, args.version, tier, str(date.today()), args.notes)

@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 """Evaluate a directory of weak-model outputs and recommend a capability tier.
 
+Exit codes:
+    0 = cases evaluated, all passed
+    1 = cases evaluated, at least one failed
+    2 = not assessable: directory missing / not a directory, or zero
+        AI output files matched (argparse usage errors share exit 2;
+        the stderr message distinguishes them). A report is still
+        written with recommended_tier: null so humans can inspect it,
+        but update_model_registry.py will refuse it.
+
 Usage:
     python scripts/evaluate_ai_protocol.py docs/ai/evals/weak-model/good-runs
     python scripts/evaluate_ai_protocol.py outputs/dsv4pro-2026-06-15 --json
@@ -51,6 +60,9 @@ def check_file(path):
 
 
 def recommend_tier(results):
+    # NOTE: empty results cannot reach here from main() (it exits 2 first).
+    # Returning "T0" for empty input would be a fake signal ("evaluated and
+    # worst" vs "never assessed") — do not call this with [].
     if not results:
         return "T0"
 
@@ -74,13 +86,14 @@ def markdown_report(results, tier):
     total = len(results)
     passed = sum(1 for item in results if item["pass"])
     failed = total - passed
+    tier_label = tier if tier is not None else "N/A (0 cases — not assessable)"
     lines = [
         "# AI Protocol Evaluation Report",
         "",
         f"- Total cases: {total}",
         f"- Passed: {passed}",
         f"- Failed: {failed}",
-        f"- Recommended tier: {tier}",
+        f"- Recommended tier: {tier_label}",
         "",
         "| File | Mode | Result | Errors |",
         "|------|------|--------|--------|",
@@ -100,9 +113,21 @@ def main():
     args = parser.parse_args()
 
     directory = Path(args.directory)
+    if not directory.is_dir():
+        print(f"ERROR: not a directory or does not exist: {directory}", file=sys.stderr)
+        sys.exit(2)
     files = candidate_files(directory)
-    results = [check_file(path) for path in files]
-    tier = recommend_tier(results)
+    results = []
+    tier = None
+    if not files:
+        # Two-state honesty (empty eval): zero matched cases is "not
+        # assessable", NOT a scored T0. The old behavior (recommended_tier
+        # "T0" + exit 0) was misleading-success and could flow into the
+        # persisted model registry via update_model_registry.py.
+        print(f"ERROR: no AI output files matched in {directory} (not assessable)", file=sys.stderr)
+    else:
+        results = [check_file(path) for path in files]
+        tier = recommend_tier(results)
 
     payload = {"recommended_tier": tier, "results": results}
     rendered = json.dumps(payload, indent=2) if args.json else markdown_report(results, tier)
@@ -112,6 +137,8 @@ def main():
     else:
         print(rendered)
 
+    if tier is None:
+        sys.exit(2)
     sys.exit(1 if any(not item["pass"] for item in results) else 0)
 
 

@@ -1207,4 +1207,108 @@ check_review_signals.py:125),无第 4 处;check_review_signals.py:91/104 的正�
 - iter 16 起按计划(recommend_tier 两态决策)。
 - INDEX.md 自身 BOM:显式不改(无消费者受损;改=无谓 diff)。
 
+---
+
+## 迭代 16 — recommend_tier 空输入假 T0 + registry 缺 key 默认 T0(两态决策,双 sentinel-conflation)
+
+### 触发的理论缺口
+iter 13 backlog [中] 兑现。两态决策(诚实性硬原则 1):空 eval = **真·不可观测**(信号根本
+没产出),诚实答案不是 T0(假最差/false-negative)也不是满分,是**退出评分**。旧行为把
+空输入评成 T0 + exit 0(misleading-success 家族),且经 `update_model_registry.py:81`
+`.get("recommended_tier", "T0")` **流进持久 model registry**。REFUTE 又挖出第二个同族:
+**缺 key 也默认 T0**(sentinel 缺失子类)。
+
+### grep journal 结果(Step 1)
+`not-assessable`/`misleading-success`(iter 13 过程意外栏)命中;`两态决策` 命中 skill 原则;
+`exit-code 契约` 命中 iter 2(validate exit 3 documented-but-unreachable——本轮测试落点教训同源)。
+
+### 合法 shape 清单 + 覆盖状态(evaluate 输入目录 × registry 输入 report)
+| Shape | 判别 | UNDERSTOOD? | 方案覆盖? |
+|-------|------|-------------|-----------|
+| A 非空有 fail | T1(有 plan 过)/T0 + exit 1 | ✓ | 不变 ✓ |
+| B 非空全过 | T2/T1/T0 + exit 0 | ✓ | 不变 ✓(good-runs 回归) |
+| C 目录在但 0 匹配文件 | 空 results | ✓ | **exit 2 + null + N/A** ✓ |
+| D 目录不存在/是文件 | — | ✓(REFUTE 实测 rglob 静默返 [],**非** traceback) | is_dir 检查 + exit 2 ✓ |
+| E checker 崩溃 | 计 fail | ✓ | 不变 ✓ |
+| F registry:tier 合法/非法/None/缺 key | .get 语义 | ✓ | None/缺 key → parser.error ✓ |
+
+### 退化输入×消费者矩阵
+| 退化输入＼消费者 | evaluate exit | report.json | markdown 报告 | model-registry.md(持久) |
+|----------------|--------------|-------------|--------------|------------------------|
+| 空 run(旧) | 0(假绿) | "T0" | "Recommended tier: T0"(假证据落盘) | **静默写入 T0 行** |
+| 空 run(新) | 2 | null | N/A (0 cases — not assessable) | 拒绝(exit 2) |
+| 缺 key report(旧) | n/a | n/a | n/a | **静默写入 T0 行**(REFUTE 复现后还原) |
+| 缺 key report(新) | n/a | n/a | n/a | 拒绝(exit 2) |
+
+### 初版方案(被推翻点)
+**REFUTE subagent 推翻 4 处**:
+- [major-1] 我宣称"缺目录→裸 traceback"**是假的**——rglob 对不存在目录静默返 [](三条
+  Python 版本实测)。Shape D 早就静默坍缩成 C。**没实测就写现状 = iter 68 式错误再犯**。
+- [major-2] item 1(空→None)在 main 提前守卫后成死代码;单独提交反而泄漏 repr "None"。
+  采纳替代方案:main 层单点拥有,recommend_tier 只加防御注释。
+- [major-3] registry 对显式 null **今天就拒**(None not in VALID_TIERS);真增量只有缺 key。
+  我的测试用例"null→exit 2"改前就绿 = 非判别性测试。改用缺 key 用例(改前红)。
+- [major-4] 测试没落点 = documented-but-unreachable 家族(iter 2 exit 3 同源)。落进 CI
+  已跑的 test_ai_protocol.py;registry 测试走 parser.error 先于 REGISTRY 写入的顺序,零污染。
+- [major-5] 文档同步打错靶:两份 README 无陈旧内容;真缺口是 **run_eval.py:187 打印的
+  下一步命令**(新 scaffold 空 run 目录踩 exit 2 的最高频现实触发点)。
+- (g) exit 2 论证成立:1 已被"有 case 且失败"占用,混码毁掉"零证据 vs 不及格证据"的区分;
+  C/D 分 stderr 文案;docstring 写明 2 兼覆盖 argparse usage。
+
+### 对抗审查结论
+核心方向(空输入不可评分为 T0)不能被推翻;方案 4 处事实/设计错误先修。**Tiebreaker 实证**:
+REFUTE 的每个"现状"主张都带实测(good-runs 4 fixture T2、registry 静默写行复现后还原、
+rglob 三版本行为)。
+
+### 修订方案(采纳 REFUTE 替代方案 v2)
+1. evaluate main:is_dir 守卫(D,含"传了文件"情形,文案 "not a directory or does not exist")
+   + 空 files 分支(C,文案 "no AI output files matched ... not assessable"),报告仍落盘
+   (null/N/A)但 exit 2;recommend_tier 不改 + 防御注释;markdown tier_label 守卫。
+2. update_model_registry:.get 无默认 + None/缺 key → parser.error(消息含 empty/not-assessable)。
+3. docstring 退出码契约(0/1/2 + 2 兼 usage);run_eval docstring + 打印的 step-4 注记。
+4. test_ai_protocol.py 新增 test_evaluate:good-runs T2/exit0、空目录 exit2+null+stderr、
+   缺目录 exit2+文案、registry 缺 key exit2。
+
+### 数据流 hops(空 eval 信号)
+| Hop | 写者→读者 | ✓/✗ |
+|-----|-----------|-----|
+| 1 candidate_files 空 | main → exit 2 | ✓ |
+| 2 report.json recommended_tier null | evaluate → update_model_registry | ✓(拒绝) |
+| 3 markdown N/A | evaluate → 人 | ✓(字符串级验证) |
+| 4 run_eval step-4 文案 | run_eval → 操作员 | ✓(预设期望) |
+
+### 变种横向 grep
+同族 ".get 默认 sentinel":全 scripts/ grep `.get(` 带 "T0"/哨兵默认——仅 update_model_registry
+一处;`report.get("pass")`(evaluate:48)默认 None 是保守方向(不当 pass),合法。
+同族 "空输入假信号":recommend_tier 是唯一评分聚合点(check_ai_protocol 无聚合)。
+
+### 改动文件
+- `scripts/evaluate_ai_protocol.py`(docstring 契约 + main 守卫 + tier_label + 防御注释)
+- `scripts/update_model_registry.py`(:81-89 无默认 + 拒绝消息)
+- `scripts/test_ai_protocol.py`(+test_evaluate 5 组断言,CI 已接线)
+- `scripts/run_eval.py`(docstring step 4 + 打印注记)
+
+### 测试证据(X/X,真实 exit code)
+- test_ai_protocol **全过(含 5 组新断言)** exit 0 ✓;test_plan_debug exit 0 ✓
+- 空 run --output:exit **2** ✓,报告落盘 "Recommended tier: N/A (0 cases — not assessable)"
+  (字符串级)✓
+- good-runs:T2 + exit 0(回归)✓;validate/gen_index/check_all exit 0(无回归)✓
+- py_compile 4 脚本 OK ✓
+
+### 过程意外 / 与预期偏差
+1. **现状描述错再犯(被 REFUTE 拦截)**:我在没实测的情况下写"缺目录→traceback"——正是
+   Rationalization Table"方案里的现状我记得是 X"条目。rglob 静默返 [] 是 pathlib 远古行为,
+   反直觉(rglob 不 exist 检查)。**永远实测现状,哪怕"显然"**。
+2. **Edit 工具第二次吞块**:docstring Edit 的 new_string 含闭合 `"""` 而 old_string 只有
+   opening 行 → 原 Usage 块成孤儿顶层代码,py_compile 抓到,修复。两轮连续踩 Edit 粒度坑
+   ——教训:跨"语句边界"的 Edit 必须让 old/new 完整覆盖被替换区域。
+3. 非判别性测试教训:改前就绿 的断言什么都没证明(REFUTE major-3)——修复类测试必须
+   先证明它在旧代码上是红的。
+
+### Pattern Index 更新: 新增 two-state-empty-input | get-default-sentinel | non-discriminating-test
+### 遗留 backlog
+- iter 17 起按计划(未审脚本扫描)。
+- argparse usage exit 2 与 not-assessable exit 2 共码(靠 stderr 文案区分)——可接受,显式记录。
+
+
 
