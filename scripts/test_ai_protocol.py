@@ -156,6 +156,26 @@ def test_wrapper_json(errors):
         errors.append(f"aggregate --json with a bad fixture expected exit 1, got {mixed.returncode}")
 
 
+def test_leading_space_section(errors):
+    """m2 family, third site (iter 25): an indented field line must not be
+    'present but empty' - presence is substring-based, extraction now strips.
+    """
+    with tempfile.TemporaryDirectory() as tmp:
+        p = Path(tmp) / "ls.plan.output.md"
+        lines = [
+            b"Objective: Fix one bug",
+            b" Applicable harnesses: common/planning/task-decomposition.md",
+            b"Applicable checklist items: item 1",
+            b"Patch plan: edit one file",
+            b"Verification plan: run tests",
+            b"Risks / NOT VERIFIED: none",
+        ]
+        p.write_bytes(b"\r\n".join(lines) + b"\r\n")
+        result = run([p])
+        if result.returncode != 0:
+            errors.append(f"leading-space plan section rejected: {result.stdout.strip()}")
+
+
 def main():
     errors = []
 
@@ -173,6 +193,7 @@ def main():
     test_evaluate(errors)
     test_bom(errors)
     test_wrapper_json(errors)
+    test_leading_space_section(errors)
 
     if errors:
         for error in errors:

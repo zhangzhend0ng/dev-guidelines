@@ -1868,6 +1868,60 @@ subprocess 自取。**Shell 数据流第三种坑**(前有:管道末端 exit、/
 - [低] FAIL 行格式变体(嵌 [Item N]/[R1] 引用不匹配 ITEM_LINE_RE)。
 - m6 README 覆盖语义;[低] LINE_BUDGETS 支配性。
 
+---
+
+## 迭代 25 — 三个 [低] backlog 清账:一个修复、两个实证"不是病"、一个新同族第三处
+
+### 触发的理论缺口
+清账轮:iter 2(--json pass 语义)+ iter 8(:153 "死检查")+ iter 21(LINE_BUDGETS 支配性)。
+**实证纪律的两个方向都兑现了**:该修的修了;被控诉的两项经实验无罪释放——
+"审查者的严重度判断需实证校验"反过来也成立:**backlog 的指控也需要实证校验**。
+
+### grep journal 结果(Step 1)
+`documented-but-unimplemented`(iter 22——validate docstring 与 JSON 契约同步属同族);
+`non-discriminating-test`/`现状描述错`。
+
+### 三项裁决(各带实验)
+| 项 | 指控 | 实验 | 裁决 |
+|----|------|------|------|
+| --json pass 语义 | exit 3 + pass:true 矛盾 | 键核查 | **修**:+warnings_count + docstring 契约("pass 反映 errors only") |
+| check_ai_protocol:153 死检查 | "总被 section 检查掩盖" | 构造含未引用 finding 的合法节结构 review → **exit 1 正确触发** | **无罪**:检查活着且正确,保留 |
+| LINE_BUDGETS(:49)支配性 | 疑似 iter 21 同族死代码 | 对照:check_ai_protocol 的 shape 检查是 **substring 存在性**,非 exact 行数 → budget 是活判决 | **无罪**:不支配,保留 |
+| (新发现)section_value strip | m2 家族第三处(检查子串命中、提取裸行 startswith → 缩进节"在但空") | 构造缩进节 plan → 修复前 empty-section 假错 | **修** + 测试 |
+
+### 数据流 hops(无跨层;JSON 消费者契约)
+| Hop | 写者→读者 | ✓/✗ |
+|-----|-----------|-----|
+| 1 validate JSON +warnings_count | validate → 机器消费者 | ✓(键显式,判别 exit 0/3) |
+
+### 变种横向 grep
+section_value 家族全量:check_plan_protocol(修,iter 21)/ check_debug_report(修,iter 21)/
+check_ai_protocol(修,本轮)= 全部 3 处闭环;check_feedback_signals 无此函数。
+
+### 改动文件
+- `scripts/validate.py`(docstring 契约 + warnings_count 键)
+- `scripts/check_ai_protocol.py`(section_value strip + 注释)
+- `scripts/test_ai_protocol.py`(+test_leading_space_section,用对的节名)
+
+### 测试证据(X/X,真实 exit code)
+- test_ai_protocol exit 0(新断言:缩进节 plan 通过)✓;JSON 键含 warnings_count ✓
+- :153 反证实验(修复前口径):合法节 + 无引用 finding → exit 1 ✓
+- pd/fb/check_all 全 0 ✓
+
+### 过程意外 / 与预期偏差
+1. **heredoc 第 4 次咬人**(`\\n` 又被吃)——自己 iter 21 立的"含转义代码只用 Edit 工具"规则
+   被自己违反。修复时遵守了(Read+Edit)。**规则立了就要查自己是否执行**(与 skill 的
+   Pattern Index 机械完成标志同构:立规者最易豁免自己)。
+2. fixture 节名错配第 2 次(plan 两协议):check_ai_protocol 的 plan 节是
+   Objective/Applicable harnesses/...,不是 check_plan_protocol 的 Goal/Harnesses/...。
+   **同形不同约,写 fixture 先查 REQUIRED_SECTIONS**。
+
+### Pattern Index 更新: 新增 backlog-claim-needs-verification | presence-vs-extraction-asymmetry
+### 遗留 backlog
+- [低] FAIL 行格式变体(嵌 [Item N]/[R1] 引用不匹配 ITEM_LINE_RE)。
+- m6 README 覆盖语义。
+
+
 
 
 

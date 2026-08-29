@@ -10,6 +10,10 @@ Exit codes:
     1 = frontmatter errors (hard fail)
     2 = cross-reference errors (hard fail)
     3 = stale citations (warn; only with --stale)
+
+--json: "pass" reflects ERRORS only. Warnings (exit 3) do not flip it;
+"warnings_count" carries the number so machine consumers can distinguish
+pass:true+exit:0 from pass:true+exit:3 (iter 2 backlog, closed iter 25).
 """
 
 import argparse
@@ -253,6 +257,7 @@ def main():
             "pass": len(all_errors) == 0,
             "errors": all_errors,
             "warnings": warnings,
+            "warnings_count": len(warnings),
         }
         if args.related:
             result["related_advisories"] = related_findings

@@ -94,8 +94,10 @@ def check_noise(text):
 
 
 def section_value(text, section):
+    # strip: presence checks are substring-based; raw-line startswith made an
+    # indented section "present but empty" (iter 21 m2 family, third site)
     for line in text.splitlines():
-        if line.startswith(section):
+        if line.strip().startswith(section):
             return line.split(":", 1)[1].strip()
     return ""
 
