@@ -317,7 +317,7 @@ def main():
         print(f"ERROR: review report not found: {report_path}", file=sys.stderr)
         return 1
 
-    report_text = report_path.read_text(encoding="utf-8")
+    report_text = report_path.read_text(encoding="utf-8-sig")  # utf-8-sig: strip BOM if present - a BOM breaks pos-0 anchors/parsers (iter 15/19)
     harness_files = find_harness_files(report_text)
 
     if not harness_files:

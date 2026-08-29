@@ -3,6 +3,7 @@
 
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 
@@ -86,6 +87,15 @@ def main():
         result = run_inline(script, text)
         if result.returncode == 0:
             errors.append(f"bad inline fixture unexpectedly passed for {script.name}")
+
+    # BOM tolerance (iter 19): BOM before "Goal:" must not false-fail.
+    with tempfile.TemporaryDirectory() as tmp:
+        for script, source in GOOD:
+            bom_path = Path(tmp) / ("bom-" + source.name)
+            bom_path.write_bytes(bytes([0xef, 0xbb, 0xbf]) + source.read_bytes())
+            result = run(script, bom_path)
+            if result.returncode != 0:
+                errors.append(f"BOM'd good fixture failed: {source.name}")
 
     if errors:
         for error in errors:

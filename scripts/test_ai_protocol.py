@@ -96,6 +96,23 @@ def test_evaluate(errors):
             errors.append(f"registry update with tier-less report expected exit 2, got {reg.returncode}")
 
 
+def test_bom(errors):
+    """A UTF-8 BOM before the content must not fail protocol checks (iter 19).
+
+    Windows editors emit BOMs; a BOM before "Goal:" broke the pos-0 anchor
+    and false-failed a perfectly good plan (iter 15 fixed harness parsers,
+    this covers the AI-output reader path).
+    """
+    with tempfile.TemporaryDirectory() as tmp:
+        bom_file = Path(tmp) / "bom-plan.plan.output.md"
+        bom_file.write_bytes(
+            bytes([0xef, 0xbb, 0xbf]) + GOOD[0].read_bytes()
+        )
+        result = run([bom_file])
+        if result.returncode != 0:
+            errors.append("BOM'd good plan fixture failed protocol checks")
+
+
 def main():
     errors = []
 
@@ -111,6 +128,7 @@ def main():
             errors.append(f"bad fixture unexpectedly passed: {bad}")
 
     test_evaluate(errors)
+    test_bom(errors)
 
     if errors:
         for error in errors:

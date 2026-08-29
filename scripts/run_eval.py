@@ -85,7 +85,7 @@ def load_task(spec_path):
     """Load a task spec from YAML, or return the default if none given."""
     if spec_path is None:
         return dict(DEFAULT_TASK)
-    data = yaml.safe_load(Path(spec_path).read_text(encoding="utf-8"))
+    data = yaml.safe_load(Path(spec_path).read_text(encoding="utf-8-sig"))  # utf-8-sig: strip BOM if present - a BOM breaks pos-0 anchors/parsers (iter 15/19)
     if not isinstance(data, dict) or "fields" not in data:
         raise ValueError(
             f"task spec {spec_path} must be a mapping with a 'fields' key"
@@ -99,7 +99,7 @@ def render_prompt(template_path, fields, placeholders):
     Returns (rendered_text, unfilled) where unfilled is the list of placeholders
     whose values were not present in the task spec (left as {X} for a human).
     """
-    text = template_path.read_text(encoding="utf-8")
+    text = template_path.read_text(encoding="utf-8-sig")  # utf-8-sig: strip BOM if present - a BOM breaks pos-0 anchors/parsers (iter 15/19)
     unfilled = []
     for key in placeholders:
         token = "{" + key + "}"

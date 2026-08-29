@@ -77,7 +77,7 @@ def main():
     parser.add_argument("--notes", default="Updated from protocol evaluation")
     args = parser.parse_args()
 
-    report = json.loads(Path(args.report).read_text(encoding="utf-8"))
+    report = json.loads(Path(args.report).read_text(encoding="utf-8-sig"))  # utf-8-sig: strip BOM if present - a BOM breaks pos-0 anchors/parsers (iter 15/19)
     # No default: a report without recommended_tier (e.g. an empty/not-
     # assessable eval) must be rejected, never silently recorded as T0.
     tier = report.get("recommended_tier")

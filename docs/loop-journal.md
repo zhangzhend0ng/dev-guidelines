@@ -1456,6 +1456,76 @@ Signal 归一;threshold<1 → parser.error;JSON+文本双通道 unparsed 警告;
   实为 GUI PR FAIL)——生产者侧,后轮修(修后 ccc/AGENTS 计数会变,需同步测试注释)。
 - iter 19 = M2 BOM 补面;iter 20 = pack 工具链(m4/m5/m7/m11+m8)。
 
+---
+
+## 迭代 19 — BOM 补面:iter 15 的同语义兄弟位点(M2 单层修复补完)
+
+### 触发的理论缺口
+iter 17 扫描 [major-M2]:iter 15 的 utf-8-sig 只落在 3 处 harness 解析点,**同语义位点
+(协议检查器输出读取、pack YAML、eval report JSON)漏改**——带 BOM 的合法 plan 被
+`line 1 must start with Goal:` 假错;BOM YAML 会被 PyYAML 拒;BOM JSON 被 json.loads 拒。
+Step 4 横向 grep 未做全,扫描抓到(诚实记录:这是我的单层修复)。
+
+### grep journal 结果(Step 1)
+`single-layer-bom-fix`(iter 17 登记);iter 15(修复落点与"免疫有因"清单)。
+
+### 合法 shape 清单 + 覆盖状态(读入点 × BOM 敏感性)
+| 位点 | BOM 敏感机制 | 处置 |
+|------|-------------|------|
+| check_plan_protocol:31 / check_debug_report:33 / check_ai_protocol:74(输出读取) | line-1/pos-0 锚定 | **修** |
+| check_review_signals:320(review report) | 行首正则族 | **修** |
+| pack_utils:23/33/71(pack.yml/installed.yml) | PyYAML 拒 \ufeff token | **修** |
+| update_model_registry:80(report.json) | json.loads 拒 BOM | **修** |
+| run_eval:88/102(task spec/template) | PyYAML / 透传进 prompt | **修** |
+| check_review_signals:91/104/273 | MULTILINE 正则,item/id 非 pos-0 | 免疫,不改(记录理由) |
+| check_review_signals:229(log dedup) | substring in | 免疫,不改 |
+| update_model_registry:91(REGISTRY 读改写) | BOM round-trip 无害 | 不改 |
+| generate_index:108/159(INDEX read/write) | BOM round-trip 自洽;修=无谓 diff | 不改(iter 15 已显式决策) |
+
+### 初版方案(被推翻点)
+无独立 REFUTE——机械多点位补面,判据:单分支、无阈值、有现成回归套件(两套 CI 测试各加
+BOM 用例)。自证风险由"改前红/改后绿"实证兜底:扫描 agent 已实测改前 BOM plan 假错;
+本轮改后直接实验 exit 0。
+
+### 对抗审查结论(实证代替)
+- 新 BOM 用例进 test_ai_protocol + test_plan_debug(CI 已接线,防 documented-but-unreachable)。
+- 免疫位点逐一给机制理由(见 shape 表),不留"顺手全改"的对称性噪声。
+
+### 数据流 hops(BOM 字节)
+| Hop | 写者→读者 | ✓/✗ |
+|-----|-----------|-----|
+| 1 Windows 编辑器产 BOM 文件 | → 协议检查器/pack/eval 读取 | ✓ utf-8-sig |
+| 2 解析锚定(line 1 / YAML token / JSON) | → 判定 | ✓ 不再假错 |
+
+### 变种横向 grep
+`read_text(encoding="utf-8")` 全仓 17 处逐一分类(上表);修 9 处、免疫 8 处有因。
+无第 10 处遗漏(grep 权威,非 Git Bash grep——iter 14 教训)。
+
+### 改动文件
+- `scripts/check_plan_protocol.py` / `check_debug_report.py` / `check_ai_protocol.py` /
+  `check_review_signals.py`(:320)/ `pack_utils.py`(×3)/ `update_model_registry.py` /
+  `run_eval.py`(×2)——共 9 处 utf-8-sig + 注释
+- `scripts/test_ai_protocol.py`(+test_bom:eval 格式 BOM fixture)
+- `scripts/test_plan_debug_protocol.py`(+BOM'd 双 fixture 用例)
+
+### 测试证据(X/X,真实 exit code)
+- test_ai_protocol exit 0(含 BOM 用例)✓;test_plan_debug exit 0(含双 BOM 用例)✓
+- check_plan_protocol 直接实验:BOM'd good plan exit **0**(改前假错,扫描实证)✓
+- test_feedback / check_all / validate / gen_index 全 0(无回归)✓
+
+### 过程意外 / 与预期偏差
+1. **Bash 工具转义层二次咬人**:`b"\xef\xbb\xbf"` 经 heredoc+工具层变成文件内乱码字符
+   (Python `\\x`→`\x`→hex 转义被吃),SyntaxError 抓到;第一次修复搜索串又构造错
+   (U+FEFF 单字符 vs 3 个 Latin-1 字符)。最终用 `bytes([0xef,0xbb,0xbf])` 免转义形式。
+   **教训:含字节转义的代码必须用免转义构造(bytes([...])),不过 heredoc。**
+2. 实验 fixture 错配:用 plan 协议样张喂 check_ai_protocol(两种 plan 格式不同)→ 假红;
+   换 eval 格式 fixture 后绿。**跨格式 fixture 不可混用**。
+
+### Pattern Index 更新: N/A(single-layer-bom-fix 已于 iter 17 登记,本轮落地)
+### 遗留 backlog
+- iter 20 = pack 工具链(m4 环检测/m5 干净报错/m7 .gitignore/m11 list_packs + m8 空集守卫)。
+
+
 
 
 

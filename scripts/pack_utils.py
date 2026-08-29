@@ -20,7 +20,7 @@ def load_pack(pack_id):
     path = PACKS_DIR / pack_id / "pack.yml"
     if not path.exists():
         raise KeyError(f"unknown pack: {pack_id}")
-    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    data = yaml.safe_load(path.read_text(encoding="utf-8-sig"))  # utf-8-sig: strip BOM if present - a BOM breaks pos-0 anchors/parsers (iter 15/19)
     data["_path"] = path.relative_to(ROOT).as_posix()  # posix: goes into packs/index.yml (machine-crossing)
     return data
 
@@ -30,7 +30,7 @@ def list_packs():
     if not PACKS_DIR.exists():
         return packs
     for manifest in sorted(PACKS_DIR.glob("*/pack.yml")):
-        data = yaml.safe_load(manifest.read_text(encoding="utf-8"))
+        data = yaml.safe_load(manifest.read_text(encoding="utf-8-sig"))  # utf-8-sig: strip BOM if present - a BOM breaks pos-0 anchors/parsers (iter 15/19)
         data["_path"] = manifest.relative_to(ROOT).as_posix()  # posix: goes into packs/index.yml (machine-crossing)
         packs.append(data)
     return packs
@@ -68,7 +68,7 @@ def installed_paths_for(pack_ids):
 def read_installed():
     if not INSTALLED_PATH.exists():
         return None
-    return yaml.safe_load(INSTALLED_PATH.read_text(encoding="utf-8"))
+    return yaml.safe_load(INSTALLED_PATH.read_text(encoding="utf-8-sig"))  # utf-8-sig: strip BOM if present - a BOM breaks pos-0 anchors/parsers (iter 15/19)
 
 
 def pack_index():

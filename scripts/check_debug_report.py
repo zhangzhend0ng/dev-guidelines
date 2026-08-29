@@ -30,7 +30,7 @@ FORBIDDEN_PATTERNS = [
 
 def read_input(path):
     if path:
-        return Path(path).read_text(encoding="utf-8")
+        return Path(path).read_text(encoding="utf-8-sig")  # utf-8-sig: strip BOM if present - a BOM breaks pos-0 anchors/parsers (iter 15/19)
     return sys.stdin.read()
 
 
