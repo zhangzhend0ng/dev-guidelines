@@ -2113,6 +2113,36 @@ README 宣称 "**65 harnesses**"(实际 **82**——BOM 修复后 +4,历史增�
 ### 遗留 backlog
 - [信息] staleness 主波 2027-05/06;[低] spec 6.3 步骤清单。
 
+---
+
+## 迭代 32 — 最后未审位点:templates 一致性(无罪)+ 全 pack export E2E(6/6 绿)
+
+### 触发的理论缺口
+R1 边界扫描:scripts/ 全审完(19 文件)、spec/README/AGENTS/prompt/harness 抽样/CI/日志
+均已覆盖。剩最后一个从未核对的 producer-consumer 对:**templates/harness.template.md →
+validate REQUIRED_FIELDS**(从模板新建的 harness 能否过校验?不能 = 模板欺骗作者)。
+
+### 结果
+1. **模板 16/16 必填字段对齐** REQUIRED_FIELDS;值域(status=draft、tier/language 占位在
+   合法集内)、`related: []` 空表、`stable_since: ""` 空串(validate 只拒 None 不拒 "")—
+   全部兼容。**无罪**。软观察:模板示例日期冻结在 2026.05(作者需自行更新 version/
+   last_validated)——占位值语义,可接受,记录。
+2. **全 6 pack export --zip E2E**:ai-dev/common-core/cpp-core/cpp-security/cpp-testing/
+   python-core 全 exit 0,zip+sha256 齐备(iter 20 的 _path/manifest 改动广度验证)✓。
+
+### 测试证据
+- 6/6 export exit 0 ✓;validate/gen_index/check_all exit 0 ✓
+
+### R4 置信度自评
+本轮 + 前三轮(29 元审查 2 漏、30 spec 2 处、31 数字 2 处漂移)仍在新维度产出新发现,
+未触发"连续 2 轮无新发现"。但发现尺寸在收窄(blocker→major→minor→无罪),符合批次尾部
+特征。下一轮按 skill 批次收尾协议执行。
+
+### Pattern Index 更新: N/A
+### 遗留 backlog
+- [信息] staleness 主波 2027-05/06;[低] spec 6.3 步骤清单。
+
+
 
 
 
