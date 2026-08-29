@@ -393,19 +393,30 @@ cpp/correctness/exception-safety.md                ← C++ specific: exception g
 ### 6.1 `scripts/validate.py`
 
 ```
-Usage: python scripts/validate.py [--stale] [--json]
+Usage: python scripts/validate.py [--stale] [--related] [--pack ID] [--installed] [--json]
 
-Performs:
-  1. Frontmatter completeness check (all required fields present)
-  2. Tier consistency check (no deprecated sources without replacement)
-  3. Category consistency (file path matches frontmatter category)
+Performs (spec synced to implementation 2026-08-30, iter 30):
+  1. Frontmatter completeness + value check (required fields present;
+     type/status/tier/language hold valid values)
+  2. Tier checks live in two places: frontmatter tier VALUE validity here
+     (see item 1); frontmatter-tier-vs-source-tier consistency is the
+     ADVISORY audit in check_review_signals.py --audit-harnesses (not
+     validate.py)
+  3. Category is frontmatter-declared (INDEX.md groups by it); no
+     path<->category coupling is enforced - the mapping is editorial,
+     not mechanical
   4. --related: Report non-bidirectional related links (advisory,
-     report-only; never affects the exit code). Implemented iter 22 —
-     59+ pre-existing one-way links burn down incrementally.
+     report-only; never affects the exit code). Implemented iter 22;
+     the 59 pre-existing one-way links were burned down to zero in
+     iter 24.
   5. Harness ID uniqueness (no two active harnesses share an id;
      no new harness reuses an id from the archive/ directory)
-  6. --stale: Report all citations past their review window
-  7. --json: Machine-readable output for CI integration
+  6. --stale: Report harnesses past their review window (only when both
+     last_validated and review_cycle are present)
+  7. --json: Machine-readable output ("pass" reflects errors only;
+     "warnings_count" added iter 25)
+  8. --pack ID / --installed: validate only the selected subset (errors
+     if the selection resolves to zero paths - iter 20)
 
 Exit codes:
   0 = all clear

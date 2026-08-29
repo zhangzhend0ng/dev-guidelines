@@ -2048,6 +2048,41 @@ iter 12 新增,scope 正是"AI 写的、编译过、测试绿、但可能错"的
 ### 遗留 backlog
 - [信息] staleness 主波 2027-05/06(见 iter 26)。
 
+---
+
+## 迭代 30 — spec 6.1 契约逐条对账:又两处 documented-but-unimplemented(iter 3 同族终局)
+
+### 触发的理论缺口
+iter 22 只修了 spec item 4——本轮把 Performs 清单 **7 项 + Usage 行**逐条对照实现:
+| spec 条款 | 实况 | 裁决 |
+|-----------|------|------|
+| 1 frontmatter completeness | check_frontmatter(且超承诺:校验 type/status/tier/language 值域) | 如实扩写 |
+| 2 tier consistency "no deprecated sources without replacement" | **复合承诺无对应实现**:值域校验在 validate(item 1);tier-vs-source 一致性住在 check_review_signals 的 advisory audit;"deprecated sources" 措辞与 cross_references 的 deprecated **link** 警告混淆 | 如实拆写(指明真实住所) |
+| 3 category↔path coupling | **无实现**,且机制上需编辑性映射表,不可机械 | 如实改写(声明式 category,无路径耦合) |
+| 4 --related | iter 22 实现;但我自己写的"59+ burn down"已过时(iter 24 清零) | 更新(自己上轮的文本本轮过时——时效性教训) |
+| 5/6/7 id 唯一/--stale/--json | 实现 ✓(--stale 补"双字段才判"语义;--json 补 warnings_count) | 如实扩写 |
+| Usage 行 | 缺 --pack/--installed/--related(subset 模式是 iter 14 上下文的大功能) | 补 + 新增 item 8(subset 空集守卫 iter 20) |
+
+### grep journal 结果(Step 1)
+`documented-but-unimplemented`(iter 22 Pattern Index——同类第三/四处,本族终局);
+`exit-code 契约`(iter 2/16/25)。
+
+### 教训(本族的结构性根因)
+spec 写于实现之前(desired state),实现落后/偏离后**没有任何机制逼 spec 同步**——validate
+的 docstring 与 spec 是两个独立文档。已处理的四个实例(iter 3 两处、iter 22 item 4、本轮
+item 2/3)全部靠对抗循环撞见。结构性缓解留给 harness-evolution 判断(spec 是否该降格为
+"设计意图史"而非"契约"),不在本轮扩scope。
+
+### 测试证据
+- 纯文档同步:validate/check_all exit 0 ✓;每条新表述均从函数清单反推(check_frontmatter
+  值域分支 :61-75、cross_references deprecated 分支 :137-141)
+
+### Pattern Index 更新: 新增 spec-as-contract-drift
+### 遗留 backlog
+- [信息] staleness 主波 2027-05/06。
+- [低] spec 6.3 CI 步骤清单未含 --related advisory 步骤(workflow 文件为准,收益低不追)。
+
+
 
 
 
