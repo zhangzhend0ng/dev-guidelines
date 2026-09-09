@@ -12,6 +12,7 @@ Rules:
 - Do not change public API unless explicitly approved.
 - Use concise phase updates only if blocked or verification finishes.
 - Summarize command output; do not paste full logs unless needed to explain failure.
+- If the host supports structured output, emit JSON conforming to docs/ai/schemas/patch.schema.json instead of the markdown template.
 
 Approved harnesses:
 {HARNESSES}

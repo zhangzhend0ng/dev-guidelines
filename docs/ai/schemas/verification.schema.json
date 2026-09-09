@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "dev-guidelines:verification-protocol",
+  "title": "Weak-model verification output contract (verification mode)",
+  "description": "JSON counterpart of the markdown verification template checked by scripts/check_ai_protocol.py --mode verification. Each property is the line content of the corresponding markdown section, as an array of strings. Aligned checks: all four sections required; an empty 'verification_run' requires a 'not verified' entry in 'failures_not_verified' (checker code); a success claim without command evidence requires an explicit NOT VERIFIED entry (checker code); total lines must not exceed the verification budget of 8 (LINE_BUDGETS.verification); forbidden noise phrases rejected.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "verification_run",
+    "result",
+    "failures_not_verified",
+    "next_action"
+  ],
+  "properties": {
+    "verification_run": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Verification run: commands actually executed with their result; empty is allowed only with a NOT VERIFIED explanation."
+    },
+    "result": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Result: pass/fail summary of the verification."
+    },
+    "failures_not_verified": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Failures / NOT VERIFIED: failures, or explicit 'not verified: <why>' entries."
+    },
+    "next_action": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Next action: what happens next (review, fix, escalate)."
+    }
+  }
+}

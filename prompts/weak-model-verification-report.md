@@ -10,6 +10,7 @@ Rules:
 - If no command was run, write NOT VERIFIED.
 - Summarize failures; do not paste full logs unless needed to explain the next action.
 - Keep output to 8 non-empty lines or fewer.
+- If the host supports structured output, emit JSON conforming to docs/ai/schemas/verification.schema.json instead of the markdown template.
 
 Commands available:
 {COMMANDS}

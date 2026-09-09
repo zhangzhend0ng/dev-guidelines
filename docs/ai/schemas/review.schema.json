@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "dev-guidelines:review-protocol",
+  "title": "Weak-model review output contract (review mode)",
+  "description": "JSON counterpart of the markdown review template checked by scripts/check_ai_protocol.py --mode review. Findings are structured objects: an empty array means 'none' (the markdown 'none' value). Aligned checks: all five sections required; every finding entry must carry a file:line citation (pattern enforced here, same regex as the markdown checker); an APPROVE verdict requires non-empty harness coverage without 'NOT VERIFIED' (checker code); non-empty findings require non-empty harness coverage (checker code); total lines must not exceed the review budget of 20 (LINE_BUDGETS.review); forbidden noise phrases rejected.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "blocking_findings",
+    "high_findings",
+    "suggestions",
+    "harness_coverage",
+    "verdict"
+  ],
+  "properties": {
+    "blocking_findings": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/finding"},
+      "description": "Blocking findings: tier (N) or hard-gate violations; empty array = none."
+    },
+    "high_findings": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/finding"},
+      "description": "High findings: (C)-tier issues needing fix or documented justification; empty array = none."
+    },
+    "suggestions": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/finding"},
+      "description": "Suggestions: (A)/(P)-tier advice; empty array = none."
+    },
+    "harness_coverage": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Harness coverage: which harnesses were applied and whether the coverage is verified."
+    },
+    "verdict": {
+      "type": "string",
+      "description": "Verdict: e.g. APPROVE, REQUEST CHANGES. APPROVE requires verified harness coverage."
+    }
+  },
+  "definitions": {
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "citation"],
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "The finding, including its tier tag and [Rx] citation labels."
+        },
+        "citation": {
+          "type": "string",
+          "pattern": "[\\w./\\\\-]+:\\d+",
+          "description": "file:line citation for the finding (same regex as the markdown checker)."
+        }
+      }
+    }
+  }
+}

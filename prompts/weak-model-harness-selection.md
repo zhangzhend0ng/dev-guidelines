@@ -11,6 +11,7 @@ Rules:
 - Keep output to 6 non-empty lines or fewer.
 - If a required harness is missing, say NOT VERIFIED.
 - If the routing script is runnable, first run `python scripts/route_harnesses.py --files {FILES}` and use its output as the starting point for Applicable harnesses (no match or not runnable: fall back to scanning INDEX.md).
+- If the host supports structured output, emit JSON conforming to docs/ai/schemas/plan.schema.json instead of the markdown template.
 
 Task:
 {TASK}

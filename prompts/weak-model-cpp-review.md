@@ -16,6 +16,7 @@ Rules:
 - Do not include pass-only checklist items unless needed for coverage.
 - Do not give a verdict unless every applicable harness item was checked.
 - If evidence is missing, say NOT VERIFIED.
+- If the host supports structured output, emit JSON conforming to docs/ai/schemas/review.schema.json instead of the markdown template.
 
 Harnesses:
 {HARNESSES}

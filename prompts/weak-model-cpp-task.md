@@ -9,7 +9,7 @@ Prefer the specialized templates:
 - [C++ Review](weak-model-cpp-review.md) - bounded diff review
 - [Verification Report](weak-model-verification-report.md) - final evidence summary
 
-The combined template below is retained for tools that need a single prompt.
+The combined template below is retained for tools that need a single prompt. When the host supports structured output, prefer the JSON contracts in `docs/ai/schemas/` for plan/patch/review/verification outputs.
 
 ## Template
 

@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "dev-guidelines:plan-protocol",
+  "title": "Weak-model plan output contract (plan mode)",
+  "description": "JSON counterpart of the markdown plan template checked by scripts/check_ai_protocol.py --mode plan. Each property is the line content of the corresponding markdown section ('Section:' -> snake_case), as an array of strings. Aligned checks: all six sections required; 'Applicable harnesses' and 'Verification plan' must be non-empty (minItems 1); total lines (sum of array lengths + scalar strings) must not exceed the plan budget of 6 (LINE_BUDGETS.plan) - the sum is enforced by check_ai_protocol.py --schema code, not by JSON Schema. Forbidden noise phrases (chain of thought, hidden reasoning, ...) are rejected on all string content.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "objective",
+    "applicable_harnesses",
+    "applicable_checklist_items",
+    "patch_plan",
+    "verification_plan",
+    "risks_not_verified"
+  ],
+  "properties": {
+    "objective": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Objective: what the bounded task achieves."
+    },
+    "applicable_harnesses": {
+      "type": "array",
+      "items": {"type": "string"},
+      "minItems": 1,
+      "description": "Applicable harnesses: harness paths or ids selected for the task (never empty; use the router output as the starting point)."
+    },
+    "applicable_checklist_items": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Applicable checklist items: the specific items that will be satisfied."
+    },
+    "patch_plan": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Patch plan: files to touch and the smallest behavior-preserving change."
+    },
+    "verification_plan": {
+      "type": "array",
+      "items": {"type": "string"},
+      "minItems": 1,
+      "description": "Verification plan: concrete verification commands, or NOT VERIFIED with a reason (never empty)."
+    },
+    "risks_not_verified": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Risks / NOT VERIFIED: open risks and anything that will not be verified."
+    }
+  }
+}

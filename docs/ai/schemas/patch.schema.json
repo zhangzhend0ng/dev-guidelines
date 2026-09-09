@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "dev-guidelines:patch-protocol",
+  "title": "Weak-model patch output contract (patch mode)",
+  "description": "JSON counterpart of the markdown patch template checked by scripts/check_ai_protocol.py --mode patch. Each property is the line content of the corresponding markdown section, as an array of strings. Aligned checks: all five sections required; 'Files changed' must be non-empty (minItems 1); total lines must not exceed the patch budget of 10 (LINE_BUDGETS.patch) - enforced by checker code; a success claim without command evidence in verification content requires an explicit NOT VERIFIED entry (checker code); forbidden noise phrases rejected.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "files_changed",
+    "harness_checks",
+    "verification_run",
+    "failures_not_verified",
+    "residual_risks"
+  ],
+  "properties": {
+    "files_changed": {
+      "type": "array",
+      "items": {"type": "string"},
+      "minItems": 1,
+      "description": "Files changed: every touched path (never empty)."
+    },
+    "harness_checks": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Harness checks: per-item PASS/FAIL against the selected harnesses."
+    },
+    "verification_run": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Verification run: commands actually executed with their result; a tool name must look like an invocation (e.g. 'python scripts/validate.py'), not a prose mention."
+    },
+    "failures_not_verified": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Failures / NOT VERIFIED: failures, or explicit 'NOT VERIFIED: <why>' entries."
+    },
+    "residual_risks": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Residual risks: what remains unproven after this patch."
+    }
+  }
+}

@@ -1,6 +1,6 @@
 # Weak Model From Distilled Task Prompt
 
-Use this prompt when a weaker model should execute a task distilled from a stronger-model conversation.
+Use this prompt when a weaker model should execute a task distilled from a stronger-model conversation. When the host supports structured output, prefer the JSON contracts in `docs/ai/schemas/` for plan/patch/review/verification outputs; this template's format maps to the plan contract.
 
 ```text
 You are a constrained software-development assistant.

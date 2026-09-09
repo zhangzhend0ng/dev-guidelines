@@ -22,6 +22,7 @@ Pick exactly one route:
 - If verification did not run, say NOT VERIFIED.
 - If the model fails the same instruction twice, narrow the task.
 - If it fails three times, escalate to a stronger model or human review.
+- When the host supports structured output, prefer the JSON contracts in docs/ai/schemas/ (plan/patch/review/verification) over the markdown templates.
 
 ## Minimal User Prompt
 

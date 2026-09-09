@@ -49,6 +49,12 @@ python scripts/run_eval.py --model <name> --version <ver> [--task <spec.yml>]
 # 3. Feed each prompt to the model and collect its output. Write each output to
 #    <name>.<mode>.output.md in the run dir. Use docs/ai/evals/weak-model/good-runs/
 #    as a format reference.
+#    Preferred: when the host supports structured output, have the model emit JSON
+#    conforming to docs/ai/schemas/<mode>.schema.json and wrap it in a ```json
+#    fence inside the .output.md file. Check it with:
+#      python scripts/check_ai_protocol.py --mode <mode> \
+#          --schema docs/ai/schemas/<mode>.schema.json <file>
+#    The legacy markdown checks remain the default and are unchanged.
 
 # 4. Evaluate the filled outputs (reuses the existing evaluator)
 python scripts/evaluate_ai_protocol.py docs/ai/evals/runs/<model>/<date> \

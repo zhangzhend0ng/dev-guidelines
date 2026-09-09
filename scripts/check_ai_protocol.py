@@ -6,6 +6,12 @@ Usage:
     python scripts/check_ai_protocol.py --mode patch output.md --json
     python scripts/check_ai_protocol.py --mode review output.md
     python scripts/check_ai_protocol.py --mode verification output.md
+    python scripts/check_ai_protocol.py --mode plan --schema docs/ai/schemas/plan.schema.json output.json
+
+--schema switches to the JSON contract mode: the input must be a pure JSON
+document (or markdown with a ```json fenced block) conforming to
+docs/ai/schemas/<mode>.schema.json. The markdown checks above are unchanged
+and remain the default.
 """
 
 import argparse
@@ -67,6 +73,19 @@ SUCCESS_PATTERNS = [
     "verified",
     "all good",
 ]
+
+# Command evidence: a tool name must look like an INVOCATION, not a prose
+# mention or a line-ending name-drop. Require the tool to be followed on
+# the SAME LINE by an argument/path char ( '/', '.', '=', or a space then
+# more non-space content). This blocks "will use cmake" (name-drop at end
+# of a residual-risk line) and "the cmake build" (bare prose mention) while
+# accepting "python scripts/validate.py", "cmake --build", "ctest --test-dir".
+# Note: \s in lookahead would match the trailing newline, so we require a
+# space followed by at least one more character on the same line.
+COMMAND_EVIDENCE_RE = re.compile(
+    r"\b(python|python3|pytest|cmake|ctest|ninja|clang|gcc|g\+\+|msbuild|lldb|gdb)"
+    r"(?=(?:[/.=]| +\S))"
+)
 
 
 def read_input(path):
@@ -179,60 +198,207 @@ def check_verification_claims(text, mode):
         line.lower().startswith("verification run:") and line.split(":", 1)[1].strip()
         for line in text.splitlines()
     )
-    # Command evidence: a tool name must look like an INVOCATION, not a prose
-    # mention or a line-ending name-drop. Require the tool to be followed on
-    # the SAME LINE by an argument/path char ( '/', '.', '=', or a space then
-    # more non-space content). This blocks "will use cmake" (name-drop at end
-    # of a residual-risk line) and "the cmake build" (bare prose mention) while
-    # accepting "python scripts/validate.py", "cmake --build", "ctest --test-dir".
-    # Note: \s in lookahead would match the trailing newline, so we require a
-    # space followed by at least one more character on the same line.
-    tool = r"(python|python3|pytest|cmake|ctest|ninja|clang|gcc|g\+\+|msbuild|lldb|gdb)"
-    command_re = re.compile(
-        rf"\b{tool}(?=(?:[/.=]| +\S))"
+    # Command evidence regex is module-level COMMAND_EVIDENCE_RE (shared with
+    # the --schema JSON mode).
+    has_command_signal = verification_line_has_value or bool(
+        COMMAND_EVIDENCE_RE.search(lowered)
     )
-    has_command_signal = verification_line_has_value or bool(command_re.search(lowered))
 
     if has_success_claim and not has_command_signal and not has_not_verified:
         return ["success claim without command evidence or NOT VERIFIED"]
     return []
 
 
+def extract_json(text):
+    """Pure JSON document, or the first ```json fenced block inside markdown."""
+    fence = re.search(r"```(?:json)?\s*\n(.*?)```", text, re.DOTALL)
+    candidates = ([fence.group(1)] if fence else []) + [text]
+    last = None
+    for candidate in candidates:
+        try:
+            return json.loads(candidate), None
+        except json.JSONDecodeError as e:
+            last = e
+    return None, (
+        "no parsable JSON (expected a ```json fenced block or a pure JSON "
+        f"document): {last}"
+    )
+
+
+def _resolve_ref(root, ref):
+    node = root
+    for part in ref[2:].split("/"):
+        node = node.get(part, {})
+    return node
+
+
+def validate_against_schema(obj, schema, root, path="$"):
+    """Minimal JSON Schema validator: only the keyword subset used by
+    docs/ai/schemas/ (type, properties, required, additionalProperties,
+    items, minItems, pattern, $ref). Deliberately stdlib-only - adding a
+    jsonschema dependency needs separate approval (change-scope-control 3)."""
+    if "$ref" in schema:
+        return validate_against_schema(obj, _resolve_ref(root, schema["$ref"]), root, path)
+    t = schema.get("type")
+    if t == "object":
+        if not isinstance(obj, dict):
+            return [f"{path}: expected object"]
+        errors = []
+        for req in schema.get("required", []):
+            if req not in obj:
+                errors.append(f"{path}: missing required property '{req}'")
+        if schema.get("additionalProperties") is False:
+            for key in obj:
+                if key not in schema.get("properties", {}):
+                    errors.append(f"{path}: unexpected property '{key}'")
+        for key, sub in schema.get("properties", {}).items():
+            if key in obj:
+                errors.extend(validate_against_schema(obj[key], sub, root, f"{path}.{key}"))
+        return errors
+    if t == "array":
+        if not isinstance(obj, list):
+            return [f"{path}: expected array"]
+        errors = []
+        if "minItems" in schema and len(obj) < schema["minItems"]:
+            errors.append(
+                f"{path}: needs at least {schema['minItems']} item(s), got {len(obj)}"
+            )
+        items = schema.get("items")
+        if items:
+            for i, v in enumerate(obj):
+                errors.extend(validate_against_schema(v, items, root, f"{path}[{i}]"))
+        return errors
+    if t == "string":
+        if not isinstance(obj, str):
+            return [f"{path}: expected string"]
+        if "pattern" in schema and not re.search(schema["pattern"], obj):
+            return [f"{path}: {obj!r} does not match pattern {schema['pattern']!r}"]
+        return []
+    return []
+
+
+def _iter_strings(obj):
+    if isinstance(obj, str):
+        yield obj
+    elif isinstance(obj, dict):
+        for v in obj.values():
+            yield from _iter_strings(v)
+    elif isinstance(obj, list):
+        for v in obj:
+            yield from _iter_strings(v)
+
+
+def _count_contract_lines(payload):
+    total = 0
+    for v in payload.values():
+        if isinstance(v, list):
+            total += len(v)
+        elif isinstance(v, str) and v.strip():
+            total += 1
+    return total
+
+
+def schema_mode_errors(text, mode, schema_path):
+    """JSON contract checks: schema conformance + budget + ported semantics."""
+    errors = []
+    try:
+        schema = json.loads(Path(schema_path).read_text(encoding="utf-8-sig"))
+    except (OSError, json.JSONDecodeError) as e:
+        return [f"unreadable schema {schema_path}: {e}"]
+
+    payload, err = extract_json(text)
+    if err:
+        return [err]
+
+    errors.extend(validate_against_schema(payload, schema, schema))
+
+    budget = LINE_BUDGETS[mode]
+    lines = _count_contract_lines(payload)
+    if lines > budget:
+        errors.append(f"{lines} contract lines exceeds {mode} budget {budget}")
+
+    lowered = "\n".join(_iter_strings(payload)).lower()
+    for pattern in check_noise(lowered):
+        errors.append(f"forbidden noise pattern: {pattern}")
+
+    if mode in ("patch", "verification"):
+        has_success = any(p in lowered for p in SUCCESS_PATTERNS)
+        has_not_verified = "not verified" in "\n".join(
+            _iter_strings(payload.get("failures_not_verified", []))
+        ).lower()
+        has_signal = bool(payload.get("verification_run")) or bool(
+            COMMAND_EVIDENCE_RE.search(lowered)
+        )
+        if has_success and not has_signal and not has_not_verified:
+            errors.append("success claim without command evidence or NOT VERIFIED")
+
+    if mode == "verification":
+        run = payload.get("verification_run", [])
+        not_verified = "not verified" in "\n".join(
+            _iter_strings(payload.get("failures_not_verified", []))
+        ).lower()
+        if not run and not not_verified:
+            errors.append(
+                "empty verification_run requires a 'not verified' entry in "
+                "failures_not_verified"
+            )
+
+    if mode == "review":
+        verdict = str(payload.get("verdict", ""))
+        coverage = payload.get("harness_coverage", [])
+        cov = "\n".join(_iter_strings(coverage)).lower()
+        if "approve" in verdict.lower() and (not cov or "not verified" in cov):
+            errors.append("APPROVE verdict requires verified harness coverage")
+        if any(payload.get(k) for k in ("blocking_findings", "high_findings",
+                                        "suggestions")) and not coverage:
+            errors.append("findings require harness coverage")
+
+    return errors
+
+
 def main():
     parser = argparse.ArgumentParser(description="Check AI protocol output")
     parser.add_argument("file", nargs="?", help="Output file to check; stdin if omitted")
     parser.add_argument("--mode", choices=sorted(REQUIRED_SECTIONS), required=True)
+    parser.add_argument("--schema",
+                        help="JSON contract mode: validate against this schema "
+                             "(docs/ai/schemas/<mode>.schema.json) instead of the markdown checks")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
 
     text = read_input(args.file)
     errors = []
 
-    missing = check_sections(text, args.mode)
-    for section in missing:
-        errors.append(f"missing required section: {section}")
+    if args.schema:
+        errors = schema_mode_errors(text, args.mode, args.schema)
+    else:
+        missing = check_sections(text, args.mode)
+        for section in missing:
+            errors.append(f"missing required section: {section}")
 
-    budget_error = check_budget(text, args.mode)
-    if budget_error:
-        errors.append(budget_error)
+        budget_error = check_budget(text, args.mode)
+        if budget_error:
+            errors.append(budget_error)
 
-    for pattern in check_noise(text):
-        errors.append(f"forbidden noise pattern: {pattern}")
+        for pattern in check_noise(text):
+            errors.append(f"forbidden noise pattern: {pattern}")
 
-    for error in check_non_empty_sections(text, args.mode):
-        errors.append(error)
+        for error in check_non_empty_sections(text, args.mode):
+            errors.append(error)
 
-    for error in check_review_findings(text, args.mode):
-        errors.append(error)
+        for error in check_review_findings(text, args.mode):
+            errors.append(error)
 
-    for error in check_verification_claims(text, args.mode):
-        errors.append(error)
+        for error in check_verification_claims(text, args.mode):
+            errors.append(error)
 
     result = {
         "pass": not errors,
         "mode": args.mode,
         "errors": errors,
     }
+    if args.schema:
+        result["schema"] = args.schema
 
     if args.json:
         print(json.dumps(result, indent=2))
