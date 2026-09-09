@@ -64,6 +64,7 @@ def main():
         ("test_route_harnesses.py", ["test_route_harnesses.py"]),
         ("test_ai_protocol_schema.py", ["test_ai_protocol_schema.py"]),
         ("test_tier_enforcement.py", ["test_tier_enforcement.py"]),
+        ("test_policy_config.py", ["test_policy_config.py"]),
         # --dry-run: a health check must not mutate a tracked file. The audit
         # is advisory (exit 0); we capture its stdout to surface findings in the
         # SUMMARY rather than only in scrollback.

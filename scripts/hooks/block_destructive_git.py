@@ -16,10 +16,12 @@ Protocol (verified against https://code.claude.com/docs/en/hooks, 2026-09):
 
 Fail-open ONLY when the hook's own input cannot be parsed (malformed JSON,
 missing/non-string command) - an unanalyzable command is never treated as a
-match, so a host-protocol bug cannot freeze the shell. Known gaps are listed
-in docs/ai/hooks-setup.md (git restore, `git checkout .`, quoted prose false
-positives from the secondary net). The high-risk list is hardcoded in
-DESTRUCTIVE_RULES until Phase 5 externalizes it to config/policy.yml.
+match, so a host-protocol bug cannot freeze the shell. Policy (the destructive
+pattern list) lives in config/policy.yml; when the policy is missing,
+unreadable, or invalid the hook FAILS CLOSED: every git command is denied
+until the config is fixed. Known gaps are listed in docs/ai/hooks-setup.md
+(git restore, `git checkout .`, quoted prose false positives from the
+secondary net).
 """
 
 import argparse
@@ -29,20 +31,57 @@ import shlex
 import sys
 from pathlib import Path
 
+import yaml
+
 MAX_STDIN_BYTES = 1 << 20
 
-# Hardcoded initial policy (Phase 5 -> config/policy.yml).
-# checkout: interactive patch mode (-p/--patch) is the AGENTS.md-preferred
-# fine-grained rollback tool and must stay allowed; the `--` path-separator
-# forms are unconditional discards. branch -D == --delete --force; plain
-# `-d` refuses unmerged branches and stays allowed.
-DESTRUCTIVE_RULES = [
-    {"subcommand": "checkout", "path_separator": True, "allow_patch": True},
-    {"subcommand": "reset", "flags": ["hard"]},
-    {"subcommand": "clean", "force": True},
-    {"subcommand": "stash", "subcommands": ["drop", "clear"]},
-    {"subcommand": "branch", "force_delete": True},
-]
+DEFAULT_POLICY_PATH = Path(__file__).resolve().parents[2] / "config" / "policy.yml"
+
+# Per-subcommand parameter schema. Every key listed here is REQUIRED in the
+# policy file for that subcommand - a silently-missing flag would quietly
+# weaken the guardrail, so absence is a config error (fail-closed).
+RULE_SCHEMA = {
+    "checkout": {"path_separator": bool, "allow_patch": bool},
+    "reset": {"flags": list},
+    "clean": {"force": bool},
+    "stash": {"subcommands": list},
+    "branch": {"force_delete": bool},
+}
+
+
+class PolicyError(Exception):
+    pass
+
+
+def load_policy(path):
+    """Parse + validate config/policy.yml into rule dicts (see RULE_SCHEMA)."""
+    try:
+        data = yaml.safe_load(Path(path).read_text(encoding="utf-8-sig"))
+    except (OSError, yaml.YAMLError) as e:
+        raise PolicyError(f"无法读取策略配置 {path}: {e}")
+    if not isinstance(data, dict) or not isinstance(data.get("destructive_patterns"), list):
+        raise PolicyError(f"策略配置缺少 destructive_patterns 列表: {path}")
+    rules = []
+    for i, entry in enumerate(data["destructive_patterns"]):
+        if not isinstance(entry, dict) or entry.get("subcommand") not in RULE_SCHEMA:
+            raise PolicyError(f"destructive_patterns[{i}] 的 subcommand 非法: {entry!r}")
+        sub = entry["subcommand"]
+        spec = RULE_SCHEMA[sub]
+        unknown = set(entry) - {"subcommand"} - set(spec)
+        if unknown:
+            raise PolicyError(f"destructive_patterns[{i}] 含未知字段: {sorted(unknown)}")
+        rule = {"subcommand": sub}
+        for key, typ in spec.items():
+            if key not in entry:
+                raise PolicyError(f"destructive_patterns[{i}] ({sub}) 缺少字段 {key}")
+            value = entry[key]
+            if not isinstance(value, typ):
+                raise PolicyError(
+                    f"destructive_patterns[{i}].{key} 类型应为 {typ.__name__}: {value!r}"
+                )
+            rule[key] = value
+        rules.append(rule)
+    return rules
 
 # Secondary net per statement: catches git nested in command substitution
 # (`$(git reset --hard)`, backticks) where tokenization sees only the outer
@@ -143,20 +182,29 @@ def _rule_matches(rule, args):
     return False
 
 
-def analyze_statement(stmt, rules):
-    """Return the matched rule name for one shell statement, or None."""
+def _statement_is_git(stmt):
+    """True if the statement's primary binary is git (env/builtin prefixes stripped)."""
     try:
         toks = shlex.split(stmt, posix=True)
     except ValueError:
-        return _secondary(stmt)
+        return False
     k = 0
     while k < len(toks) and _ENV_ASSIGN.match(toks[k]):
         k += 1
     if k < len(toks) and toks[k] in ("command", "exec"):
         k += 1
-    if k >= len(toks) or not _is_git_token(toks[k]):
+    return k < len(toks) and _is_git_token(toks[k])
+
+
+def analyze_statement(stmt, rules):
+    """Return the matched rule name for one shell statement, or None."""
+    if not _statement_is_git(stmt):
         return _secondary(stmt)
-    k += 1
+    try:
+        toks = shlex.split(stmt, posix=True)
+    except ValueError:
+        return _secondary(stmt)
+    k = 0
     subcommand = None
     while k < len(toks):
         t = toks[k]
@@ -183,10 +231,8 @@ def _secondary(stmt):
     return None
 
 
-def decide(command, rules=None):
+def decide(command, rules):
     """Return the first matched destructive rule name in a command line."""
-    if rules is None:
-        rules = DESTRUCTIVE_RULES
     for stmt in split_statements(command or ""):
         matched = analyze_statement(stmt, rules)
         if matched:
@@ -194,8 +240,15 @@ def decide(command, rules=None):
     return None
 
 
-def deny_reason(rule_name, command):
+def deny_reason(rule_name, command, policy_error=""):
     display = command if len(command) <= 120 else command[:117] + "..."
+    if rule_name == "fail-closed":
+        return (
+            f"[block_destructive_git] 策略配置不可用，按 fail-closed 拒绝所有 git 命令：{display}\n"
+            f"{policy_error}\n"
+            "修复 config/policy.yml（或用 --policy 指定正确路径）后重试；"
+            "先做只读核查确认影响范围：git diff HEAD -- <path> / git status。\n"
+        )
     return (
         f"[block_destructive_git] 已拦截高危 git 命令（{rule_name}）：{display}\n"
         "该命令会不可逆丢弃 git 数据。先做只读核查确认影响范围："
@@ -209,7 +262,15 @@ def main():
     ap = argparse.ArgumentParser(description="PreToolUse destructive-git guard")
     ap.add_argument("--output", choices=("exit2", "json"), default="exit2",
                     help="deny protocol: exit 2 + stderr (default) or stdout JSON decision")
+    ap.add_argument("--policy", help=f"policy file (default: {DEFAULT_POLICY_PATH})")
     args = ap.parse_args()
+
+    policy_error = ""
+    try:
+        rules = load_policy(args.policy or DEFAULT_POLICY_PATH)
+    except PolicyError as e:
+        rules = None
+        policy_error = str(e)
 
     raw = b""
     try:
@@ -227,11 +288,17 @@ def main():
     if not isinstance(command, str) or not command.strip():
         sys.exit(0)
 
-    rule = decide(command)
-    if rule is None:
-        sys.exit(0)
+    if rules is None:
+        # fail-closed: policy unavailable -> deny every git command, pass the rest
+        if not any(_statement_is_git(s) for s in split_statements(command)):
+            sys.exit(0)
+        rule, reason = "fail-closed", deny_reason("fail-closed", command, policy_error)
+    else:
+        rule = decide(command, rules)
+        if rule is None:
+            sys.exit(0)
+        reason = deny_reason(rule, command)
 
-    reason = deny_reason(rule, command)
     if args.output == "json":
         json.dump({"hookSpecificOutput": {
             "hookEventName": "PreToolUse",

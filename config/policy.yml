@@ -1,0 +1,39 @@
+# block_destructive_git.py 的策略配置（版本化）。
+#
+# 语义：hook 每次调用都会重新加载本文件，改规则即时生效、无需重启。
+# 缺失 / 不可解析 / 校验失败时 hook 一律 fail-closed：拒绝所有 git 命令
+# （非 git 命令不受影响），拒绝理由中会说明配置错误原因。
+#
+# 字段 schema（每个 subcommand 的字段全部必填，缺字段按配置错误处理，
+# 防止规则被静默削弱）：
+#   checkout: path_separator (bool)  拦截 `--` 分隔的路径式还原
+#             allow_patch    (bool)  true 时放行 -p/--patch 交互式回退
+#   reset:    flags          (list)  命中任一旗标即拦（如 hard）
+#   clean:    force          (bool)  true 时任何强制旗标（-f/-fd/--force）即拦
+#   stash:    subcommands    (list)  拦截列出的 stash 子命令（drop/clear）
+#   branch:   force_delete   (bool)  true 时拦 -D 与 --delete --force
+#
+# 匹配机制（tokenize + 二级文本网）在 hook 脚本内实现，本文件只描述"拦什么"。
+
+destructive_patterns:
+  # checkout：`--` 分隔的路径式还原（含 checkout HEAD -- f、checkout <sha> -- f）。
+  # -p/--patch 交互式回退保持放行（AGENTS.md 推荐的细粒度工具）。
+  - subcommand: checkout
+    path_separator: true
+    allow_patch: true
+
+  # reset：--hard 丢弃工作区/暂存区；--soft/--mixed 放行。
+  - subcommand: reset
+    flags: [hard]
+
+  # clean：任何强制旗标（-f、-fd、-xdf、--force）都会删未跟踪文件；-n 干跑放行。
+  - subcommand: clean
+    force: true
+
+  # stash：drop/clear 不可逆丢弃 stash；push/list/pop 放行。
+  - subcommand: stash
+    subcommands: [drop, clear]
+
+  # branch：-D / --delete --force 强删未合并分支；-d（拒绝未合并）放行。
+  - subcommand: branch
+    force_delete: true
