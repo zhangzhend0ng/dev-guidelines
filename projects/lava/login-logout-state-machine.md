@@ -6,10 +6,10 @@ language: "dart"
 category: "project-specific"
 tier: "P"
 scope: "Before changing any login/logout session-flow code in the lava monorepo (lava-orca / lava-app / lava-shared): enumerate every trigger and re-entry path across the WCP (machine), Orca, and cloud session states, and prove the transition sequence is idempotent and loop-free"
-version: "2026.09"
+version: "2026.09.1"
 status: "draft"
 stable_since: ""
-last_validated: "2026-09-09"
+last_validated: "2026-09-10"
 review_cycle: "12m"
 tags: [lava, login, logout, session, state-machine, wcp, orca, flutter]
 based_on:
@@ -20,6 +20,7 @@ related:
   - "common/planning/change-scope-control.md"
 supersedes: []
 changelog:
+  - "2026.09.10: Reference Sources refined after the C29 split — R2's source cell now names [C29] Dart Official Documentation with the concrete pages behind item 2's cleanup rule (dart.dev/language/async; dart.dev/libraries/async/futures-error-handling)."
   - "2026.09: Initial draft — distilled from lava monorepo dual-diff review (feature-flag fail-closed cache / login state machine / PII log findings)"
 ---
 
@@ -90,10 +91,11 @@ changelog:
 | Label | Tier | Source | Clause | Timeliness | Last Verified |
 |-------|------|--------|--------|------------|---------------|
 | R1 | P | lava monorepo dual-diff review (2026-08) | Login/logout trigger enumeration, three-party sequence, stranded `TokenInvalidation.reset()`, re-entry loop | verified-2026 | 2026-09 |
-| R2 | C | [C29] Dart and Flutter Official Documentation | Futures/async error propagation (the mechanism under item 2's cleanup rule) | verified-2026 | 2026-09 |
+| R2 | C | [C29] Dart Official Documentation | dart.dev/language/async; dart.dev/libraries/async/futures-error-handling — error propagation of awaited calls (the mechanism under item 2's cleanup rule) | verified-2026 | 2026-09-10 |
 
 ---
 
 ## Changelog
 
+- 2026.09.10: Reference Sources refined after the C29 split — R2's source cell now names [C29] Dart Official Documentation with the concrete pages behind item 2's cleanup rule (dart.dev/language/async; dart.dev/libraries/async/futures-error-handling).
 - 2026.09: Initial draft — distilled from lava monorepo dual-diff review (feature-flag fail-closed cache / login state machine / PII log findings)
