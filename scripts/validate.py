@@ -40,7 +40,7 @@ REQUIRED_FIELDS = [
 
 VALID_STATUSES = {"draft", "reviewed", "stable", "deprecated"}
 VALID_TIERS = {"N", "C", "A", "P"}
-VALID_LANGUAGES = {"common", "cpp", "python", "go", "rust"}
+VALID_LANGUAGES = {"common", "cpp", "python", "go", "rust", "dart"}
 
 
 def parse_frontmatter(filepath):

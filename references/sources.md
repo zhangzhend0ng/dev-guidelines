@@ -2,7 +2,7 @@
 
 Central registry of all sources cited across harnesses. Harness reference tables reference entries here by Source ID. **Single source of truth for tier classification, review cycles, and verification status.**
 
-**Last updated:** 2026-07-29
+**Last updated:** 2026-09-09
 
 ---
 
@@ -52,6 +52,8 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | C26 | pytest Documentation | pytest fixtures, assertions, parametrization, test discovery | pytest-dev | Continuous |
 | C27 | mypy Documentation | static type checking, configuration, gradual typing | mypy project | Continuous |
 | C28 | Confluent Schema Registry / Apache Avro Schema Evolution | Serialization name/format immutability, backward/forward compatibility rules | Confluent / Apache | Continuous |
+| C29 | Dart and Flutter Official Documentation (dart.dev / flutter.dev) | Dart language tour, futures/streams/async error propagation, zone unhandled-error handling, `jsonDecode`/type semantics, `flutter_test` and platform-channel mocking | Dart / Flutter team (Google) | Continuous |
+| C30 | Effective Dart (dart.dev/guides/language/effective-dart) | Official Dart style/design guidance — async usage, error handling, avoid premature casts, testability | Dart team (Google) | Continuous |
 
 ## A-Tier: Advisory (Expert Literature & Org Standards)
 
