@@ -60,6 +60,7 @@ def main():
         ("generate_index.py --check", ["generate_index.py", "--check"]),
         ("check_feedback_signals.py", ["check_feedback_signals.py"]),
         ("test_feedback_signals.py", ["test_feedback_signals.py"]),
+        ("test_hook_block_git.py", ["test_hook_block_git.py"]),
         # --dry-run: a health check must not mutate a tracked file. The audit
         # is advisory (exit 0); we capture its stdout to surface findings in the
         # SUMMARY rather than only in scrollback.
