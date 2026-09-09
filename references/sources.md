@@ -2,7 +2,7 @@
 
 Central registry of all sources cited across harnesses. Harness reference tables reference entries here by Source ID. **Single source of truth for tier classification, review cycles, and verification status.**
 
-**Last updated:** 2026-09-09
+**Last updated:** 2026-09-10
 
 ---
 
@@ -52,8 +52,9 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | C26 | pytest Documentation | pytest fixtures, assertions, parametrization, test discovery | pytest-dev | Continuous |
 | C27 | mypy Documentation | static type checking, configuration, gradual typing | mypy project | Continuous |
 | C28 | Confluent Schema Registry / Apache Avro Schema Evolution | Serialization name/format immutability, backward/forward compatibility rules | Confluent / Apache | Continuous |
-| C29 | Dart and Flutter Official Documentation (dart.dev / flutter.dev) | Dart language tour, futures/streams/async error propagation, zone unhandled-error handling, `jsonDecode`/type semantics, `flutter_test` and platform-channel mocking | Dart / Flutter team (Google) | Continuous |
-| C30 | Effective Dart (dart.dev/guides/language/effective-dart) | Official Dart style/design guidance — async usage, error handling, avoid premature casts, testability | Dart team (Google) | Continuous |
+| C29 | Dart Official Documentation (dart.dev / api.dart.dev) | Dart language docs (async, operators/type checks, type system), `dart:async` API (unawaited, Stream.listen, Completer, runZonedGuarded), `dart:convert` JSON semantics, `dart:core` (Map, Object), linter-rule reference (unawaited_futures) | Dart team (Google) | Continuous |
+| C30 | Effective Dart (dart.dev/effective-dart) | Official Dart style/design guidance — async usage, error handling, avoid premature casts, testability | Dart team (Google) | Continuous |
+| C31 | Flutter Official Documentation (docs.flutter.dev / api.flutter.dev) | `flutter_test` (TestWidgetsFlutterBinding, TestDefaultBinaryMessenger platform-channel mocking), Flutter error channels (`FlutterError.onError`, `PlatformDispatcher.instance.onError`), widget-test async, Flutter breaking-change documentation (mock-platform-channels), first-party plugin API docs on pub.dev (shared_preferences) | Flutter team (Google) | Continuous |
 
 ## A-Tier: Advisory (Expert Literature & Org Standards)
 
