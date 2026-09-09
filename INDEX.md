@@ -84,7 +84,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | cpp-compile-time | [Compile-Time Programming Checklist](cpp/correctness/compile-time-programming.md) | cpp | N | draft | 2026.06 |
 | cpp-thread-safety | [Concurrency and Thread Safety Checklist](cpp/concurrency/thread-safety.md) | cpp | N | draft | 2026.06 |
 | cpp-const-correctness | [Const Correctness Checklist](cpp/correctness/const-correctness.md) | cpp | N | draft | 2026.05 |
-| dart-error-handling | [Dart Asynchronous Error and Exception Safety Checklist](dart/error-handling.md) | dart | C | draft | 2026.09.1 |
+| dart-error-handling | [Dart Asynchronous Error and Exception Safety Checklist](dart/error-handling.md) | dart | C | draft | 2026.09.2 |
 | cpp-exception-safety | [Exception Safety Guarantees Checklist](cpp/correctness/exception-safety.md) | cpp | N | draft | 2026.06 |
 | cpp-integer-safety | [Integer Safety Checklist](cpp/correctness/integer-safety.md) | cpp | N | draft | 2026.06 |
 | cpp-interface-contracts | [Interface Contracts and Design-by-Contract Checklist](cpp/correctness/interface-contracts.md) | cpp | N | draft | 2026.06 |
