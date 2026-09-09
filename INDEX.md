@@ -140,7 +140,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
-| common-logging-standards | [Logging Standards Checklist](common/logging/logging-standards.md) | common | N | draft | 2026.09 |
+| common-logging-standards | [Logging Standards Checklist](common/logging/logging-standards.md) | common | N | draft | 2026.09.1 |
 
 ### meta
 
