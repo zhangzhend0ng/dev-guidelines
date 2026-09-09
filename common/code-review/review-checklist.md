@@ -6,10 +6,10 @@ language: "common"
 category: "code-review"
 tier: "C"
 scope: "Systematically review code for correctness, security, performance, readability, and test coverage"
-version: "2026.06"
+version: "2026.09"
 status: "draft"
 stable_since: ""
-last_validated: "2026-06-01"
+last_validated: "2026-09-09"
 review_cycle: "12m"
 tags: [code-review, process, quality]
 based_on:
@@ -24,6 +24,7 @@ related:
 supersedes: []
 changelog:
   - "2026.06: Initial draft"
+  - "2026.09: Item 9 (user-visible copy) added — new/changed user-facing strings are checked for spelling and stray/broken symbols, and display copy must not reuse log-format traces. Distilled from the lava monorepo dual-diff review."
 ---
 
 # Code Review Checklist
@@ -97,6 +98,11 @@ changelog:
 - [ ] Author resolves within 2 business days → **(A)** [R3]
 - [ ] Stale (>1 week) → author refreshes summary → **(A)** [R1]
 
+### 9. User-Visible Copy  **(A)** [R5]
+
+- [ ] Diff adds or changes a user-facing string → **(A)** check spelling and stray/broken symbols exactly as the user will see it (e.g. `'...please try again later}'` has a stray `}` that renders verbatim); flag typo-grade defects in UI copy. [R5]
+- [ ] User-facing text is taken from a log message, error string, or other internal format → **(A)** do not surface log-format traces (correlation IDs, internal codes, log wording) to end users; keep display copy and log copy separate. [R5]
+
 ---
 
 ## Decision Tree
@@ -111,6 +117,7 @@ PR received
   → Readability [6]: Clear?
   → Performance [7]: Hot path issues?
   → Speed [8]: 1-day response
+  → Copy [9]: user-facing strings clean? No log traces?
 
 (N)=BLOCK  (C)=fix-or-justify  (A)=suggestion
 ```
@@ -150,9 +157,11 @@ PR received
 | R2 | C | Microsoft Code Review Guide | Security | verified-2026 | 2026-06 |
 | R3 | A | SWE at Google (Winters) | Ch.9 | verified-2026 | 2026-06 |
 | R4 | A | SmartBear Best Practices | Review limits | verified-2026 | 2026-06 |
+| R5 | A | dev-guidelines engineering experience (lava monorepo dual-diff review) | Stray `}` in a user-visible retry string rendered verbatim; log-format traces leaking into display copy | verified-2026 | 2026-09 |
 
 ---
 
 ## Changelog
 
 - 2026.06: Initial draft
+- 2026.09: Item 9 (user-visible copy) added — spelling and stray/broken symbols in user-facing strings, and no log-format traces in display copy. Distilled from the lava monorepo dual-diff review.

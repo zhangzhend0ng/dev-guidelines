@@ -6,10 +6,10 @@ language: "common"
 category: "testing"
 tier: "C"
 scope: "Establish test classification, pyramid proportions, mocking rules, and flaky test management for any codebase"
-version: "2026.06"
+version: "2026.09"
 status: "draft"
 stable_since: ""
-last_validated: "2026-06-01"
+last_validated: "2026-09-09"
 review_cycle: "12m"
 tags: [testing, unit-tests, integration-tests, tdd, quality]
 based_on:
@@ -37,9 +37,11 @@ related:
   - "cpp/debugging/flaky-test-triage.md"
   - "python/correctness/type-hints-and-mypy.md"
   - "python/testing/pytest-patterns.md"
+  - "dart/testing.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"
+  - "2026.09: Reciprocal link to dart/testing.md (Dart/Flutter unit-test concrete form of this harness) added to related."
 ---
 
 # Testing Strategy Checklist
@@ -140,6 +142,7 @@ Coverage trend [7]
 ## See Also
 
 - [Code Review Checklist](../code-review/review-checklist.md) — Test coverage as a review dimension
+- [Dart/Flutter Unit Testing Patterns Checklist](../../dart/testing.md) — the Dart/Flutter concrete form: singleton isolation, platform-channel mocking, static pure-function evaluators
 
 ---
 
@@ -158,3 +161,4 @@ Coverage trend [7]
 ## Changelog
 
 - 2026.06: Initial draft
+- 2026.09: Reciprocal link to dart/testing.md (Dart/Flutter unit-test concrete form of this harness) added to related.

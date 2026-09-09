@@ -6,10 +6,10 @@ language: "common"
 category: "logging"
 tier: "N"
 scope: "Establish log levels, structured format, PII protection, correlation, and retention policies"
-version: "2026.06"
+version: "2026.09"
 status: "draft"
 stable_since: ""
-last_validated: "2026-06-01"
+last_validated: "2026-09-09"
 review_cycle: "12m"
 tags: [logging, observability, security, pii]
 based_on:
@@ -24,9 +24,11 @@ related:
   - "cpp/runtime/observability-and-diagnostics.md"
   - "common/security/input-validation.md"
   - "python/security/input-deserialization.md"
+  - "common/error-handling/error-handling-strategy.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"
+  - "2026.09: Item 3 and anti-pattern 3 extended — whole-object logging via default entity `toString()` in Dart/Flutter carries PII implicitly, and raising a line's level (debug→warning) changes retention/upload policy and must be re-reviewed. Distilled from the lava monorepo dual-diff review."
 ---
 
 # Logging Standards Checklist
@@ -69,6 +71,8 @@ changelog:
 - [ ] NEVER credentials, passwords, tokens, API keys → **(N)** [R1]
 - [ ] NEVER PII (names, emails, phones, SSNs) in plaintext → **(N)** [R1]
 - [ ] NEVER session IDs, credit card numbers → **(N)** [R1]
+- [ ] A whole object whose default `toString()` includes PII fields (e.g. a Dart/Flutter entity whose default `toString()` emits every field — email, phone) is interpolated into a log line → **(N)** log explicit safe fields or a redacted projection; never the whole object. [R1]
+- [ ] A log line's level is raised (debug→warning/error) on a message that may carry PII → **(C)** re-review the line under this section before promotion; raising the level changes retention and upload policy and expands the PII exposure surface. [R1][R2]
 - [ ] Mask/redact sensitive values before emission → **(C)** [R1]
 
 ### 4. Correlation IDs  **(C)** [R3]
@@ -125,12 +129,20 @@ Event to log?
 - **Consequence:** Impossible to search/aggregate/alert. Volume explodes, signal lost.
 - **Fix:** `logger.info("action=login user_id=42")` or structured JSON.
 
+### 3. Logging the Whole Entity via Default `toString()`
+
+- **Appearance:** A Dart/Flutter client logs `log.info('session updated: $user')` where `User` has **no** `toString()` override, so the default implementation emits every field — including `email` and `phone` — and the whole entity goes into the log line.
+- **Trap:** `$user` is one interpolation token and reads as "logging the user for context"; the default `toString()` is meant for debugging, so the field list is invisible at the call site. Because no code names a PII field, the line never looks like a PII leak.
+- **Consequence:** Emails/phones land in logs and flow into retention, upload, and error-aggregation pipelines. Later, raising that line from debug to warning moves it into always-on retention — the PII exposure surface expands silently, driven by a log-level change nobody reviewed as a data-protection decision.
+- **Fix:** Item 3 — log an explicit projection (`userId=42`, redacted fields) or an overridden safe `toString()`; never interpolate an unvetted whole object. Treat any level promotion of a log line as a trigger to re-review it under item 3.
+
 ---
 
 ## See Also
 
 - [Input Validation](../security/input-validation.md) — Validate before logging
-- [Error Handling](../error-handling/error-handling-strategy.md) — Log once at outermost handler
+- [Error Handling](../error-handling/error-handling-strategy.md) — Log once at outermost handler; message text is not a contractual error identifier
+- [Dart Asynchronous Error and Exception Safety Checklist](../../dart/error-handling.md) — the client-side rule that the single log line at the edge is the *only* log line
 
 ---
 
@@ -149,3 +161,4 @@ Event to log?
 ## Changelog
 
 - 2026.06: Initial draft
+- 2026.09: Item 3 and anti-pattern 3 extended with the Dart/Flutter client form — whole-object logging through default entity `toString()` carries PII implicitly (email/phone), and promoting a log line's level (debug→warning) changes retention/upload policy and expands the PII exposure surface. Distilled from the lava monorepo dual-diff review.

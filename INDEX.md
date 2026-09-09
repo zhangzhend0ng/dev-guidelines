@@ -55,7 +55,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | common-ai-generated-code-failure-modes | [AI-Generated Code Failure Modes Checklist](common/code-review/ai-generated-code-failure-modes.md) | common | A | draft | 2026.08 |
-| common-code-review-checklist | [Code Review Checklist](common/code-review/review-checklist.md) | common | C | draft | 2026.06 |
+| common-code-review-checklist | [Code Review Checklist](common/code-review/review-checklist.md) | common | C | draft | 2026.09 |
 | common-harness-driven-review | [Harness-Driven Development Protocol](common/code-review/harness-driven-review.md) | common | A | draft | 2026.07.2 |
 
 ### commits
@@ -74,7 +74,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
-| common-config-option-registration | [Configuration Option Registration and Dimension Classification Checklist](common/config/option-registration-and-dimension.md) | common | A | draft | 2026.07 |
+| common-config-option-registration | [Configuration Option Registration and Dimension Classification Checklist](common/config/option-registration-and-dimension.md) | common | A | draft | 2026.09 |
 
 ### correctness
 
@@ -84,6 +84,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | cpp-compile-time | [Compile-Time Programming Checklist](cpp/correctness/compile-time-programming.md) | cpp | N | draft | 2026.06 |
 | cpp-thread-safety | [Concurrency and Thread Safety Checklist](cpp/concurrency/thread-safety.md) | cpp | N | draft | 2026.06 |
 | cpp-const-correctness | [Const Correctness Checklist](cpp/correctness/const-correctness.md) | cpp | N | draft | 2026.05 |
+| dart-error-handling | [Dart Asynchronous Error and Exception Safety Checklist](dart/error-handling.md) | dart | C | draft | 2026.09 |
 | cpp-exception-safety | [Exception Safety Guarantees Checklist](cpp/correctness/exception-safety.md) | cpp | N | draft | 2026.06 |
 | cpp-integer-safety | [Integer Safety Checklist](cpp/correctness/integer-safety.md) | cpp | N | draft | 2026.06 |
 | cpp-interface-contracts | [Interface Contracts and Design-by-Contract Checklist](cpp/correctness/interface-contracts.md) | cpp | N | draft | 2026.06 |
@@ -118,8 +119,9 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 |----|-------|----------|------|--------|---------|
 | common-api-design | [API Design Principles Checklist](common/api-design/restful-api-design.md) | common | C | draft | 2026.06 |
 | cpp-result-vs-exception | [C++ Result vs Exception Checklist](cpp/error-handling/result-vs-exception.md) | cpp | C | draft | 2026.06 |
-| common-error-handling | [Error Handling Strategy Checklist](common/error-handling/error-handling-strategy.md) | common | C | draft | 2026.05 |
+| common-error-handling | [Error Handling Strategy Checklist](common/error-handling/error-handling-strategy.md) | common | C | draft | 2026.09 |
 | cpp-feature-design-prerequisites | [Feature Design Prerequisites Checklist](cpp/design/feature-design-prerequisites.md) | cpp | C | draft | 2026.07.2 |
+| common-feature-flag-rollout | [Remote Feature-Flag Evaluation and Rollout Checklist](design/feature-flag-rollout.md) | common | C | draft | 2026.09 |
 
 ### documentation
 
@@ -138,7 +140,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
-| common-logging-standards | [Logging Standards Checklist](common/logging/logging-standards.md) | common | N | draft | 2026.06 |
+| common-logging-standards | [Logging Standards Checklist](common/logging/logging-standards.md) | common | N | draft | 2026.09 |
 
 ### meta
 
@@ -164,7 +166,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
-| common-change-scope-control | [Change Scope Control Checklist](common/planning/change-scope-control.md) | common | A | draft | 2026.06 |
+| common-change-scope-control | [Change Scope Control Checklist](common/planning/change-scope-control.md) | common | A | draft | 2026.09 |
 | common-planning-requirements-gap-analysis | [Requirements-vs-Implementation Gap Analysis Checklist](common/planning/requirements-gap-analysis.md) | common | C | draft | 2026.07 |
 | common-risk-verification-plan | [Risk and Verification Plan Checklist](common/planning/risk-and-verification-plan.md) | common | C | draft | 2026.06 |
 | common-rollback-migration-plan | [Rollback and Migration Plan Checklist](common/planning/rollback-and-migration-plan.md) | common | C | draft | 2026.06 |
@@ -174,6 +176,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
+| lava-login-logout-state-machine | [Lava Login/Logout State Machine Pre-Check](projects/lava/login-logout-state-machine.md) | dart | P | draft | 2026.09 |
 | snapmaker-orca-coding-standards | [SnapmakerOrca C++ Coding Standards](projects/snapmaker-orca/coding-standards.md) | cpp | P | draft | 2026.06 |
 | snapmaker-orca-workflow | [SnapmakerOrca PR and Workflow Standards](projects/snapmaker-orca/workflow-standards.md) | common | P | draft | 2026.06 |
 
@@ -196,7 +199,8 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | cpp-secure-coding | [C++ Secure Coding Checklist](cpp/security/secure-coding.md) | cpp | N | draft | 2026.06 |
-| common-input-validation | [Input Validation Checklist](common/security/input-validation.md) | common | N | draft | 2026.05 |
+| dart-json-boundaries | [Dart Dynamic JSON Boundary Checklist](dart/json-boundaries.md) | dart | C | draft | 2026.09 |
+| common-input-validation | [Input Validation Checklist](common/security/input-validation.md) | common | N | draft | 2026.09 |
 | python-input-deserialization | [Python Input Deserialization Checklist](python/security/input-deserialization.md) | python | N | draft | 2026.06 |
 
 ### serialization
@@ -220,11 +224,12 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | cpp-property-based-testing | [C++ Property-Based Testing Checklist](cpp/testing/property-based-testing.md) | cpp | C | draft | 2026.06 |
 | cpp-static-analysis | [C++ Static Analysis Checklist](cpp/testing/static-analysis.md) | cpp | C | draft | 2026.06 |
 | cpp-catch2 | [Catch2 Testing Patterns Checklist](cpp/testing/catch2-patterns.md) | cpp | C | draft | 2026.06 |
+| dart-testing | [Dart/Flutter Unit Testing Patterns Checklist](dart/testing.md) | dart | A | draft | 2026.09 |
 | common-testing-differential-oracle | [Differential Oracle and Characterization Testing Checklist](common/testing/differential-oracle-testing.md) | common | A | draft | 2026.07 |
 | cpp-googletest | [GoogleTest and GMock Patterns Checklist](cpp/testing/googletest-patterns.md) | cpp | C | draft | 2026.06 |
 | cpp-sanitizers | [Sanitizer Integration and Usage Checklist](cpp/testing/sanitizers.md) | cpp | N | draft | 2026.06 |
 | common-test-doubles | [Test Doubles Taxonomy and Selection Checklist](common/testing/test-doubles.md) | common | C | draft | 2026.06 |
-| common-testing-strategy | [Testing Strategy Checklist](common/testing/testing-strategy.md) | common | C | draft | 2026.06 |
+| common-testing-strategy | [Testing Strategy Checklist](common/testing/testing-strategy.md) | common | C | draft | 2026.09 |
 | python-pytest-patterns | [pytest Patterns Checklist](python/testing/pytest-patterns.md) | python | C | draft | 2026.06 |
 
 ### third-party

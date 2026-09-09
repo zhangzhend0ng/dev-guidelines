@@ -6,10 +6,10 @@ language: "common"
 category: "config"
 tier: "A"
 scope: "Classify a configuration option by its data dimension and register it symmetrically across every required site, before treating a requirement as a mere registration task"
-version: "2026.07"
+version: "2026.09"
 status: "draft"
 stable_since: ""
-last_validated: "2026-07-29"
+last_validated: "2026-09-09"
 review_cycle: "12m"
 tags: [config, configuration, options, presets, data-dimension, serialization, registration, schema]
 based_on:
@@ -19,9 +19,11 @@ related:
   - "cpp/design/feature-design-prerequisites.md"
   - "common/planning/task-decomposition.md"
   - "cpp/serialization/parsing-and-validation.md"
+  - "design/feature-flag-rollout.md"
 supersedes: []
 changelog:
   - "2026.07: Initial draft — distilled from a session where a 'different value per mode' requirement was unrepresentable because the key's data dimension was [normal,stealth] (time-estimation mode), not per-extruder; a dimension mismatch is a design blocker, not a registration task"
+  - "2026.09: Reciprocal link to design/feature-flag-rollout.md (remote feature-flag evaluation/rollout — what happens after registration) added to related."
 ---
 
 # Configuration Option Registration and Dimension Classification Checklist
@@ -133,6 +135,7 @@ Asked to "add a config option"
 - [Feature Design Prerequisites Checklist](../../cpp/design/feature-design-prerequisites.md) — the broader design gate for a new feature; this harness is the narrower "how to wire one config option completely" gate that runs when a feature needs a new setting.
 - [Task Decomposition Checklist](../planning/task-decomposition.md) — splitting confirmed work; adding an option that fails item 1 (dimension mismatch) is *not* a schedulable task, it is a design escalation.
 - [C++ Parsing and Validation Checklist](../../cpp/serialization/parsing-and-validation.md) — how to parse the serialized form safely once the option is registered; this harness covers *registration and dimension*, not input parsing.
+- [Remote Feature-Flag Evaluation and Rollout Checklist](../../design/feature-flag-rollout.md) — what happens after registration when the config is *pushed remotely and evaluated on clients*: fail-closed evaluation, last-known-good caching, and schema-version gating.
 
 ---
 
@@ -150,3 +153,4 @@ Asked to "add a config option"
 ## Changelog
 
 - 2026.07: Initial draft — 6 items covering dimension classification, symmetric multi-site registration, per-instance resize, serialization-name immutability, override precedence (max/tighten-only), and the user-set-vs-default sentinel. Distilled from a session where a dimension mismatch was the hidden design blocker behind a "simple" config request.
+- 2026.09: Reciprocal link to design/feature-flag-rollout.md (remote feature-flag evaluation/rollout — what happens after registration) added to related.

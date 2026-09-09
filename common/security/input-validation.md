@@ -6,10 +6,10 @@ language: "common"
 category: "security"
 tier: "N"
 scope: "Validate all input at trust boundaries to prevent injection, overflow, and data corruption"
-version: "2026.05"
+version: "2026.09"
 status: "draft"
 stable_since: ""
-last_validated: "2026-05-31"
+last_validated: "2026-09-09"
 review_cycle: "12m"
 tags: [security, validation, input, injection, owasp]
 based_on:
@@ -30,9 +30,11 @@ related:
   - "cpp/third-party/wxwidgets-3-1-5.md"
   - "projects/snapmaker-orca/coding-standards.md"
   - "python/security/input-deserialization.md"
+  - "dart/json-boundaries.md"
 supersedes: []
 changelog:
   - "2026.05: Initial draft"
+  - "2026.09: Reciprocal link to dart/json-boundaries.md (Dart landing of this harness for inbound JSON) added to related."
 ---
 
 # Input Validation Checklist
@@ -121,6 +123,7 @@ Output: encode at render point [7]
 ## See Also
 
 - [Parameter Validation (C++)](../../cpp/functions/parameter-validation.md) — C++ contract types, assert vs. if/throw
+- [Dart Dynamic JSON Boundary Checklist](../../dart/json-boundaries.md) — the Dart landing of this harness for inbound JSON (type checks before casts, missing-key vs null semantics)
 
 ---
 
@@ -138,3 +141,4 @@ Output: encode at render point [7]
 ## Changelog
 
 - 2026.05: Initial draft
+- 2026.09: Reciprocal link to dart/json-boundaries.md (Dart landing of this harness for inbound JSON) added to related.
