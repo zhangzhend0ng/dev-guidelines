@@ -6,10 +6,10 @@ language: "dart"
 category: "security"
 tier: "C"
 scope: "Convert untrusted JSON (server/device/pushed config) safely inside a Dart/Flutter app: type-discriminate before casts, respect missing-key vs explicit-null semantics, centralize dual-key transitional lookups, and prevent null pollution of persistent view-model maps"
-version: "2026.09"
+version: "2026.09.1"
 status: "draft"
 stable_since: ""
-last_validated: "2026-09-09"
+last_validated: "2026-09-10"
 review_cycle: "12m"
 tags: [dart, flutter, json, dynamic, type-safety, input-validation, serialization, view-model]
 based_on:
@@ -21,6 +21,7 @@ related:
   - "design/feature-flag-rollout.md"
 supersedes: []
 changelog:
+  - "2026.09.10: Item 4 and anti-pattern 2 refined for numeric-drift accuracy — the decoder maps whole-number JSON payloads to `int` (when they fit) and fractional/out-of-range values to `double`, so a drifted field can be `int`, `double`, or quoted `String`; anti-pattern 2 now distinguishes the two failure shapes (`\"3600\"` breaks both `as num` and `as int`; `3600.5` as `double` breaks `as int` but not `as num`). Matches dart:convert decode semantics."
   - "2026.09: Initial draft — distilled from lava monorepo dual-diff review (feature-flag fail-closed cache / login state machine / PII log findings)"
 ---
 
@@ -91,7 +92,7 @@ if (data.containsKey('estimated_time')) {
 
 ### 4. Numeric JSON Fields Handle int/double/String Forms **(C)** [R1]
 
-- [ ] A numeric field is read with a single cast → **(C)** accept `num` and convert (`toInt()`/`toDouble()`), and decide a policy for numeric strings (`num.tryParse`) — JSON numbers are `int` or `double` at the decoder's discretion, and servers do send quoted numbers. [R1][R3]
+- [ ] A numeric field is read with a single cast → **(C)** accept `num` and convert (`toInt()`/`toDouble()`), and decide a policy for numeric strings (`num.tryParse`) — JSON has one number type, and `jsonDecode` maps a whole-number payload to `int` (when it fits) and any fractional or out-of-range value to `double`, so the same field can arrive as `int`, `double`, or (quoted) `String`. [R1][R3]
 - [ ] Rounding/truncation semantics for `double`→`int` are chosen deliberately → **(C)** `toInt()` truncates; if the protocol means a whole number, validate, don't silently truncate a drifted fractional value. [R1][R3]
 
 ### 5. Dual-Key (camelCase + snake_case) Lookup Is One Centralized Rule **(A)** [R2][R3]
@@ -133,7 +134,7 @@ Inbound JSON value (dynamic) about to be used
 
 - **Appearance:** Server sends `estimated_time: 3600`; client reads `data['estimated_time'] as num` (or `as int`) and feeds it to the UI.
 - **Trap:** The payload is correct today; the cast documents intent and the code passes against the current server. Nobody expects the field type to change.
-- **Consequence:** A later server/device version sends `"3600"` (numeric string) or `3600.5` for the same semantic field. `as num` throws a runtime `TypeError`; if the read is inside an update handler with no guard, the whole update path dies — or worse, a partial update leaves the view model half-populated.
+- **Consequence:** A later server/device version sends `"3600"` (a numeric string) or `3600.5` for the same semantic field. `"3600"` makes **both** `as num` and `as int` throw a runtime `TypeError`; `3600.5` decodes as `double`, which `as int` rejects (a `double` is not an `int`) even though `as num` would accept it. Either drift fails at a read site nobody expected to break; if the read is inside an update handler with no guard, the whole update path dies — or worse, a partial update leaves the view model half-populated.
 - **Fix:** Items 1 and 4 — `is num`/`is String` discrimination with a fail-closed branch (log + keep previous value), confined to the adapter layer (item 6) so the drift is caught in one testable module.
 
 ### Anti-Pattern 3: Scattered Ad-Hoc Dual-Key `??` Chains
@@ -168,4 +169,5 @@ Inbound JSON value (dynamic) about to be used
 
 ## Changelog
 
+- 2026.09.10: Item 4 and anti-pattern 2 refined for numeric-drift accuracy — the decoder maps whole-number JSON payloads to `int` (when they fit) and fractional/out-of-range values to `double`, so a drifted field can be `int`, `double`, or quoted `String`; anti-pattern 2 now distinguishes the two failure shapes (`"3600"` breaks both `as num` and `as int`; `3600.5` as `double` breaks `as int` but not `as num`). Matches dart:convert decode semantics.
 - 2026.09: Initial draft — distilled from lava monorepo dual-diff review (feature-flag fail-closed cache / login state machine / PII log findings)
