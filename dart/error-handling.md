@@ -6,14 +6,15 @@ language: "dart"
 category: "correctness"
 tier: "C"
 scope: "Ensure every Dart/Flutter async error reaches exactly one handler and that cleanup, finalization, and single-flight side effects survive awaited calls, unawaited futures, stream callbacks, rethrows, and Completers"
-version: "2026.09.2"
+version: "2026.09.3"
 status: "draft"
 stable_since: ""
 last_validated: "2026-09-10"
 review_cycle: "12m"
 tags: [dart, flutter, async, futures, streams, exceptions, error-handling, state-machine]
 based_on:
-  - "[C] Dart and Flutter Official Documentation (dart.dev / flutter.dev)"
+  - "[C] Dart Official Documentation (dart.dev / api.dart.dev)"
+  - "[C] Flutter Official Documentation (docs.flutter.dev / api.flutter.dev)"
   - "[C] Effective Dart"
   - "[A] dev-guidelines engineering experience (lava monorepo dual-diff review)"
 related:
@@ -21,6 +22,7 @@ related:
   - "projects/lava/login-logout-state-machine.md"
 supersedes: []
 changelog:
+  - "2026.09.10: Reference Sources refined to concrete official pages after the C29 split (Dart docs = C29, Flutter docs = new C31) — R1 clause pins dart.dev language/async, futures-error-handling, using-streams and api.dart.dev dart:async entries; new R4 row cites docs.flutter.dev/testing/errors for the `FlutterError.onError` / `PlatformDispatcher.instance.onError` mechanism (item 1 bullet 2 now tags [R1][R4][R3]); R2 clause now lists only actual Effective Dart usage items."
   - "2026.09.10: Concepts (`stream.listen` async callback) and item 1 corrected — an exception inside an `async` onData callback becomes an unhandled async error because `listen` discards the returned `Future`; `listen`'s `onError`/`cancelOnError` handle error events the stream emits, not exceptions from your own callback, so the catch belongs inside the callback. Matches api.dart.dev Stream.listen semantics."
   - "2026.09.10: Concepts (Error `Zone`) and item 1 refined to the current Flutter error-channel model — `FlutterError.onError` (framework callbacks) and `PlatformDispatcher.instance.onError` (errors outside Flutter callbacks, e.g. async platform-channel/plugin errors; return `true` when handled), recommended by docs.flutter.dev/testing/errors over a custom `runZonedGuarded` zone since Flutter 3.3; `runZonedGuarded` remains the plain-Dart net."
   - "2026.09: Initial draft — distilled from lava monorepo dual-diff review (feature-flag fail-closed cache / login state machine / PII log findings)"
@@ -28,7 +30,7 @@ changelog:
 
 # Dart Asynchronous Error and Exception Safety Checklist
 
-**Based on:** Dart/Flutter official docs ([C]), Effective Dart ([C]), dev-guidelines engineering experience from the lava monorepo dual-diff review ([A]).
+**Based on:** Dart official docs ([C]), Flutter official docs ([C]), Effective Dart ([C]), dev-guidelines engineering experience from the lava monorepo dual-diff review ([A]).
 **Scope:** The Dart-language concrete rules for `common/error-handling/error-handling-strategy.md`: where async errors escape, how they must be caught/wrapped/logged, and how cleanup and remote side effects must survive them. This harness does **not** re-state the general strategy checklist — it pins down the Dart-specific failure modes (unawaited futures, `stream.listen` async callbacks, `Completer` dangling, double-send races). C++ exception-safety guarantees have no direct Dart `noexcept` equivalent; the analogue is *finalization must not be skipped* and *errors must not be dropped or doubled*.
 
 ---
@@ -55,7 +57,7 @@ changelog:
 An exception from an `async` callback passed to `stream.listen` (or an event bus, socket, or platform-channel handler) does not reach a `try` around the `listen` call — it becomes an unhandled async error.
 
 - [ ] Callback is `(event) async { ... }` and can throw → **(C)** catch inside the callback body: `listen` discards the returned `Future`, so an error it completes with never reaches `listen`'s `onError` (that fires only for error events the *stream* emits) — it becomes an unhandled async error. [R1][R2]
-- [ ] The async error is only noticed via a global handler (`FlutterError.onError` / `PlatformDispatcher.instance.onError` in Flutter; `runZonedGuarded` in plain Dart) → **(A)** acceptable as a last-resort net (telemetry + crash reporting); do not rely on it for flow correctness. [R1][R3]
+- [ ] The async error is only noticed via a global handler (`FlutterError.onError` / `PlatformDispatcher.instance.onError` in Flutter; `runZonedGuarded` in plain Dart) → **(A)** acceptable as a last-resort net (telemetry + crash reporting); do not rely on it for flow correctness. [R1][R4][R3]
 
 ### 2. Fire-and-Forget Futures Carry an Error Path
 
@@ -178,9 +180,10 @@ async function / callback
 
 | Label | Tier | Source | Clause | Timeliness | Last Verified |
 |-------|------|--------|--------|------------|---------------|
-| R1 | C | [C29] Dart and Flutter Official Documentation | Futures, streams, async error propagation, unhandled-error zones, `Completer` | verified-2026 | 2026-09 |
-| R2 | C | [C30] Effective Dart | Async usage guidance, `unawaited_futures` discipline | verified-2026 | 2026-09 |
-| R3 | A | dev-guidelines engineering experience (lava monorepo dual-diff review) | Login/logout re-entry, fire-and-forget ordering, duplicate logout, stranded `TokenInvalidation.reset()` | verified-2026 | 2026-09 |
+| R1 | C | [C29] Dart Official Documentation | dart.dev/language/async (async/await; `unawaited_futures` lint); dart.dev/libraries/async/futures-error-handling (where async errors land); dart.dev/libraries/async/using-streams (`listen`); api.dart.dev dart:async — Stream.listen (unhandled errors → zone), `unawaited()` (since 2.15, no error path), `Future.ignore()`, Completer/completeError, runZonedGuarded | verified-2026 | 2026-09-10 |
+| R2 | C | [C30] Effective Dart | dart.dev/effective-dart/usage — asynchrony (prefer async/await over raw futures; avoid `Completer` directly; don't discard errors from catches without `on` clauses; use `rethrow`) | verified-2026 | 2026-09-10 |
+| R3 | A | dev-guidelines engineering experience (lava monorepo dual-diff review) | Login/logout re-entry, fire-and-forget ordering, duplicate logout, stranded `TokenInvalidation.reset()` | verified-2026 | 2026-09-10 |
+| R4 | C | [C31] Flutter Official Documentation | docs.flutter.dev/testing/errors — `FlutterError.onError` (framework callbacks) vs `PlatformDispatcher.instance.onError` (errors outside Flutter callbacks; handler returns `true` when handled; recommended since Flutter 3.3 over a custom zone) | verified-2026 | 2026-09-10 |
 
 > **Tier honesty note:** The mechanism rules — where an async error lands, that `unawaited()` does not handle errors, that a `Completer` must complete once — are backed by the official Dart/Flutter documentation and are tagged (C). The *flow-level* rules (items 3, 5, 7: cleanup-after-throw, single-issuer, state-machine re-entry) are distilled from one real review and carry engineering experience as (A)-tier evidence; they are stated as (C) at the harness level because they are the Dart concrete form of long-standing error-handling consensus, but reviewers should read the item-level tags honestly.
 
@@ -188,6 +191,7 @@ async function / callback
 
 ## Changelog
 
+- 2026.09.10: Reference Sources refined to concrete official pages after the C29 split (Dart docs = C29, Flutter docs = new C31) — R1 clause pins dart.dev language/async, futures-error-handling, using-streams and api.dart.dev dart:async entries; new R4 row cites docs.flutter.dev/testing/errors for the `FlutterError.onError` / `PlatformDispatcher.instance.onError` mechanism (item 1 bullet 2 now tags [R1][R4][R3]); R2 clause now lists only actual Effective Dart usage items.
 - 2026.09.10: Concepts (`stream.listen` async callback) and item 1 corrected — an exception inside an `async` onData callback becomes an unhandled async error because `listen` discards the returned `Future`; `listen`'s `onError`/`cancelOnError` handle error events the stream emits, not exceptions from your own callback, so the catch belongs inside the callback. Matches api.dart.dev Stream.listen semantics.
 - 2026.09.10: Concepts (Error `Zone`) and item 1 refined to the current Flutter error-channel model — `FlutterError.onError` (framework callbacks) and `PlatformDispatcher.instance.onError` (errors outside Flutter callbacks, e.g. async platform-channel/plugin errors; return `true` when handled), recommended by docs.flutter.dev/testing/errors over a custom `runZonedGuarded` zone since Flutter 3.3; `runZonedGuarded` remains the plain-Dart net.
 - 2026.09: Initial draft — distilled from lava monorepo dual-diff review (feature-flag fail-closed cache / login state machine / PII log findings)
