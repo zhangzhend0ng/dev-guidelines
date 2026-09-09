@@ -199,7 +199,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version |
 |----|-------|----------|------|--------|---------|
 | cpp-secure-coding | [C++ Secure Coding Checklist](cpp/security/secure-coding.md) | cpp | N | draft | 2026.06 |
-| dart-json-boundaries | [Dart Dynamic JSON Boundary Checklist](dart/json-boundaries.md) | dart | C | draft | 2026.09.1 |
+| dart-json-boundaries | [Dart Dynamic JSON Boundary Checklist](dart/json-boundaries.md) | dart | C | draft | 2026.09.2 |
 | common-input-validation | [Input Validation Checklist](common/security/input-validation.md) | common | N | draft | 2026.09 |
 | python-input-deserialization | [Python Input Deserialization Checklist](python/security/input-deserialization.md) | python | N | draft | 2026.06 |
 

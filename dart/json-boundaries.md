@@ -6,14 +6,14 @@ language: "dart"
 category: "security"
 tier: "C"
 scope: "Convert untrusted JSON (server/device/pushed config) safely inside a Dart/Flutter app: type-discriminate before casts, respect missing-key vs explicit-null semantics, centralize dual-key transitional lookups, and prevent null pollution of persistent view-model maps"
-version: "2026.09.1"
+version: "2026.09.2"
 status: "draft"
 stable_since: ""
 last_validated: "2026-09-10"
 review_cycle: "12m"
 tags: [dart, flutter, json, dynamic, type-safety, input-validation, serialization, view-model]
 based_on:
-  - "[C] Dart and Flutter Official Documentation (dart.dev / flutter.dev)"
+  - "[C] Dart Official Documentation (dart.dev / api.dart.dev)"
   - "[C] Effective Dart"
   - "[A] dev-guidelines engineering experience (lava monorepo dual-diff review)"
 related:
@@ -21,13 +21,14 @@ related:
   - "design/feature-flag-rollout.md"
 supersedes: []
 changelog:
+  - "2026.09.10: Reference Sources refined after the C29 split — R1 clause now pins the concrete dart.dev/api.dart.dev pages (Using JSON, dart-convert, operators/type-system, Map API); R2 clause limited to Effective Dart design items that exist (AVOID `dynamic`); dual-key item 5 retagged [R2][R3] → [R3] because Effective Dart does not cover lookup-helper patterns; based_on updated to Dart Official Documentation."
   - "2026.09.10: Item 4 and anti-pattern 2 refined for numeric-drift accuracy — the decoder maps whole-number JSON payloads to `int` (when they fit) and fractional/out-of-range values to `double`, so a drifted field can be `int`, `double`, or quoted `String`; anti-pattern 2 now distinguishes the two failure shapes (`\"3600\"` breaks both `as num` and `as int`; `3600.5` as `double` breaks `as int` but not `as num`). Matches dart:convert decode semantics."
   - "2026.09: Initial draft — distilled from lava monorepo dual-diff review (feature-flag fail-closed cache / login state machine / PII log findings)"
 ---
 
 # Dart Dynamic JSON Boundary Checklist
 
-**Based on:** Dart/Flutter official docs ([C]), Effective Dart ([C]), dev-guidelines engineering experience from the lava monorepo dual-diff review ([A]).
+**Based on:** Dart official docs ([C]), Effective Dart ([C]), dev-guidelines engineering experience from the lava monorepo dual-diff review ([A]).
 **Scope:** How `jsonDecode`'s `dynamic` results cross into typed Dart state. This is the Dart landing of `common/security/input-validation.md` for **inbound JSON from a server, device, or pushed remote config** — not for JSON this app serializes itself (that path is under your control). It covers type discrimination before casts, missing-key vs explicit-`null` semantics, the dual-key (camelCase + snake_case) transitional lookup, and null pollution of **persistent** view-model fields that are not rebuilt on every message.
 
 ---
@@ -95,9 +96,9 @@ if (data.containsKey('estimated_time')) {
 - [ ] A numeric field is read with a single cast → **(C)** accept `num` and convert (`toInt()`/`toDouble()`), and decide a policy for numeric strings (`num.tryParse`) — JSON has one number type, and `jsonDecode` maps a whole-number payload to `int` (when it fits) and any fractional or out-of-range value to `double`, so the same field can arrive as `int`, `double`, or (quoted) `String`. [R1][R3]
 - [ ] Rounding/truncation semantics for `double`→`int` are chosen deliberately → **(C)** `toInt()` truncates; if the protocol means a whole number, validate, don't silently truncate a drifted fractional value. [R1][R3]
 
-### 5. Dual-Key (camelCase + snake_case) Lookup Is One Centralized Rule **(A)** [R2][R3]
+### 5. Dual-Key (camelCase + snake_case) Lookup Is One Centralized Rule **(A)** [R3]
 
-- [ ] Two spellings of the same field must both be read during a migration → **(A)** implement one lookup helper (`readField(map, [camel, snake])` → first *present* key wins) and use it everywhere; do not scatter `a['x'] ?? a['y']` chains across call sites. [R2][R3]
+- [ ] Two spellings of the same field must both be read during a migration → **(A)** implement one lookup helper (`readField(map, [camel, snake])` → first *present* key wins) and use it everywhere; do not scatter `a['x'] ?? a['y']` chains across call sites. [R3]
 - [ ] Both keys present simultaneously → **(A)** precedence is deterministic and documented (e.g., canonical spelling wins); the helper is covered by a unit test for each spelling and for the both-present case. [R3]
 
 ### 6. Cast Sites Are Confined to One Adapter Layer **(C)** [R1][R2]
@@ -159,9 +160,9 @@ Inbound JSON value (dynamic) about to be used
 
 | Label | Tier | Source | Clause | Timeliness | Last Verified |
 |-------|------|--------|--------|------------|---------------|
-| R1 | C | [C29] Dart and Flutter Official Documentation | JSON support, `dynamic`, runtime type checks, `TypeError` semantics of `as` | verified-2026 | 2026-09 |
-| R2 | C | [C30] Effective Dart | Avoid unchecked casts; prefer type tests / explicit conversion | verified-2026 | 2026-09 |
-| R3 | A | dev-guidelines engineering experience (lava monorepo dual-diff review) | `estimated_time` null-stamping/backfill blocking; persistent view-model pollution | verified-2026 | 2026-09 |
+| R1 | C | [C29] Dart Official Documentation | dart.dev/libraries/serialization/json (Using JSON); dart.dev/libraries/dart-convert (jsonDecode/jsonEncode semantics); dart.dev/language/operators (`as`/`is` type-test operators); dart.dev/language/type-system (runtime checks; failed cast throws `TypeError`); api.dart.dev dart:core Map (`operator[]` returns null for a missing key; `containsKey`) | verified-2026 | 2026-09-10 |
+| R2 | C | [C30] Effective Dart | dart.dev/effective-dart/design — AVOID using `dynamic` unless you want to disable static checking; annotate over inference (basis for type-discriminating and confining dynamic usage) | verified-2026 | 2026-09-10 |
+| R3 | A | dev-guidelines engineering experience (lava monorepo dual-diff review) | `estimated_time` null-stamping/backfill blocking; persistent view-model pollution | verified-2026 | 2026-09-10 |
 
 > **Tier honesty note:** The type-checking and cast mechanics (items 1, 4, 6) are grounded in the Dart language/Effective Dart and are tagged (C). The map-semantics rules (items 2, 3) and the dual-key pattern (item 5) are strongly informed by one real incident (explicit-null write blocking backfill in a persistent view model) and carry (A) evidence; the harness stays (C) because the underlying principle — validate all input at a trust boundary and never corrupt durable state with a parsing artifact — is the input-validation consensus this repo already treats as normative.
 
@@ -169,5 +170,6 @@ Inbound JSON value (dynamic) about to be used
 
 ## Changelog
 
+- 2026.09.10: Reference Sources refined after the C29 split — R1 clause now pins the concrete dart.dev/api.dart.dev pages (Using JSON, dart-convert, operators/type-system, Map API); R2 clause limited to Effective Dart design items that exist (AVOID `dynamic`); dual-key item 5 retagged [R2][R3] → [R3] because Effective Dart does not cover lookup-helper patterns; based_on updated to Dart Official Documentation.
 - 2026.09.10: Item 4 and anti-pattern 2 refined for numeric-drift accuracy — the decoder maps whole-number JSON payloads to `int` (when they fit) and fractional/out-of-range values to `double`, so a drifted field can be `int`, `double`, or quoted `String`; anti-pattern 2 now distinguishes the two failure shapes (`"3600"` breaks both `as num` and `as int`; `3600.5` as `double` breaks `as int` but not `as num`). Matches dart:convert decode semantics.
 - 2026.09: Initial draft — distilled from lava monorepo dual-diff review (feature-flag fail-closed cache / login state machine / PII log findings)
