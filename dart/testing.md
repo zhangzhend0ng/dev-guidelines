@@ -6,10 +6,10 @@ language: "dart"
 category: "testing"
 tier: "A"
 scope: "Isolate Dart/Flutter unit tests from singletons, static-late injection seams, and platform channels; structure evaluators as static pure functions so decision matrices are directly testable"
-version: "2026.09"
+version: "2026.09.1"
 status: "draft"
 stable_since: ""
-last_validated: "2026-09-09"
+last_validated: "2026-09-10"
 review_cycle: "12m"
 tags: [dart, flutter, testing, singletons, platform-channels, mocking, flutter_test]
 based_on:
@@ -20,6 +20,7 @@ related:
   - "common/testing/testing-strategy.md"
 supersedes: []
 changelog:
+  - "2026.09.10: Item-3 example and Platform-channel mock concept corrected for accuracy — the sample now installs and clears the mock on the same channel (previously it cleared `SystemChannels.platform`, which nothing had mocked), and the concept/checklist wording no longer implies plugin convenience setters wrap `setMockMethodCallHandler` (e.g. `SharedPreferences.setMockInitialValues` swaps the plugin's platform-side store directly; both named setters are `@visibleForTesting`). Checked against the Flutter mock-platform-channels migration doc and pub.dev plugin docs."
   - "2026.09: Initial draft — distilled from lava monorepo dual-diff review (feature-flag fail-closed cache / login state machine / PII log findings)"
 ---
 
@@ -37,7 +38,7 @@ changelog:
 | `Xxx.instance` singleton | A process-wide global (`static final ... instance = Xxx._()`). Tests that mutate it leak state into the next test unless reset. |
 | `static late` seam | A `static late` field assigned lazily. It is assignable from a test (`Xxx.config = fakeConfig`), which makes it an injection point — but it is still a mutable global and must be restored in `tearDown`. |
 | `TestWidgetsFlutterBinding.ensureInitialized()` | Must run before any test touches the binding (widget tests do this in the test body; unit tests that hit platform channels need it before channel mocks are installed). |
-| Platform-channel mock | `TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(...)` replaces the platform side of a `MethodChannel`. Plugin packages often wrap this in a convenience setter (e.g. `SharedPreferences.setMockInitialValues`, `PackageInfo.setMockInitialValues`). |
+| Platform-channel mock | `TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, handler)` replaces the platform side of a `MethodChannel` (passing `null` removes the mock). Plugin packages often offer a convenience seam instead — e.g. `SharedPreferences.setMockInitialValues`, `PackageInfo.setMockInitialValues` (both `@visibleForTesting`) — which replaces the plugin's platform-side state directly; such setters do not necessarily register a binary-messenger handler. |
 | Static pure-function evaluator | A decision function written as `static` with no instance state and no channel access (inputs in, value out). The entire evaluation matrix is then testable without binding, singletons, or async setup. |
 
 **Guiding idea:** each test must start from a known global state. Every seam a test uses (singleton reset, static field override, channel mock) must be installed *before* the code under test runs and removed/restored *after* it, so the suite is order-independent.
@@ -60,19 +61,25 @@ changelog:
 ### 3. Platform-Channel Mocks Are Installed Before Use, With the Binding Initialized **(C)** [R1]
 
 - [ ] Code under test can reach a platform channel (`MethodChannel`, plugin) → **(C)** call `TestWidgetsFlutterBinding.ensureInitialized()` (typically once in `setUpAll`/`main`) *before* installing the mock, and install the mock with `setMockMethodCallHandler` / `setMockInitialValues` *before* invoking the code. [R1]
-- [ ] A convenience mock setter exists for the plugin (e.g. `SharedPreferences.setMockInitialValues({...})`, `PackageInfo.setMockInitialValues(...)`) → **(C)** use it instead of hand-rolling `setMockMethodCallHandler`; it keeps the mock in sync with the plugin's channel contract. [R1][R3]
+- [ ] A convenience mock setter exists for the plugin (e.g. `SharedPreferences.setMockInitialValues({...})`, `PackageInfo.setMockInitialValues(...)`) → **(C)** use it instead of hand-rolling a channel mock; it stays in sync with the plugin's contract and any cached singleton state. [R1][R3]
 - [ ] A mock handler was registered for a channel → **(C)** remove it in `tearDown` (`setMockMethodCallHandler(null)`) so it cannot leak into the next test. [R1]
 
 ```dart
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized(); // before any channel mock
+
+  const channel = MethodChannel('lava/status'); // a channel the code under test calls
+
   setUp(() {
-    SharedPreferences.setMockInitialValues({'theme': 'dark'}); // before use
+    SharedPreferences.setMockInitialValues({'theme': 'dark'}); // plugin convenience seam
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (call) async => 'ok'); // raw channel mock
   });
   tearDown(() {
-    // restore the default messenger state for the channel
+    // Remove the mock for the channel it was registered on — a mock left
+    // installed leaks into the next test.
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(SystemChannels.platform, null);
+        .setMockMethodCallHandler(channel, null);
   });
   test('...', () async { ... });
 }
@@ -184,4 +191,5 @@ Writing/keeping a Dart unit test
 
 ## Changelog
 
+- 2026.09.10: Item-3 example and Platform-channel mock concept corrected for accuracy — the sample now installs and clears the mock on the same channel (previously it cleared `SystemChannels.platform`, which nothing had mocked), and the concept/checklist wording no longer implies plugin convenience setters wrap `setMockMethodCallHandler` (e.g. `SharedPreferences.setMockInitialValues` swaps the plugin's platform-side store directly; both named setters are `@visibleForTesting`). Checked against the Flutter mock-platform-channels migration doc and pub.dev plugin docs.
 - 2026.09: Initial draft — distilled from lava monorepo dual-diff review (feature-flag fail-closed cache / login state machine / PII log findings)
