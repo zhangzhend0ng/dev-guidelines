@@ -28,8 +28,8 @@ related:
 supersedes: []
 changelog:
   - "2026.09.10: Corrected item-3 bullet and anti-pattern 3's mechanism — Dart's inherited default `toString()` prints only `Instance of '<ClassName>'` and never dumps fields; a field-dumping string (and the PII it carries into log lines) comes from an overridden or code-generated full-field `toString()` (e.g. freezed). Fact-checked against the Dart API docs (Object.toString) in the C29/C30 documentation audit."
-  - "2026.06: Initial draft"
   - "2026.09: Item 3 and anti-pattern 3 extended — whole-object logging via default entity `toString()` in Dart/Flutter carries PII implicitly, and raising a line's level (debug→warning) changes retention/upload policy and must be re-reviewed. Distilled from the lava monorepo dual-diff review."
+  - "2026.06: Initial draft"
 ---
 
 # Logging Standards Checklist
@@ -162,5 +162,5 @@ Event to log?
 ## Changelog
 
 - 2026.09.10: Corrected the item-3 bullet and anti-pattern 3 mechanism — Dart's inherited default `toString()` prints only `Instance of '<ClassName>'` and never dumps fields; a field-dumping string (and the PII it carries into log lines) comes from an overridden or code-generated full-field `toString()` (e.g. freezed). Fact-checked against the Dart API docs (Object.toString) in the C29/C30 documentation audit.
-- 2026.06: Initial draft
 - 2026.09: Item 3 and anti-pattern 3 extended with the Dart/Flutter client form — whole-object logging through default entity `toString()` carries PII implicitly (email/phone), and promoting a log line's level (debug→warning) changes retention/upload policy and expands the PII exposure surface. Distilled from the lava monorepo dual-diff review.
+- 2026.06: Initial draft
