@@ -6,27 +6,27 @@ language: "dart"
 category: "testing"
 tier: "A"
 scope: "Isolate Dart/Flutter unit tests from singletons, static-late injection seams, and platform channels; structure evaluators as static pure functions so decision matrices are directly testable"
-version: "2026.09.1"
+version: "2026.09.2"
 status: "draft"
 stable_since: ""
 last_validated: "2026-09-10"
 review_cycle: "12m"
 tags: [dart, flutter, testing, singletons, platform-channels, mocking, flutter_test]
 based_on:
-  - "[C] Dart and Flutter Official Documentation (dart.dev / flutter.dev)"
-  - "[C] Effective Dart"
+  - "[C] Flutter Official Documentation (docs.flutter.dev / api.flutter.dev)"
   - "[A] dev-guidelines engineering experience (lava monorepo dual-diff review)"
 related:
   - "common/testing/testing-strategy.md"
 supersedes: []
 changelog:
+  - "2026.09.10: Reference Sources corrected after the C29 split — R1 now cites [C31] Flutter Official Documentation with the concrete pages (mock-platform-channels breaking-change doc, flutter_test API: ensureInitialized / setMockMethodCallHandler-null-removes); the Effective Dart row was dropped because Effective Dart contains no seam/injection/matrix-test guidance — those claims (items 2 and 4) are tagged [R3] engineering experience, matching the existing tier honesty note."
   - "2026.09.10: Item-3 example and Platform-channel mock concept corrected for accuracy — the sample now installs and clears the mock on the same channel (previously it cleared `SystemChannels.platform`, which nothing had mocked), and the concept/checklist wording no longer implies plugin convenience setters wrap `setMockMethodCallHandler` (e.g. `SharedPreferences.setMockInitialValues` swaps the plugin's platform-side store directly; both named setters are `@visibleForTesting`). Checked against the Flutter mock-platform-channels migration doc and pub.dev plugin docs."
   - "2026.09: Initial draft — distilled from lava monorepo dual-diff review (feature-flag fail-closed cache / login state machine / PII log findings)"
 ---
 
 # Dart/Flutter Unit Testing Patterns Checklist
 
-**Based on:** Dart/Flutter official docs ([C]), Effective Dart ([C]), dev-guidelines engineering experience from the lava monorepo dual-diff review ([A]).
+**Based on:** Flutter official docs ([C]), dev-guidelines engineering experience from the lava monorepo dual-diff review ([A]).
 **Scope:** Concrete Dart/Flutter unit-test patterns that sit under `common/testing/testing-strategy.md`: how to make tests order-independent when the code under test uses singletons (`Xxx.instance`), `static late` fields, and platform channels, and how to structure flag/logic evaluation as a static pure function so the full decision matrix is directly testable. This harness is about *unit-test mechanics and seam choices*, not about which tests to write (that is the common testing harness).
 
 ---
@@ -52,9 +52,9 @@ changelog:
 - [ ] A test exercises a singleton (`Xxx.instance`) that keeps mutable state (caches, session, listeners) → **(C)** reset it to a fresh state in `setUp`, or capture and restore the original in `tearDown`, so no state leaks into the next test. [R1][R3]
 - [ ] The suite passes in isolation but fails when run as a whole → **(C)** assume singleton leakage first; find every `instance` field mutated by tests and reset it. [R3]
 
-### 2. Injection Order: Constructor First, `static late` Only as a Last-Resort Seam **(A)** [R2]
+### 2. Injection Order: Constructor First, `static late` Only as a Last-Resort Seam **(A)** [R3]
 
-- [ ] A dependency can be passed through the constructor → **(A)** prefer constructor/parameter injection over a `static late` field; testability should not require mutating a global. [R2][R3]
+- [ ] A dependency can be passed through the constructor → **(A)** prefer constructor/parameter injection over a `static late` field; testability should not require mutating a global. [R3]
 - [ ] A `static late` field is used as the injection point for a genuinely unavoidable singleton/config (e.g., a `static late` evaluator configuration) → **(A)** document it as a test seam, assign the fake *before* the code under test runs, and restore the original in `tearDown`. [R3]
 - [ ] A `static late` field is read by code that is *not* under this test's control at an unpredictable time → **(A)** do not rely on assignment timing; restructure so the value is passed in, or the field is set in `setUpAll` before anything can read it. [R3]
 
@@ -85,11 +85,11 @@ void main() {
 }
 ```
 
-### 4. Evaluation Logic Is a Static Pure Function So the Matrix Is Directly Testable **(A)** [R2][R3]
+### 4. Evaluation Logic Is a Static Pure Function So the Matrix Is Directly Testable **(A)** [R3]
 
 - [ ] Flag/decision logic lives in an instance method that reads singleton or channel state → **(A)** extract the pure part into a `static` function taking the decision inputs as parameters (`FeatureFlags.evaluateFlag(flagName, config, version)`); the instance method becomes a thin wrapper that fetches inputs and calls it. [R3]
 - [ ] A decision matrix (flag × version × payload) exists → **(A)** parameterize a test over the whole matrix and assert each expected outcome; with a pure function this needs no binding, no singleton reset, and no async — a full matrix (e.g. 409 cases in the lava review) runs as one fast test. [R3]
-- [ ] New inputs are added to a decision later → **(A)** the pure signature and the matrix extend together; a compile error in the test is the signal that a matrix case is missing. [R2][R3]
+- [ ] New inputs are added to a decision later → **(A)** the pure signature and the matrix extend together; a compile error in the test is the signal that a matrix case is missing. [R3]
 
 ```dart
 // Positive example from the lava review: a 409-case evaluation matrix runs
@@ -181,9 +181,8 @@ Writing/keeping a Dart unit test
 
 | Label | Tier | Source | Clause | Timeliness | Last Verified |
 |-------|------|--------|--------|------------|---------------|
-| R1 | C | [C29] Dart and Flutter Official Documentation | `flutter_test`, `TestWidgetsFlutterBinding`, platform-channel mocking, widget-test async | verified-2026 | 2026-09 |
-| R2 | C | [C30] Effective Dart | Testability guidance, prefer explicit parameters over hidden global state | verified-2026 | 2026-09 |
-| R3 | A | dev-guidelines engineering experience (lava monorepo dual-diff review) | Singleton leakage, `static late` seams, 409-case `FeatureFlags.evaluateFlag` matrix | verified-2026 | 2026-09 |
+| R1 | C | [C31] Flutter Official Documentation | docs.flutter.dev/release/breaking-changes/mock-platform-channels (`MethodChannel.setMockMethodCallHandler` → `TestDefaultBinaryMessenger.setMockMethodCallHandler`, stable since Flutter 2.5); api.flutter.dev flutter_test — TestWidgetsFlutterBinding.ensureInitialized, TestDefaultBinaryMessenger.setMockMethodCallHandler (pass `null` to remove a mock); docs.flutter.dev testing guides (widget-test async: pump/pumpAndSettle/runAsync) | verified-2026 | 2026-09-10 |
+| R3 | A | dev-guidelines engineering experience (lava monorepo dual-diff review) | Singleton leakage, `static late` seams, 409-case `FeatureFlags.evaluateFlag` matrix | verified-2026 | 2026-09-10 |
 
 > **Tier honesty note:** The binding/channel-mock mechanics (items 1, 3, 5) follow the official Flutter testing documentation and are tagged (C). The seam and structure guidance (items 2 and 4 — injection order, `static late` discipline, static pure-function evaluators) is best practice without a single normative source; those are tagged (A) and the harness tier is (A), matching the strongest *evidence-backed* claim it makes rather than the aspiration.
 
@@ -191,5 +190,6 @@ Writing/keeping a Dart unit test
 
 ## Changelog
 
+- 2026.09.10: Reference Sources corrected after the C29 split — R1 now cites [C31] Flutter Official Documentation with the concrete pages (mock-platform-channels breaking-change doc, flutter_test API: ensureInitialized / setMockMethodCallHandler-null-removes); the Effective Dart row was dropped because Effective Dart contains no seam/injection/matrix-test guidance — those claims (items 2 and 4) are tagged [R3] engineering experience, matching the existing tier honesty note.
 - 2026.09.10: Item-3 example and Platform-channel mock concept corrected for accuracy — the sample now installs and clears the mock on the same channel (previously it cleared `SystemChannels.platform`, which nothing had mocked), and the concept/checklist wording no longer implies plugin convenience setters wrap `setMockMethodCallHandler` (e.g. `SharedPreferences.setMockInitialValues` swaps the plugin's platform-side store directly; both named setters are `@visibleForTesting`). Checked against the Flutter mock-platform-channels migration doc and pub.dev plugin docs.
 - 2026.09: Initial draft — distilled from lava monorepo dual-diff review (feature-flag fail-closed cache / login state machine / PII log findings)

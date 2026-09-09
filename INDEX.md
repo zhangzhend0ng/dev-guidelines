@@ -224,7 +224,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | cpp-property-based-testing | [C++ Property-Based Testing Checklist](cpp/testing/property-based-testing.md) | cpp | C | draft | 2026.06 |
 | cpp-static-analysis | [C++ Static Analysis Checklist](cpp/testing/static-analysis.md) | cpp | C | draft | 2026.06 |
 | cpp-catch2 | [Catch2 Testing Patterns Checklist](cpp/testing/catch2-patterns.md) | cpp | C | draft | 2026.06 |
-| dart-testing | [Dart/Flutter Unit Testing Patterns Checklist](dart/testing.md) | dart | A | draft | 2026.09.1 |
+| dart-testing | [Dart/Flutter Unit Testing Patterns Checklist](dart/testing.md) | dart | A | draft | 2026.09.2 |
 | common-testing-differential-oracle | [Differential Oracle and Characterization Testing Checklist](common/testing/differential-oracle-testing.md) | common | A | draft | 2026.07 |
 | cpp-googletest | [GoogleTest and GMock Patterns Checklist](cpp/testing/googletest-patterns.md) | cpp | C | draft | 2026.06 |
 | cpp-sanitizers | [Sanitizer Integration and Usage Checklist](cpp/testing/sanitizers.md) | cpp | N | draft | 2026.06 |
