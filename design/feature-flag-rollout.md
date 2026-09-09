@@ -6,10 +6,10 @@ language: "common"
 category: "design"
 tier: "C"
 scope: "Evaluate remotely-pushed feature-flag configs with fail-closed semantics across client versions and schema upgrades: last-known-good caching on rejection, explicit gate-tier semantics, generic evaluation loops, and doc-to-code contract sync"
-version: "2026.09"
+version: "2026.09.1"
 status: "draft"
 stable_since: ""
-last_validated: "2026-09-09"
+last_validated: "2026-09-10"
 review_cycle: "12m"
 tags: [feature-flags, remote-config, fail-closed, rollout, schema-versioning, cache, client-server]
 based_on:
@@ -21,6 +21,7 @@ related:
   - "dart/json-boundaries.md"
 supersedes: []
 changelog:
+  - "2026.09.10: Reference Sources refined — R1 clause now pins the concrete schema-evolution pages (avro.apache.org spec — Schema Resolution; docs.confluent.io Schema Registry compatibility types); rows re-verified."
   - "2026.09: Initial draft — distilled from lava monorepo dual-diff review (feature-flag fail-closed cache / login state machine / PII log findings)"
 ---
 
@@ -163,9 +164,9 @@ Remote config payload arrives
 
 | Label | Tier | Source | Clause | Timeliness | Last Verified |
 |-------|------|--------|--------|------------|---------------|
-| R1 | C | [C28] Confluent Schema Registry / Apache Avro Schema Evolution | Schema compatibility across producer/consumer versions; unknown-field and versioning rules | verified-2026 | 2026-09 |
-| R2 | A | [A7] Release It! (Nygard) | Stability patterns; keeping last-good state under partial failure | verified-2026 | 2026-09 |
-| R3 | A | dev-guidelines engineering experience (lava monorepo dual-diff review) | `_applyConfig` hard-coded `flags['modelCommunity']`; fail-closed cache overwrite → restart drift; eval-semantics upgrade vs old clients; doc/comment contract drift | verified-2026 | 2026-09 |
+| R1 | C | [C28] Confluent Schema Registry / Apache Avro Schema Evolution | avro.apache.org specification — Schema Resolution (reader/writer schema evolution, unknown-field handling across versions); docs.confluent.io Schema Registry docs — compatibility types (BACKWARD / FORWARD / FULL) | verified-2026 | 2026-09-10 |
+| R2 | A | [A7] Release It! (Nygard) | Stability patterns; keeping last-good state under partial failure | verified-2026 | 2026-09-10 |
+| R3 | A | dev-guidelines engineering experience (lava monorepo dual-diff review) | `_applyConfig` hard-coded `flags['modelCommunity']`; fail-closed cache overwrite → restart drift; eval-semantics upgrade vs old clients; doc/comment contract drift | verified-2026 | 2026-09-10 |
 
 > **Tier honesty note:** The version/schema compatibility principle (items 1, 6, and the dual-write frame of item 4) is grounded in schema-evolution consensus ([C28]) and is tagged (C). The *operational* rules — last-known-good caching (item 3), generic evaluation loops (item 2), explicit gate tiers (item 5), and doc-sync (item 7) — are distilled from one real incident and carry engineering-experience evidence as (A). The harness tier is (C) because the underlying guarantee (a remote config must never push a client into undefined or drifting behavior) is the fail-closed/versioning consensus; read item-level tags honestly.
 
@@ -173,4 +174,5 @@ Remote config payload arrives
 
 ## Changelog
 
+- 2026.09.10: Reference Sources refined — R1 clause now pins the concrete schema-evolution pages (avro.apache.org spec — Schema Resolution; docs.confluent.io Schema Registry compatibility types); rows re-verified.
 - 2026.09: Initial draft — distilled from lava monorepo dual-diff review (feature-flag fail-closed cache / login state machine / PII log findings)

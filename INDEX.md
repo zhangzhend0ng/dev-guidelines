@@ -121,7 +121,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | cpp-result-vs-exception | [C++ Result vs Exception Checklist](cpp/error-handling/result-vs-exception.md) | cpp | C | draft | 2026.06 |
 | common-error-handling | [Error Handling Strategy Checklist](common/error-handling/error-handling-strategy.md) | common | C | draft | 2026.09 |
 | cpp-feature-design-prerequisites | [Feature Design Prerequisites Checklist](cpp/design/feature-design-prerequisites.md) | cpp | C | draft | 2026.07.2 |
-| common-feature-flag-rollout | [Remote Feature-Flag Evaluation and Rollout Checklist](design/feature-flag-rollout.md) | common | C | draft | 2026.09 |
+| common-feature-flag-rollout | [Remote Feature-Flag Evaluation and Rollout Checklist](design/feature-flag-rollout.md) | common | C | draft | 2026.09.1 |
 
 ### documentation
 
