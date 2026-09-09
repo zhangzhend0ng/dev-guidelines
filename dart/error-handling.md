@@ -37,7 +37,7 @@ changelog:
 |---------|---------------|
 | Async error propagation | An `async` function never throws synchronously; it returns a `Future` that completes with the error. `await` rethrows that error in the awaiting zone. |
 | Unhandled async error | A `Future` whose error is never observed surfaces as an **unhandled error** in the enclosing zone (`Zone.current.handleUnhandledError`) — it does *not* propagate to the `try` around the code that *started* the future. |
-| `unawaited()` | `package:async`'s `unawaited(future)` marks a deliberate fire-and-forget and satisfies the `unawaited_futures` lint. It suppresses the *warning*; it does **not** add an error handler. |
+| `unawaited()` | `dart:async`'s `unawaited(future)` (since Dart 2.15) marks a deliberate fire-and-forget and satisfies the `unawaited_futures` lint. It suppresses the *warning* only; it does **not** add an error handler — a future that completes with an error is still unhandled unless you also discard it explicitly (e.g. `future.ignore()`). |
 | `stream.listen` async callback | The callback `(event) async { ... }` returns a `Future` that `listen` discards. An exception thrown inside it becomes an unhandled async error unless caught inside the callback or handled by `onError`/`cancelOnError`. |
 | Error `Zone` | `runZonedGuarded`/`PlatformDispatcher.onError` catch *unhandled* errors globally. A last-resort net, not a substitute for per-call handling. |
 | `Completer` | The owner must complete the future exactly once — with a value or an error — on every path. A never-completed `Completer` leaves awaiters hanging forever. |
