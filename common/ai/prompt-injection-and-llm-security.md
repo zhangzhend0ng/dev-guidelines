@@ -22,6 +22,7 @@ based_on:
   - "[C] NIST AI 600-1 Generative AI Profile"
   - "[C] OWASP ASVS"
   - "[C] NIST SP 800-218 SSDF"
+apply_globs: ["**/llm/**", "**/*prompt*"]
 related:
   - "common/ai/model-capability-and-instruction-adherence.md"
   - "common/ai/tool-calling-and-agent-control.md"

@@ -90,8 +90,8 @@ def build_index_table(harnesses):
     for cat in sorted_cats:
         lines.append(f"### {cat}")
         lines.append("")
-        lines.append("| ID | Title | Language | Tier | Status | Version |")
-        lines.append("|----|-------|----------|------|--------|---------|")
+        lines.append("| ID | Title | Language | Tier | Status | Version | Apply Globs |")
+        lines.append("|----|-------|----------|------|--------|---------|-------------|")
         for relpath, fm in sorted(
             by_category[cat], key=lambda x: x[1].get("title", "")
         ):
@@ -101,8 +101,10 @@ def build_index_table(harnesses):
             tier = fm.get("tier", "-")
             status = fm.get("status", "-")
             version = fm.get("version", "-")
+            globs = fm.get("apply_globs") or []
+            globs_cell = ", ".join(f"`{g}`" for g in globs) if globs else "-"
             lines.append(
-                f"| {hid} | {title} | {lang} | {tier} | {status} | {version} |"
+                f"| {hid} | {title} | {lang} | {tier} | {status} | {version} | {globs_cell} |"
             )
         lines.append("")
     return "\n".join(lines)

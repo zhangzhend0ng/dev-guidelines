@@ -27,6 +27,7 @@ from pathlib import Path
 import yaml
 
 from pack_utils import installed_paths_for, read_installed, HARNESS_SKIP_DIRS
+from route_harnesses import glob_to_regex
 
 ROOT = Path(__file__).resolve().parent.parent
 SKIP_DIRS = HARNESS_SKIP_DIRS
@@ -71,6 +72,19 @@ def check_frontmatter(filepath, fm):
         errors.append(f"{filepath}: invalid tier '{fm['tier']}'")
     if fm.get("language") and fm["language"] not in VALID_LANGUAGES:
         errors.append(f"{filepath}: invalid language '{fm['language']}'")
+    # apply_globs is optional (Phase 2 routing); when present it must be a
+    # list of compilable gitignore-style globs, else route_harnesses would
+    # silently skip the harness.
+    globs = fm.get("apply_globs")
+    if globs is not None:
+        if not isinstance(globs, list) or not all(isinstance(g, str) for g in globs):
+            errors.append(f"{filepath}: apply_globs must be a list of strings")
+        else:
+            for g in globs:
+                try:
+                    glob_to_regex(g)
+                except ValueError as e:
+                    errors.append(f"{filepath}: invalid apply_globs entry {g!r}: {e}")
     return errors
 
 

@@ -18,6 +18,7 @@ based_on:
   - "[C] SEI/CERT OOP51-CPP"
   - "[A] Effective Modern C++ (Meyers) Items 14, 17, 23-30"
   - "[A] A Tour of C++ 3rd ed. (Stroustrup) Chapter 6"
+apply_globs: ["**/memory/**", "**/*move*"]
 related:
   - "cpp/performance/optimization-patterns.md"
   - "cpp/memory/raii.md"

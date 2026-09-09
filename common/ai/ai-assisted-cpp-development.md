@@ -22,6 +22,7 @@ based_on:
   - "[C] SEI/CERT C++ Coding Standard"
   - "[C] NIST SP 800-218 SSDF"
   - "[A] dev-guidelines Harness-Driven Development Protocol"
+apply_globs: ["**/ai/**/*.cpp", "**/ai/**/*.h", "**/ai/**/*.hpp"]
 related:
   - "common/ai/model-capability-and-instruction-adherence.md"
   - "common/ai/tool-calling-and-agent-control.md"

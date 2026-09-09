@@ -17,6 +17,7 @@ based_on:
   - "[C] Flutter Official Documentation (docs.flutter.dev / api.flutter.dev)"
   - "[C] Effective Dart"
   - "[A] dev-guidelines engineering experience (lava monorepo dual-diff review)"
+apply_globs: ["**/*.dart"]
 related:
   - "common/error-handling/error-handling-strategy.md"
   - "projects/lava/login-logout-state-machine.md"

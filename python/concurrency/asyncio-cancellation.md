@@ -14,6 +14,7 @@ review_cycle: "12m"
 tags: [python, asyncio, cancellation, concurrency, tasks]
 based_on:
   - "[C] Python Documentation"
+apply_globs: ["**/asyncio/**", "**/*async*.py"]
 related:
   - "common/error-handling/error-handling-strategy.md"
   - "common/debugging/fix-verification.md"

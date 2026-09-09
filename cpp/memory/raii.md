@@ -22,6 +22,7 @@ based_on:
   - "[C] C++ Core Guidelines R.1-R.5, P.8, C.30-C.33"
   - "[C] SEI/CERT MEM51-CPP, FIO51-CPP"
   - "[A] Effective C++ Items 13-14 (Meyers)"
+apply_globs: ["**/memory/**", "**/*raii*", "**/*resource*"]
 related:
   - "cpp/error-handling/result-vs-exception.md"
   - "cpp/concurrency/thread-safety.md"

@@ -22,6 +22,7 @@ based_on:
   - "[C] Model Context Protocol Specification"
   - "[C] NIST SP 800-218 SSDF"
   - "[C] OWASP ASVS"
+apply_globs: ["**/mcp/**", "**/*agent*", "**/*tool*"]
 related:
   - "common/ai/model-capability-and-instruction-adherence.md"
   - "common/ai/ai-assisted-cpp-development.md"

@@ -94,9 +94,13 @@ NOT VERIFIED（预先声明）：宿主端真实拦截属端到端行为，需�
 验收命令：
 
 ```bash
-python scripts/route_harnesses.py --files src/physics.cpp src/main.py lib/ui.dart agent/tools.py docs/README.md
-# 期望：cpp 路径命中 cpp/memory 系；py 路径命中 python 系；dart 路径命中 dart 系；
-#       agent/tools.py 命中 common/ai 系；docs/README.md 无命中 exit 1
+python scripts/route_harnesses.py --files src/memory/arena.cpp src/smart_ptr_demo.cpp \
+    tools/gen.py tests/test_router.py app/json_parser.dart test/api_test.dart \
+    agent/tools.py docs/README.md
+# 期望：src/memory/arena.cpp 命中 cpp/memory 三件套；src/smart_ptr_demo.cpp 命中 ownership；
+#       tools/gen.py 命中 python type-hints（通用 *.py）；tests/test_router.py 命中 type-hints + pytest；
+#       app/json_parser.dart 命中 dart error-handling + json-boundaries；test/api_test.dart 命中 dart 全部三份；
+#       agent/tools.py 命中 type-hints + tool-calling（*tool*）；docs/README.md 无命中 exit 1
 python scripts/validate.py --json && python scripts/generate_index.py --check   # 双绿
 ```
 

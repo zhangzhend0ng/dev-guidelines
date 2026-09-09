@@ -16,6 +16,7 @@ based_on:
   - "[C] Dart Official Documentation (dart.dev / api.dart.dev)"
   - "[C] Effective Dart"
   - "[A] dev-guidelines engineering experience (lava monorepo dual-diff review)"
+apply_globs: ["**/*json*.dart", "**/*api*.dart", "**/*model*.dart", "**/*dto*.dart", "**/*serializer*.dart"]
 related:
   - "common/security/input-validation.md"
   - "design/feature-flag-rollout.md"

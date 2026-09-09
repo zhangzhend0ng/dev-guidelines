@@ -16,6 +16,7 @@ based_on:
   - "[C] Python Documentation"
   - "[N] OWASP Top 10"
   - "[C] NIST SP 800-218 SSDF"
+apply_globs: ["**/*deserial*.py", "**/*json*.py", "**/*yaml*.py", "**/*pickle*.py", "**/*marshal*.py"]
 related:
   - "common/security/input-validation.md"
   - "common/logging/logging-standards.md"

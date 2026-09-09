@@ -16,6 +16,7 @@ based_on:
   - "[C] Python Packaging User Guide"
   - "[C] Python Documentation"
   - "[C] NIST SP 800-218 SSDF"
+apply_globs: ["**/pyproject.toml", "**/setup.py", "**/setup.cfg", "**/requirements*.txt", "**/environment.yml"]
 related:
   - "common/dependencies/dependency-management.md"
   - "common/ci-cd/pipeline-patterns.md"

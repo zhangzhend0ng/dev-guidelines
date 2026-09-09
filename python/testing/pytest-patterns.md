@@ -15,6 +15,7 @@ tags: [python, pytest, testing, fixtures, parametrization]
 based_on:
   - "[C] pytest Documentation"
   - "[C] Google Testing Blog"
+apply_globs: ["**/test_*.py", "**/*_test.py", "**/tests/**/*.py", "**/conftest.py"]
 related:
   - "common/testing/testing-strategy.md"
   - "common/debugging/fix-verification.md"

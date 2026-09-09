@@ -22,6 +22,7 @@ based_on:
   - "[C] NIST AI 600-1 Generative AI Profile"
   - "[C] NIST SP 800-218 SSDF"
   - "[A] dev-guidelines Harness-Driven Development Protocol"
+apply_globs: ["**/ai/**", "**/llm/**"]
 related:
   - "common/ai/ai-assisted-cpp-development.md"
   - "common/ai/ai-evaluation-and-regression-strategy.md"

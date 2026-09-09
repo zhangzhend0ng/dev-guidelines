@@ -22,6 +22,7 @@ based_on:
   - "[C] NIST AI 600-1 Generative AI Profile"
   - "[C] NIST SP 800-218 SSDF"
   - "[C] Google Testing Blog"
+apply_globs: ["**/evals/**", "**/*eval*.py", "**/*regression*.py"]
 related:
   - "common/ai/model-capability-and-instruction-adherence.md"
   - "common/ai/ai-assisted-cpp-development.md"

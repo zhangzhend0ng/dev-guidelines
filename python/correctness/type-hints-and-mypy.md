@@ -15,6 +15,7 @@ tags: [python, typing, mypy, correctness, static-analysis]
 based_on:
   - "[C] Python Documentation"
   - "[C] mypy Documentation"
+apply_globs: ["**/*.py"]
 related:
   - "common/code-review/harness-driven-review.md"
   - "common/testing/testing-strategy.md"

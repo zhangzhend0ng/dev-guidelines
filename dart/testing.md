@@ -15,6 +15,7 @@ tags: [dart, flutter, testing, singletons, platform-channels, mocking, flutter_t
 based_on:
   - "[C] Flutter Official Documentation (docs.flutter.dev / api.flutter.dev)"
   - "[A] dev-guidelines engineering experience (lava monorepo dual-diff review)"
+apply_globs: ["**/test/**/*.dart", "**/*_test.dart"]
 related:
   - "common/testing/testing-strategy.md"
 supersedes: []

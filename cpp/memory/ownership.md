@@ -22,6 +22,7 @@ based_on:
   - "[C] C++ Core Guidelines R.20-R.37, F.7, F.26"
   - "[C] SEI/CERT MEM50-CPP"
   - "[A] Effective Modern C++ Items 18-22 (Meyers)"
+apply_globs: ["**/memory/**", "**/*owner*", "**/smart_ptr*", "**/*unique_ptr*", "**/*shared_ptr*"]
 related:
   - "common/ai/ai-assisted-cpp-development.md"
   - "cpp/api/abi-compatibility.md"
