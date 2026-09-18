@@ -13,6 +13,12 @@ includes:
   - common/planning/risk-and-verification-plan.md
   - common/planning/rollback-and-migration-plan.md
   - common/planning/task-decomposition.md
+  - common/planning/requirements-gap-analysis.md
+  - common/error-handling/error-handling-strategy.md
+  - common/naming/naming-conventions.md
+  - common/ci-cd/pipeline-patterns.md
+  - common/meta/harness-quality-standards.md
+  - common/meta/prior-art-and-reuse.md
   - common/meta/harness-evolution.md
   - common/documentation/documentation-standards.md
   - common/commits/conventional-commits.md

@@ -7,6 +7,7 @@ requires:
 includes:
   - common/testing/test-doubles.md
   - common/testing/testing-strategy.md
+  - common/testing/differential-oracle-testing.md
   - cpp/testing/catch2-patterns.md
   - cpp/testing/fuzzing.md
   - cpp/testing/googletest-patterns.md

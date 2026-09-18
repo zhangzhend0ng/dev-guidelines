@@ -28,7 +28,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | common-model-capability-instruction-adherence | [Model Capability and Instruction Adherence Checklist](common/ai/model-capability-and-instruction-adherence.md) | common | C | draft | 2026.06 | `**/ai/**`, `**/llm/**` |
 | common-prompt-injection-llm-security | [Prompt Injection and LLM Application Security Checklist](common/ai/prompt-injection-and-llm-security.md) | common | C | draft | 2026.06 | `**/llm/**`, `**/*prompt*` |
 | common-tool-calling-agent-control | [Tool Calling and Agent Control Checklist](common/ai/tool-calling-and-agent-control.md) | common | C | draft | 2026.06 | `**/mcp/**`, `**/*agent*`, `**/*tool*` |
-| common-writing-reusable-patterns | [Writing Reusable Experience Patterns Checklist](common/ai/writing-reusable-patterns.md) | common | A | draft | 2026.09 | `**/loop-journal.md`, `**/docs/**` |
+| common-writing-reusable-patterns | [Writing Reusable Experience Patterns Checklist](common/ai/writing-reusable-patterns.md) | common | A | draft | 2026.09 | `**/loop-journal.md`, `**/pattern-index.md` |
 
 ### api
 

@@ -23,3 +23,12 @@ includes:
   - cpp/memory/ownership.md
   - cpp/memory/raii.md
   - cpp/templates/template-best-practices.md
+  - cpp/concurrency/thread-safety.md
+  - cpp/correctness/stl-algorithms-containers.md
+  - cpp/architecture/layering-and-dependency-inversion.md
+  - cpp/architecture/module-boundaries.md
+  - cpp/api/abi-compatibility.md
+  - cpp/performance/optimization-patterns.md
+  - cpp/error-handling/result-vs-exception.md
+  - cpp/runtime/observability-and-diagnostics.md
+  - cpp/design/feature-design-prerequisites.md

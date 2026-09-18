@@ -15,7 +15,7 @@ tags: [ai, experience, patterns, knowledge-distillation, agent-collaboration]
 based_on:
   - "[A] ReasoningBank (Google Research, 2025)"
   - "[A] dev-guidelines references/pattern-index.md — Abstraction Method"
-apply_globs: ["**/loop-journal.md", "**/docs/**"]
+apply_globs: ["**/loop-journal.md", "**/pattern-index.md"]
 related:
   - "references/pattern-index.md"
   - "common/meta/prior-art-and-reuse.md"
