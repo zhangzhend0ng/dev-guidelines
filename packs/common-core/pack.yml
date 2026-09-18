@@ -19,6 +19,7 @@ includes:
   - common/ci-cd/pipeline-patterns.md
   - common/meta/harness-quality-standards.md
   - common/meta/prior-art-and-reuse.md
+  - common/config/option-registration-and-dimension.md
   - common/meta/harness-evolution.md
   - common/documentation/documentation-standards.md
   - common/commits/conventional-commits.md
