@@ -55,29 +55,43 @@
 - 仓库不在项目根时，把 `${CLAUDE_PROJECT_DIR}` 换成本仓库绝对路径。
 - 需要拒绝协议 B 时，在 command 末尾加 ` --output json`。
 
-## ZCode 接线
+## ZCode 接线（2026-09-18 实测验证版）
 
-ZCode 的 hook 配置与 Claude Code 同构（`.zcode/settings.json`，`PreToolUse` 事件 + `matcher` + `type: command`）：
+ZCode 的 hook 配置**不是** `.zcode/settings.json`，而是 `~/.zcode/cli/config.json` 顶层 `hooks` 键，且与 Claude Code 形状有三点不同（漏任何一点 hook 都不生效）：
+
+1. 必须显式 `"enabled": true`（配置文件型 hook 默认禁用）；
+2. 事件外面包一层 `"events": { ... }`；
+3. Windows 上优先 `type: "process"`（参数向量、不经 shell，规避 POSIX 语法坑）。
 
 ```json
 {
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python C:/build/dev-guidelines/scripts/hooks/block_destructive_git.py"
-          }
-        ]
-      }
-    ]
+    "enabled": true,
+    "events": {
+      "PreToolUse": [
+        {
+          "matcher": "Bash",
+          "hooks": [
+            {
+              "type": "process",
+              "command": "C:\\Users\\<你>\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+              "args": ["C:\\build\\dev-guidelines\\scripts\\hooks\\block_destructive_git.py"],
+              "timeoutMs": 10000,
+              "statusMessage": "git 破坏性命令护栏检查"
+            }
+          ]
+        }
+      ]
+    }
   }
 }
 ```
 
-**注意**：hook 协议细节各家迭代很快，字段名与配置位置以宿主**当前版本文档**为准，不要照抄本文示例里的字段名；接入后务必先用下面的自测命令在真实会话里验证一次拦截。
+实测注意（2026-09-18，ZCode + Windows + Python 3.11）：
+- policy 路径由脚本按自身位置解析（`parents[2]/config/policy.yml`），与 CWD 无关，可放心绝对路径引用；
+- **配置不热加载**——写入后需新会话/重启客户端生效；
+- matcher 是大小写敏感正则，`"Bash"` 不要写成 `"bash"`；
+- 接线前先跑全量回归：`python scripts/test_hook_block_git.py`；接线后在一次性测试仓实测一次拦截（见下）。
 
 ## 手动自测
 

@@ -83,6 +83,7 @@ Central registry of all sources cited across harnesses. Harness reference tables
 | A21 | Domain-Driven Design | Value object vs entity, bounded contexts, ubiquitous language | Eric Evans | 2003 | Low — principles timeless |
 | A22 | Object-Oriented Software Construction (2/e) | Open-Closed Principle (origin), Design by Contract, inheritance taxonomy | Bertrand Meyer | 1997 (1/e 1988) | Low — OCP origin, principles timeless |
 | A23 | Working Effectively with Legacy Code | Characterization tests, seams, breaking dependencies to enable testing | Michael Feathers | 2004 | Low — principles timeless |
+| A24 | ReasoningBank: Enabling Agents to Learn from Experience | Agent memory: strategy-vs-procedural distillation from success/failure trajectories | Google Research | 2025 | Low |
 
 ## Deprecated Sources
 
