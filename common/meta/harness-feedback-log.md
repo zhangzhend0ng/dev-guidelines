@@ -215,6 +215,12 @@ Keep each entry under 8 lines. If the finding needs more space, it belongs in a 
 - **Observation:** review-checklist Item 2 (Author Self-Check) accepts an author's compile/test claim at face value; no item instructs the reviewer to (a) verify that claimed verification scope covers every changed file, or (b) sanity-compile targets whose definitions are generated into source. A reviewer's ad-hoc compile test found the (N) failure — checklist coverage, not process, was the detection path.
 - **Outcome:** manually logged — candidate item for review-checklist ("claimed verification must cover all changed targets; definitions that generate source text need a compile check"). Pending triage.
 
+### 2026-09-30 — review-checklist, item 10 (triaged)
+- **Signal:** under-coverage
+- **Scenario:** triage of the 2026-09-29 snapmaker-orca PR #942 entry plus the two earlier recorded-pending "PR description ≠ actual commit" gap cases
+- **Observation:** both gaps are reviewer-verifiable rules rather than tooling: claimed-verification scope (Item 2) and description↔diff consistency (new Item 10)
+- **Outcome:** improved — review-checklist Item 2 extended (verification scope covers every changed target; build-generated source text sanity-compiled); new Item 10 (description↔diff consistency + required description sections); templates/pr-description.template.md added; Item 1 made canonical two-tier size rule resolving the 400-vs-500 divergence with workflow-standards §6 (this change)
+
 ---
 
 ## Maintenance

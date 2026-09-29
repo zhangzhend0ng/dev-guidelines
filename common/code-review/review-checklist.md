@@ -6,10 +6,10 @@ language: "common"
 category: "code-review"
 tier: "C"
 scope: "Systematically review code for correctness, security, performance, readability, and test coverage"
-version: "2026.09"
+version: "2026.09.1"
 status: "draft"
 stable_since: ""
-last_validated: "2026-09-09"
+last_validated: "2026-09-30"
 review_cycle: "12m"
 tags: [code-review, process, quality]
 based_on:
@@ -21,10 +21,12 @@ related:
   - "common/code-review/harness-driven-review.md"
   - "common/code-review/ai-generated-code-failure-modes.md"
   - "projects/snapmaker-orca/workflow-standards.md"
+  - "templates/pr-description.template.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"
   - "2026.09: Item 9 (user-visible copy) added — new/changed user-facing strings are checked for spelling and stray/broken symbols, and display copy must not reuse log-format traces. Distilled from the lava monorepo dual-diff review."
+  - "2026.09.1: Item 2 extended (claimed verification must cover every changed target; build-generated source text sanity-compiled); Item 1 made the canonical two-tier size rule (<400 target / 400–500 split plan / >500 must split), resolving the 400-vs-500 conflict with workflow-standards §6; new Item 10 (PR description ↔ diff consistency). From snapmaker-orca PR #942 review signal + two recorded-pending description-mismatch cases."
 ---
 
 # Code Review Checklist
@@ -44,7 +46,7 @@ changelog:
 | Test Coverage | Behavior changes have tests; untested paths documented |
 | Readability | Names, comments, function size, consistency |
 
-**Review limits:** <400 changed lines. Sessions capped at 60 minutes.
+**Review limits:** <400 changed lines target; 400–500 needs a documented split plan/justification; >500 must split before review (Item 1 is the canonical rule — `projects/snapmaker-orca/workflow-standards.md` §6 defers here). Sessions capped at 60 minutes.
 
 ---
 
@@ -52,13 +54,18 @@ changelog:
 
 ### 1. Review Size  **(C)** [R1]
 
-- [ ] <400 changed lines → Proceed
-- [ ] ≥400 → Author MUST split, or reviewer schedules longer session → **(C)** [R1][R3]
+Canonical PR size rule — `projects/snapmaker-orca/workflow-standards.md` §6 defers here; do not restate divergent thresholds.
+
+- [ ] <400 changed lines → Proceed → **(C)** [R1]
+- [ ] 400–500 → acceptable only with a documented split plan or justification in the PR description → **(C)** [R1][R6]
+- [ ] >500 → Author MUST split before review proceeds → **(C)** [R1][R6]
 
 ### 2. Author Self-Check  **(C)** [R1]
 
 - [ ] Author ran this checklist BEFORE requesting review → **(C)** [R1]
 - [ ] Findings documented in PR description → **(C)** [R1]
+- [ ] Claimed verification (compile/test runs) covers EVERY changed target, not a sample → **(A)** check the claim's scope against the diff file list; a passing claim on unrelated files is not evidence (snapmaker-orca PR #942: the test target could not compile on any platform while two unrelated .cpp files were syntax-checked). [R6]
+- [ ] Build configuration generates source text (e.g. `target_compile_definitions` content injected into sources) → **(A)** sanity-compile the affected target — syntax review cannot catch compile-validity traps such as ISO C++ [lex.string] raw-string delimiter rules. [R6]
 
 ### 3. Correctness  **(C)** [R1]
 
@@ -103,6 +110,11 @@ changelog:
 - [ ] Diff adds or changes a user-facing string → **(A)** check spelling and stray/broken symbols exactly as the user will see it (e.g. `'...please try again later}'` has a stray `}` that renders verbatim); flag typo-grade defects in UI copy. [R5]
 - [ ] User-facing text is taken from a log message, error string, or other internal format → **(A)** do not surface log-format traces (correlation IDs, internal codes, log wording) to end users; keep display copy and log copy separate. [R5]
 
+### 10. PR Description ↔ Diff Consistency  **(C)** [R1]
+
+- [ ] Description declares motivation and changed scope → **(C)** spot-check declared scope against the actual diff (files touched, behavior); mismatch → resolve BEFORE line-level review. [R6]
+- [ ] Description contains: self-check results (Item 2), test evidence (Item 5), harnesses considered (prior-art-and-reuse), rollback note for risky changes → **(C)** missing sections → return to author; author fills `templates/pr-description.template.md`. [R6]
+
 ---
 
 ## Decision Tree
@@ -118,6 +130,7 @@ PR received
   → Performance [7]: Hot path issues?
   → Speed [8]: 1-day response
   → Copy [9]: user-facing strings clean? No log traces?
+  → Desc [10]: description matches diff? Required sections present?
 
 (N)=BLOCK  (C)=fix-or-justify  (A)=suggestion
 ```
@@ -145,6 +158,8 @@ PR received
 ## See Also
 
 - [Harness-Driven Protocol](harness-driven-review.md) — When and how to apply this checklist
+- [PR Description Template](../../templates/pr-description.template.md) — Required description structure (Item 10)
+- [Prior Art and Reuse](../meta/prior-art-and-reuse.md) — Harness-consideration record required by Item 10
 - [Input Validation](../security/input-validation.md) — Detailed security checklist
 
 ---
@@ -158,6 +173,7 @@ PR received
 | R3 | A | SWE at Google (Winters) | Ch.9 | verified-2026 | 2026-06 |
 | R4 | A | SmartBear Best Practices | Review limits | verified-2026 | 2026-06 |
 | R5 | A | dev-guidelines engineering experience (lava monorepo dual-diff review) | Stray `}` in a user-visible retry string rendered verbatim; log-format traces leaking into display copy | verified-2026 | 2026-09 |
+| R6 | A | dev-guidelines engineering experience (snapmaker-orca PR #942 review 2026-09-29; feedback log recorded-pending description-mismatch cases) | Claimed verification scope vs changed targets; raw-string delimiter compile trap; description↔diff mismatch | verified-2026 | 2026-09 |
 
 ---
 
@@ -165,3 +181,4 @@ PR received
 
 - 2026.06: Initial draft
 - 2026.09: Item 9 (user-visible copy) added — spelling and stray/broken symbols in user-facing strings, and no log-format traces in display copy. Distilled from the lava monorepo dual-diff review.
+- 2026.09.1: Item 2 extended (verification scope + generated-source compile check); Item 1 canonical two-tier size rule (resolves 400-vs-500 conflict); new Item 10 (description ↔ diff consistency).

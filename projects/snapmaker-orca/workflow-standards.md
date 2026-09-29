@@ -6,10 +6,10 @@ language: "common"
 category: "project-specific"
 tier: "P"
 scope: "Enforce SnapmakerOrca branch naming, commit format, PR size, and code review workflow"
-version: "2026.06"
+version: "2026.09.1"
 status: "draft"
 stable_since: ""
-last_validated: "2026-06-04"
+last_validated: "2026-09-30"
 review_cycle: "12m"
 tags: [snapmaker-orca, git, pr, commit, workflow]
 based_on:
@@ -22,6 +22,7 @@ related:
 supersedes: []
 changelog:
   - "2026.06: Initial draft from 切片部门PR规范 v2.0"
+  - "2026.09.1: §6 size threshold deferred to review-checklist Item 1 (canonical two-tier rule); resolves the 400-vs-500 divergence between the two files"
 ---
 
 # SnapmakerOrca PR and Workflow Standards
@@ -88,13 +89,15 @@ git commit -m "fix: render module crash on null pointer"
 
 ### 6. PR Size  **(P)** [R1]
 
+Canonical threshold lives in `common/code-review/review-checklist.md` Item 1 (<400 target / 400–500 with split plan / >500 must split). The table below is project-level size classification only — do not treat it as a divergent limit.
+
 | Size | Lines | Files |
 |------|-------|-------|
 | Small | <200 | <5 |
 | Medium | 200-500 | 5-10 |
 | Large | 500-1000 | 10-20 |
 
-- [ ] ≤500 lines unless split plan documented → **(P)** [R1]
+- [ ] Thresholds per review-checklist Item 1; 400–500 lines requires a documented split plan → **(P)** [R1]
 - [ ] Large features split: core → integration → tests → docs → **(P)** [R1]
 
 ### 7. Merge Strategy  **(P)** [R1]
