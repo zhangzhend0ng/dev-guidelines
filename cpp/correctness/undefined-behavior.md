@@ -26,6 +26,7 @@ related:
   - "cpp/correctness/const-correctness.md"
   - "cpp/correctness/stl-algorithms-containers.md"
   - "cpp/correctness/type-safety.md"
+  - "cpp/correctness/format-strings.md"
   - "cpp/memory/raii.md"
   - "cpp/memory/ownership.md"
   - "cpp/testing/sanitizers.md"

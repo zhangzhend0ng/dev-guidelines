@@ -25,6 +25,7 @@ related:
   - "common/security/input-validation.md"
   - "python/security/input-deserialization.md"
   - "common/error-handling/error-handling-strategy.md"
+  - "cpp/correctness/format-strings.md"
 supersedes: []
 changelog:
   - "2026.09.10: Corrected item-3 bullet and anti-pattern 3's mechanism — Dart's inherited default `toString()` prints only `Instance of '<ClassName>'` and never dumps fields; a field-dumping string (and the PII it carries into log lines) comes from an overridden or code-generated full-field `toString()` (e.g. freezed). Fact-checked against the Dart API docs (Object.toString) in the C29/C30 documentation audit."

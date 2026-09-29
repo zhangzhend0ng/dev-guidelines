@@ -24,6 +24,7 @@ related:
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/correctness/integer-safety.md"
   - "cpp/correctness/type-safety.md"
+  - "cpp/correctness/format-strings.md"
   - "cpp/memory/ownership.md"
   - "cpp/lifetime/dangling-references.md"
   - "cpp/concurrency/thread-safety.md"
