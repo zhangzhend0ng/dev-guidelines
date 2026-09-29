@@ -209,6 +209,12 @@ Keep each entry under 8 lines. If the finding needs more space, it belongs in a 
 - **Observation:** harness only had §10 (app-side setup.h/wx-config/CMake); nothing frames compiling the library itself per port (wxGTK dev deps + GTK3/EGL defaults, wxMSW makefile.vc|gcc + per-config setup.h + RUNTIME_LIBS, wxOSX Xcode/SDK + bundle install_name_tool), cross-toolchain ABI consistency, or CMake find_package vs MinGW-w64 (#19278/#24454)
 - **Outcome:** improved — added Sections 137-140 with reference labels R32-R35 and a related link to cpp/build/toolchain-and-compiler-flags.md (this change)
 
+### 2026-09-29 — review-checklist, item 2 (under-coverage; snapmaker-orca PR #942)
+- **Signal:** under-coverage (manually logged; inline marker in docs/reviews/feature_filament_combo-pr942-2026-09-29.md)
+- **Scenario:** snapmaker-orca PR #942 added `target_compile_definitions(... FILAMENT_ALLOW_LIST_FILE=R"\(...\)")` in tests CMakeLists. ISO C++ [lex.string] forbids `\` as a raw-string delimiter, so the test target fails to compile on every platform (verified: MSVC C3513, GCC "invalid character '\\' in raw string delimiter"). No harness item covers the compile validity of build-generated string literals (CMake target_compile_definitions content); the author's declared self-check (`cl /Zs` on two unrelated .cpp files) and the PR's "Automated tests" checkbox both passed review unchallenged, yet the test target could not have compiled anywhere.
+- **Observation:** review-checklist Item 2 (Author Self-Check) accepts an author's compile/test claim at face value; no item instructs the reviewer to (a) verify that claimed verification scope covers every changed file, or (b) sanity-compile targets whose definitions are generated into source. A reviewer's ad-hoc compile test found the (N) failure — checklist coverage, not process, was the detection path.
+- **Outcome:** manually logged — candidate item for review-checklist ("claimed verification must cover all changed targets; definitions that generate source text need a compile check"). Pending triage.
+
 ---
 
 ## Maintenance
