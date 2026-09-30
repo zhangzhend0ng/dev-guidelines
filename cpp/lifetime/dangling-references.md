@@ -18,6 +18,7 @@ based_on:
   - "[C] SEI/CERT EXP54-CPP, EXP61-CPP"
   - "[A] Effective Modern C++ (Meyers) Items 31-34"
   - "[A] C++ Best Practices (Jason Turner) on lifetime"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/security/secure-coding.md"
   - "cpp/correctness/class-hierarchies.md"

@@ -18,6 +18,7 @@ tags:
   - project-convention
 based_on:
   - "[P] Project convention — default output language for AI agents in this workspace"
+apply_globs: ["**/*.md"]
 related: []
 supersedes: []
 changelog:

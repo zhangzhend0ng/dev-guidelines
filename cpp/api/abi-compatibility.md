@@ -17,6 +17,7 @@ based_on:
   - "[C] Itanium C++ ABI"
   - "[A] GCC/Clang/MSVC visibility and ABI documentation"
   - "[A] Large-Scale C++ Vol. I"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/build/toolchain-and-compiler-flags.md"
   - "cpp/correctness/interface-contracts.md"

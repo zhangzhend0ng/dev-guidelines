@@ -20,6 +20,7 @@ based_on:
   - "[C] C++ Core Guidelines I.6, I.12, I.13"
   - "[C] SEI/CERT C Coding Standard API00-C"
   - "[A] Bloomberg BDE — Contracts and Defensive Programming"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "common/security/input-validation.md"
   - "cpp/correctness/interface-contracts.md"

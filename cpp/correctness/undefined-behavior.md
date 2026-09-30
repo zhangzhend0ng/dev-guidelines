@@ -17,6 +17,7 @@ based_on:
   - "[C] C++ Core Guidelines ES.100-ES.107, ES.40-ES.49, Type.1-Type.3"
   - "[C] SEI/CERT INT32-C, EXP34-C, ARR30-C"
   - "[A] Deep C++ series (John Regehr), UB Sanitizer documentation"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "common/ai/ai-assisted-cpp-development.md"
   - "cpp/security/secure-coding.md"

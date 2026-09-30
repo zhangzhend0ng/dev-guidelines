@@ -17,6 +17,7 @@ based_on:
   - "[C] SEI CERT C Coding Standard FIO47-C — valid format strings"
   - "[A] dev-guidelines snapmaker-orca commit distillation (2026-08-31, commit 76ee70bec8)"
   - "[A] fmtlib / std::format documentation — compile-time format checking"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/security/secure-coding.md"

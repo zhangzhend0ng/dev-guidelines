@@ -17,6 +17,7 @@ based_on:
   - "[C] SEI/CERT C++ ERR rules"
   - "[A] Exceptional C++"
   - "[A] std::expected design guidance"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/runtime/observability-and-diagnostics.md"
   - "common/error-handling/error-handling-strategy.md"

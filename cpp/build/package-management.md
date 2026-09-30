@@ -17,6 +17,7 @@ based_on:
   - "[C] Conan Documentation — lockfiles, profiles, custom recipes"
   - "[C] CMake FetchContent / CPM.cmake Documentation — script-based dependency retrieval"
   - "[C] OpenSSF Scorecard — Dependency Update Tooling, CVE scanning"
+apply_globs: ["**/CMakeLists.txt", "**/*.cmake", "**/vcpkg.json", "**/vcpkg-configuration.json", "**/conanfile.py", "**/conanfile.txt"]
 related:
   - "cpp/build/toolchain-and-compiler-flags.md"
   - "cpp/build/cmake-include-hygiene.md"

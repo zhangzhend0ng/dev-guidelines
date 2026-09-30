@@ -18,6 +18,7 @@ based_on:
   - "[C] SEI/CERT ERR51-CPP, ERR55-CPP, ERR59-CPP"
   - "[A] Exceptional C++ (Sutter) Items 8-19"
   - "[A] Effective C++ (Meyers) Item 29"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/error-handling/result-vs-exception.md"
   - "cpp/memory/raii.md"

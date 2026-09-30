@@ -17,6 +17,7 @@ based_on:
   - "[C] C++ Core Guidelines SL.con.1-SL.con.4, SL.str.1-SL.str.5, SL.io.1-SL.io.5"
   - "[C] SEI/CERT CTR50-CPP through CTR58-CPP"
   - "[A] Effective STL (Scott Meyers, 2001)"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/correctness/type-safety.md"

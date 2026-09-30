@@ -17,6 +17,7 @@ based_on:
   - "[C] C++ Core Guidelines T.1-T.84"
   - "[A] C++ Templates: The Complete Guide 2/e (Vandevoorde et al., 2017)"
   - "[A] Effective Modern C++ Items 1, 2, 9, 33 (Meyers)"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related: []
 supersedes: []
 changelog:

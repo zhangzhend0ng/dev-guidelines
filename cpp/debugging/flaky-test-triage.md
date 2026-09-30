@@ -21,6 +21,7 @@ based_on:
   - "[C] Google Testing Blog Test Sizes"
   - "[C] C++ Core Guidelines"
   - "[A] Software Engineering at Google"
+apply_globs: ["**/tests/**", "**/test/**", "**/*_test.cpp", "**/*_test.hpp", "**/*_test.cc", "**/*Test.cpp", "**/*Test.hpp", "**/*Test.h"]
 related:
   - "common/testing/testing-strategy.md"
   - "common/debugging/reproduction-and-minimization.md"

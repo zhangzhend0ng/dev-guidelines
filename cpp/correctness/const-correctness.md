@@ -17,6 +17,7 @@ based_on:
   - "[C] C++ Core Guidelines Con.1-Con.5, F.15-F.17, F.20"
   - "[C] SEI/CERT EXP55-CPP"
   - "[A] Effective C++ Item 3 (Meyers)"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/lifetime/dangling-references.md"
   - "cpp/correctness/undefined-behavior.md"

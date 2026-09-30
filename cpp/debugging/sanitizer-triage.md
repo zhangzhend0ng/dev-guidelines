@@ -22,6 +22,7 @@ based_on:
   - "[N] ISO/IEC 14882 C++ Standard"
   - "[C] LLVM Compiler-RT Sanitizer Documentation"
   - "[A] Google Sanitizers Wiki"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "common/debugging/reproduction-and-minimization.md"
   - "common/debugging/root-cause-analysis.md"

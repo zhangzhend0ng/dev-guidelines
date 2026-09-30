@@ -16,6 +16,7 @@ based_on:
   - "[A] Mull Mutation Testing Documentation"
   - "[A] PIT Mutation Testing Concepts"
   - "[C] Google Testing Blog"
+apply_globs: ["**/tests/**", "**/test/**", "**/*_test.cpp", "**/*_test.hpp", "**/*_test.cc", "**/*Test.cpp", "**/*Test.hpp", "**/*Test.h"]
 related:
   - "common/testing/testing-strategy.md"
   - "cpp/testing/property-based-testing.md"

@@ -19,6 +19,7 @@ based_on:
   - "[P] Qt 6.8 Documentation — Integrating QML and C++"
   - "[P] Qt 6.8 Documentation — High DPI Support in Qt"
   - "[P] KDAB / ICS blog posts — QML performance and threading"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/third-party/qt6-core.md"
   - "cpp/concurrency/thread-safety.md"

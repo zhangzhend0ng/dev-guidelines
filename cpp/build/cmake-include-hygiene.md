@@ -18,6 +18,7 @@ based_on:
   - "[A] Professional CMake (Craig Scott)"
   - "[A] Large-Scale C++ Vol. I (John Lakos, 2019)"
   - "[A] IWYU (Include What You Use)"
+apply_globs: ["**/CMakeLists.txt", "**/*.cmake"]
 related:
   - "cpp/architecture/module-boundaries.md"
   - "cpp/build/toolchain-and-compiler-flags.md"

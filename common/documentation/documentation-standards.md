@@ -18,6 +18,7 @@ based_on:
   - "[C] OpenAPI 3.1 Specification"
   - "[A] ADR Pattern (Michael Nygard, 2011)"
   - "[A] Keep a Changelog (keepachangelog.com)"
+apply_globs: ["**/*.md"]
 related:
   - "common/ai/ai-evaluation-and-regression-strategy.md"
   - "cpp/architecture/layering-and-dependency-inversion.md"

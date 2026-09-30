@@ -71,6 +71,7 @@ based_on:
   - "[P] Snapmaker/OrcaSlicer GitHub Actions 'Build all' runs #32143560654, #32025650653, #31679936598 — Flatpak builds: 'wxWindowUpdateLocker was not declared in this scope' (declared in <wx/wupdlock.h>, missing explicit include)"
 
   - "[P] wxWidgets 3.2.0 docs/changes.txt (3.2.0 release section, 2022-07-07) — fixes since 3.1.5 used as reverse evidence of 3.1.5 build defects"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
 
   - "cpp/concurrency/thread-safety.md"

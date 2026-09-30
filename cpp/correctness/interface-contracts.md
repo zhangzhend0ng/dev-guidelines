@@ -17,6 +17,7 @@ based_on:
   - "[C] C++ Core Guidelines I.1-I.30"
   - "[C] Bloomberg BDE — Contracts and Defensive Programming"
   - "[A] Effective C++ Items 32-36 (Meyers)"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/api/abi-compatibility.md"
   - "cpp/architecture/module-boundaries.md"

@@ -17,6 +17,7 @@ based_on:
   - "[A] RapidCheck Documentation"
   - "[A] Catch2 Generators Documentation"
   - "[A] Hypothesis property-based testing concepts"
+apply_globs: ["**/tests/**", "**/test/**", "**/*_test.cpp", "**/*_test.hpp", "**/*_test.cc", "**/*Test.cpp", "**/*Test.hpp", "**/*Test.h"]
 related:
   - "common/testing/testing-strategy.md"
   - "cpp/testing/mutation-testing.md"

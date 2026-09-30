@@ -20,6 +20,7 @@ based_on:
   - "[P] Qt 6.8 Documentation — Model/View Programming"
   - "[P] Qt 6.8 Documentation — High DPI Support"
   - "[P] KDAB / ICS blog posts — Qt threading and memory management"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/third-party/qt6-qml.md"
   - "cpp/concurrency/thread-safety.md"

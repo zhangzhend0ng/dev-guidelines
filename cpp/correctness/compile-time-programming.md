@@ -17,6 +17,7 @@ based_on:
   - "[C] C++ Core Guidelines Per.11, T.123"
   - "[A] Effective Modern C++ Item 15 (Meyers)"
   - "[A] A Tour of C++ Ch.6 (Stroustrup)"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/correctness/type-safety.md"

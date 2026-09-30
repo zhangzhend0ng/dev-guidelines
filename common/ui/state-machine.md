@@ -14,6 +14,7 @@ review_cycle: "12m"
 tags: [ui, state-machine, reentry, one-shot-flag, mode-switch, event-handling, guards]
 based_on:
   - "[A] dev-guidelines snapmaker-orca commit distillation (2026-08-31) — UI state machine cluster (commits e60059ac74, 73d5b2a170, b63ab9afb9, 9490f113e5, 6a2c0715ae)"
+apply_globs: ["**/*dialog*", "**/*panel*", "**/*view*", "**/*window*", "**/*widget*", "**/*wizard*"]
 related:
   - "common/config/option-registration-and-dimension.md"
 supersedes: []

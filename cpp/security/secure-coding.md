@@ -18,6 +18,7 @@ based_on:
   - "[C] C++ Core Guidelines"
   - "[C] CWE Top 25"
   - "[C] OWASP ASVS"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "common/security/input-validation.md"
   - "common/dependencies/dependency-management.md"

@@ -17,6 +17,7 @@ based_on:
   - "[C] OpenTelemetry Logging Specification"
   - "[C] C++ Core Guidelines"
   - "[A] Google SRE Book"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "common/logging/logging-standards.md"
   - "common/error-handling/error-handling-strategy.md"

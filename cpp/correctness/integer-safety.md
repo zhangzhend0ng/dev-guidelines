@@ -19,6 +19,7 @@ based_on:
   - "[A] Boost.SafeNumerics documentation"
   - "[A] GCC/Clang -fsanitize=signed-integer-overflow, -ftrapv, -Wconversion documentation"
   - "[A] dev-guidelines snapmaker-orca commit distillation (2026-08-31) — empty-container arithmetic cluster (commits c7f426abfd, 8168f5f0c5, 236f0d350b, 2e56dd12ee)"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/serialization/parsing-and-validation.md"
   - "cpp/security/secure-coding.md"

@@ -17,6 +17,7 @@ based_on:
   - "[C] LLVM libFuzzer Documentation"
   - "[C] CWE Top 25"
   - "[A] AFL++ Documentation"
+apply_globs: ["**/tests/**", "**/test/**", "**/*_test.cpp", "**/*_test.hpp", "**/*_test.cc", "**/*Test.cpp", "**/*Test.hpp", "**/*Test.h", "**/fuzz*"]
 related:
   - "common/security/input-validation.md"
   - "common/testing/testing-strategy.md"

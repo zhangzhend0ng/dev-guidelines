@@ -16,6 +16,7 @@ based_on:
   - "[C] Catch2 Official Documentation v3.x"
   - "[A] xUnit Test Patterns (Meszaros, 2007)"
   - "[A] SWE at Google Ch.11 — Testing (2020)"
+apply_globs: ["**/tests/**", "**/test/**", "**/*_test.cpp", "**/*_test.hpp", "**/*_test.cc", "**/*Test.cpp", "**/*Test.hpp", "**/*Test.h"]
 related:
   - "common/testing/test-doubles.md"
   - "common/testing/testing-strategy.md"

@@ -18,6 +18,7 @@ based_on:
   - "[C] SEI/CERT INT02-C, INT05-C, EXP39-C"
   - "[A] Effective C++ Item 27 (Meyers)"
   - "[A] Effective Modern C++ Items 6-7 (Meyers)"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/serialization/parsing-and-validation.md"
   - "cpp/security/secure-coding.md"

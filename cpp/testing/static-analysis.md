@@ -17,6 +17,7 @@ based_on:
   - "[C] SEI/CERT C++ Coding Standard"
   - "[C] LLVM clang-tidy Documentation"
   - "[A] Include What You Use Documentation"
+apply_globs: ["**/tests/**", "**/test/**", "**/*_test.cpp", "**/*_test.hpp", "**/*_test.cc", "**/*Test.cpp", "**/*Test.hpp", "**/*Test.h"]
 related:
   - "common/ai/ai-assisted-cpp-development.md"
   - "cpp/testing/fuzzing.md"

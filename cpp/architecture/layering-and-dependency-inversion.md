@@ -17,6 +17,7 @@ based_on:
   - "[A] Clean Architecture (Martin, 2017)"
   - "[A] Object-Oriented Software Construction (Meyer, 1997)"
   - "[A] Large-Scale C++ Software Design Vol. I (Lakos, 2019)"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/architecture/module-boundaries.md"
   - "cpp/correctness/interface-contracts.md"

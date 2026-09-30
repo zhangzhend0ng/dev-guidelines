@@ -18,6 +18,7 @@ based_on:
   - "[C] SEI/CERT CON40-CPP through CON56-CPP"
   - "[A] C++ Concurrency in Action 2/e (Williams)"
   - "[A] Effective Modern C++ Items 35-40 (Meyers)"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/security/secure-coding.md"
   - "cpp/memory/ownership.md"

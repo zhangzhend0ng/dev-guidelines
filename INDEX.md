@@ -34,22 +34,22 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
 |----|-------|----------|------|--------|---------|-------------|
-| cpp-abi-compatibility | [C++ ABI Compatibility Checklist](cpp/api/abi-compatibility.md) | cpp | C | draft | 2026.06 | - |
+| cpp-abi-compatibility | [C++ ABI Compatibility Checklist](cpp/api/abi-compatibility.md) | cpp | C | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
 
 ### architecture
 
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
 |----|-------|----------|------|--------|---------|-------------|
-| cpp-module-boundaries | [C++ Module Boundaries Checklist](cpp/architecture/module-boundaries.md) | cpp | C | draft | 2026.06 | - |
-| cpp-layering-and-dip | [Layering and Dependency Inversion Checklist](cpp/architecture/layering-and-dependency-inversion.md) | cpp | A | draft | 2026.07.1 | - |
+| cpp-module-boundaries | [C++ Module Boundaries Checklist](cpp/architecture/module-boundaries.md) | cpp | C | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
+| cpp-layering-and-dip | [Layering and Dependency Inversion Checklist](cpp/architecture/layering-and-dependency-inversion.md) | cpp | A | draft | 2026.07.1 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
 
 ### build
 
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
 |----|-------|----------|------|--------|---------|-------------|
-| cpp-build-system | [C++ Build System and Include Hygiene Checklist](cpp/build/cmake-include-hygiene.md) | cpp | C | draft | 2026.06 | - |
-| cpp-package-management | [C++ Package Management Checklist](cpp/build/package-management.md) | cpp | C | draft | 2026.06 | - |
-| cpp-toolchain-compiler-flags | [C++ Toolchain and Compiler Flags Checklist](cpp/build/toolchain-and-compiler-flags.md) | cpp | C | draft | 2026.06 | - |
+| cpp-build-system | [C++ Build System and Include Hygiene Checklist](cpp/build/cmake-include-hygiene.md) | cpp | C | draft | 2026.06 | `**/CMakeLists.txt`, `**/*.cmake` |
+| cpp-package-management | [C++ Package Management Checklist](cpp/build/package-management.md) | cpp | C | draft | 2026.06 | `**/CMakeLists.txt`, `**/*.cmake`, `**/vcpkg.json`, `**/vcpkg-configuration.json`, `**/conanfile.py`, `**/conanfile.txt` |
+| cpp-toolchain-compiler-flags | [C++ Toolchain and Compiler Flags Checklist](cpp/build/toolchain-and-compiler-flags.md) | cpp | C | draft | 2026.06 | `**/CMakeLists.txt`, `**/*.cmake` |
 
 ### code-review
 
@@ -81,21 +81,21 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
 |----|-------|----------|------|--------|---------|-------------|
-| cpp-class-hierarchies | [Class Hierarchies and Virtual Dispatch Checklist](cpp/correctness/class-hierarchies.md) | cpp | N | draft | 2026.06 | - |
-| cpp-compile-time | [Compile-Time Programming Checklist](cpp/correctness/compile-time-programming.md) | cpp | N | draft | 2026.06 | - |
-| cpp-thread-safety | [Concurrency and Thread Safety Checklist](cpp/concurrency/thread-safety.md) | cpp | N | draft | 2026.06 | - |
-| cpp-const-correctness | [Const Correctness Checklist](cpp/correctness/const-correctness.md) | cpp | N | draft | 2026.05 | - |
+| cpp-class-hierarchies | [Class Hierarchies and Virtual Dispatch Checklist](cpp/correctness/class-hierarchies.md) | cpp | N | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
+| cpp-compile-time | [Compile-Time Programming Checklist](cpp/correctness/compile-time-programming.md) | cpp | N | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
+| cpp-thread-safety | [Concurrency and Thread Safety Checklist](cpp/concurrency/thread-safety.md) | cpp | N | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
+| cpp-const-correctness | [Const Correctness Checklist](cpp/correctness/const-correctness.md) | cpp | N | draft | 2026.05 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
 | dart-error-handling | [Dart Asynchronous Error and Exception Safety Checklist](dart/error-handling.md) | dart | C | draft | 2026.09.3 | `**/*.dart` |
-| cpp-exception-safety | [Exception Safety Guarantees Checklist](cpp/correctness/exception-safety.md) | cpp | N | draft | 2026.06 | - |
-| cpp-format-strings | [Format Strings and Variadic API Call Checklist](cpp/correctness/format-strings.md) | cpp | C | draft | 2026.09 | - |
-| cpp-integer-safety | [Integer Safety Checklist](cpp/correctness/integer-safety.md) | cpp | N | draft | 2026.09 | - |
-| cpp-interface-contracts | [Interface Contracts and Design-by-Contract Checklist](cpp/correctness/interface-contracts.md) | cpp | N | draft | 2026.06 | - |
-| cpp-lifetime | [Object Lifetime and Dangling References Checklist](cpp/lifetime/dangling-references.md) | cpp | N | draft | 2026.06 | - |
+| cpp-exception-safety | [Exception Safety Guarantees Checklist](cpp/correctness/exception-safety.md) | cpp | N | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
+| cpp-format-strings | [Format Strings and Variadic API Call Checklist](cpp/correctness/format-strings.md) | cpp | C | draft | 2026.09 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
+| cpp-integer-safety | [Integer Safety Checklist](cpp/correctness/integer-safety.md) | cpp | N | draft | 2026.09 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
+| cpp-interface-contracts | [Interface Contracts and Design-by-Contract Checklist](cpp/correctness/interface-contracts.md) | cpp | N | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
+| cpp-lifetime | [Object Lifetime and Dangling References Checklist](cpp/lifetime/dangling-references.md) | cpp | N | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
 | python-type-hints-mypy | [Python Type Hints and mypy Checklist](python/correctness/type-hints-and-mypy.md) | python | C | draft | 2026.06 | `**/*.py` |
-| cpp-stl-containers | [STL Algorithms and Containers Checklist](cpp/correctness/stl-algorithms-containers.md) | cpp | N | draft | 2026.06 | - |
-| cpp-type-safety | [Type Safety and Implicit Conversions Checklist](cpp/correctness/type-safety.md) | cpp | N | draft | 2026.06 | - |
-| common-ui-state-machine | [UI State Machine and Event Re-entry Checklist](common/ui/state-machine.md) | common | A | draft | 2026.09 | - |
-| cpp-undefined-behavior | [Undefined Behavior Prevention Checklist](cpp/correctness/undefined-behavior.md) | cpp | N | draft | 2026.06 | - |
+| cpp-stl-containers | [STL Algorithms and Containers Checklist](cpp/correctness/stl-algorithms-containers.md) | cpp | N | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
+| cpp-type-safety | [Type Safety and Implicit Conversions Checklist](cpp/correctness/type-safety.md) | cpp | N | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
+| common-ui-state-machine | [UI State Machine and Event Re-entry Checklist](common/ui/state-machine.md) | common | A | draft | 2026.09 | `**/*dialog*`, `**/*panel*`, `**/*view*`, `**/*window*`, `**/*widget*`, `**/*wizard*` |
+| cpp-undefined-behavior | [Undefined Behavior Prevention Checklist](cpp/correctness/undefined-behavior.md) | cpp | N | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
 
 ### debugging
 
@@ -103,8 +103,8 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 |----|-------|----------|------|--------|---------|-------------|
 | common-bug-report-triage | [Bug Report Triage Checklist](common/debugging/bug-report-triage.md) | common | A | draft | 2026.06 | - |
 | cpp-debugging-crash-dump-analysis | [C++ Crash Dump Analysis Checklist](cpp/debugging/crash-dump-analysis.md) | cpp | C | draft | 2026.06 | - |
-| cpp-debugging-flaky-test-triage | [C++ Flaky Test Triage Checklist](cpp/debugging/flaky-test-triage.md) | cpp | C | draft | 2026.06 | - |
-| cpp-debugging-sanitizer-triage | [C++ Sanitizer Report Triage Checklist](cpp/debugging/sanitizer-triage.md) | cpp | C | draft | 2026.06 | - |
+| cpp-debugging-flaky-test-triage | [C++ Flaky Test Triage Checklist](cpp/debugging/flaky-test-triage.md) | cpp | C | draft | 2026.06 | `**/tests/**`, `**/test/**`, `**/*_test.cpp`, `**/*_test.hpp`, `**/*_test.cc`, `**/*Test.cpp`, `**/*Test.hpp`, `**/*Test.h` |
+| cpp-debugging-sanitizer-triage | [C++ Sanitizer Report Triage Checklist](cpp/debugging/sanitizer-triage.md) | cpp | C | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
 | common-fix-verification | [Fix Verification Checklist](common/debugging/fix-verification.md) | common | C | draft | 2026.06 | - |
 | common-reproduction-minimization | [Reproduction and Minimization Checklist](common/debugging/reproduction-and-minimization.md) | common | A | draft | 2026.06 | - |
 | common-root-cause-analysis | [Root Cause Analysis Checklist](common/debugging/root-cause-analysis.md) | common | A | draft | 2026.06 | - |
@@ -121,7 +121,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
 |----|-------|----------|------|--------|---------|-------------|
 | common-api-design | [API Design Principles Checklist](common/api-design/restful-api-design.md) | common | C | draft | 2026.06 | - |
-| cpp-result-vs-exception | [C++ Result vs Exception Checklist](cpp/error-handling/result-vs-exception.md) | cpp | C | draft | 2026.06 | - |
+| cpp-result-vs-exception | [C++ Result vs Exception Checklist](cpp/error-handling/result-vs-exception.md) | cpp | C | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
 | common-error-handling | [Error Handling Strategy Checklist](common/error-handling/error-handling-strategy.md) | common | C | draft | 2026.09 | - |
 | cpp-feature-design-prerequisites | [Feature Design Prerequisites Checklist](cpp/design/feature-design-prerequisites.md) | cpp | C | draft | 2026.07.2 | - |
 | common-feature-flag-rollout | [Remote Feature-Flag Evaluation and Rollout Checklist](design/feature-flag-rollout.md) | common | C | draft | 2026.09.1 | - |
@@ -130,14 +130,14 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
 |----|-------|----------|------|--------|---------|-------------|
-| common-documentation-standards | [Documentation Standards Checklist](common/documentation/documentation-standards.md) | common | C | draft | 2026.06 | - |
-| common-output-language | [Output Language Convention](common/documentation/output-language.md) | common | P | draft | 2026.07 | - |
+| common-documentation-standards | [Documentation Standards Checklist](common/documentation/documentation-standards.md) | common | C | draft | 2026.06 | `**/*.md` |
+| common-output-language | [Output Language Convention](common/documentation/output-language.md) | common | P | draft | 2026.07 | `**/*.md` |
 
 ### functions
 
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
 |----|-------|----------|------|--------|---------|-------------|
-| cpp-param-validation | [Parameter Validation Checklist](cpp/functions/parameter-validation.md) | cpp | C | draft | 2026.05 | - |
+| cpp-param-validation | [Parameter Validation Checklist](cpp/functions/parameter-validation.md) | cpp | C | draft | 2026.05 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
 
 ### logging
 
@@ -163,7 +163,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
 |----|-------|----------|------|--------|---------|-------------|
-| cpp-performance-patterns | [C++ Performance Patterns Checklist](cpp/performance/optimization-patterns.md) | cpp | N | draft | 2026.06 | - |
+| cpp-performance-patterns | [C++ Performance Patterns Checklist](cpp/performance/optimization-patterns.md) | cpp | N | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
 
 ### planning
 
@@ -195,13 +195,13 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
 |----|-------|----------|------|--------|---------|-------------|
-| cpp-runtime-observability | [C++ Runtime Observability and Diagnostics Checklist](cpp/runtime/observability-and-diagnostics.md) | cpp | C | draft | 2026.06 | - |
+| cpp-runtime-observability | [C++ Runtime Observability and Diagnostics Checklist](cpp/runtime/observability-and-diagnostics.md) | cpp | C | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
 
 ### security
 
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
 |----|-------|----------|------|--------|---------|-------------|
-| cpp-secure-coding | [C++ Secure Coding Checklist](cpp/security/secure-coding.md) | cpp | N | draft | 2026.06 | - |
+| cpp-secure-coding | [C++ Secure Coding Checklist](cpp/security/secure-coding.md) | cpp | N | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
 | dart-json-boundaries | [Dart Dynamic JSON Boundary Checklist](dart/json-boundaries.md) | dart | C | draft | 2026.09.2 | `**/*json*.dart`, `**/*api*.dart`, `**/*model*.dart`, `**/*dto*.dart`, `**/*serializer*.dart` |
 | common-input-validation | [Input Validation Checklist](common/security/input-validation.md) | common | N | draft | 2026.09 | - |
 | python-input-deserialization | [Python Input Deserialization Checklist](python/security/input-deserialization.md) | python | N | draft | 2026.06 | `**/*deserial*.py`, `**/*json*.py`, `**/*yaml*.py`, `**/*pickle*.py`, `**/*marshal*.py` |
@@ -210,28 +210,28 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
 |----|-------|----------|------|--------|---------|-------------|
-| cpp-parsing-validation | [C++ Parsing and Validation Checklist](cpp/serialization/parsing-and-validation.md) | cpp | C | draft | 2026.06 | - |
+| cpp-parsing-validation | [C++ Parsing and Validation Checklist](cpp/serialization/parsing-and-validation.md) | cpp | C | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
 
 ### templates
 
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
 |----|-------|----------|------|--------|---------|-------------|
-| cpp-template-best-practices | [Template Best Practices and Concepts Checklist](cpp/templates/template-best-practices.md) | cpp | N | draft | 2026.06 | - |
+| cpp-template-best-practices | [Template Best Practices and Concepts Checklist](cpp/templates/template-best-practices.md) | cpp | N | draft | 2026.06 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
 
 ### testing
 
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
 |----|-------|----------|------|--------|---------|-------------|
-| cpp-fuzzing | [C++ Fuzzing Checklist](cpp/testing/fuzzing.md) | cpp | C | draft | 2026.06 | - |
-| cpp-mutation-testing | [C++ Mutation Testing Checklist](cpp/testing/mutation-testing.md) | cpp | A | draft | 2026.06 | - |
-| cpp-property-based-testing | [C++ Property-Based Testing Checklist](cpp/testing/property-based-testing.md) | cpp | C | draft | 2026.06 | - |
-| cpp-static-analysis | [C++ Static Analysis Checklist](cpp/testing/static-analysis.md) | cpp | C | draft | 2026.06 | - |
-| cpp-catch2 | [Catch2 Testing Patterns Checklist](cpp/testing/catch2-patterns.md) | cpp | C | draft | 2026.06 | - |
+| cpp-fuzzing | [C++ Fuzzing Checklist](cpp/testing/fuzzing.md) | cpp | C | draft | 2026.06 | `**/tests/**`, `**/test/**`, `**/*_test.cpp`, `**/*_test.hpp`, `**/*_test.cc`, `**/*Test.cpp`, `**/*Test.hpp`, `**/*Test.h`, `**/fuzz*` |
+| cpp-mutation-testing | [C++ Mutation Testing Checklist](cpp/testing/mutation-testing.md) | cpp | A | draft | 2026.06 | `**/tests/**`, `**/test/**`, `**/*_test.cpp`, `**/*_test.hpp`, `**/*_test.cc`, `**/*Test.cpp`, `**/*Test.hpp`, `**/*Test.h` |
+| cpp-property-based-testing | [C++ Property-Based Testing Checklist](cpp/testing/property-based-testing.md) | cpp | C | draft | 2026.06 | `**/tests/**`, `**/test/**`, `**/*_test.cpp`, `**/*_test.hpp`, `**/*_test.cc`, `**/*Test.cpp`, `**/*Test.hpp`, `**/*Test.h` |
+| cpp-static-analysis | [C++ Static Analysis Checklist](cpp/testing/static-analysis.md) | cpp | C | draft | 2026.06 | `**/tests/**`, `**/test/**`, `**/*_test.cpp`, `**/*_test.hpp`, `**/*_test.cc`, `**/*Test.cpp`, `**/*Test.hpp`, `**/*Test.h` |
+| cpp-catch2 | [Catch2 Testing Patterns Checklist](cpp/testing/catch2-patterns.md) | cpp | C | draft | 2026.06 | `**/tests/**`, `**/test/**`, `**/*_test.cpp`, `**/*_test.hpp`, `**/*_test.cc`, `**/*Test.cpp`, `**/*Test.hpp`, `**/*Test.h` |
 | dart-testing | [Dart/Flutter Unit Testing Patterns Checklist](dart/testing.md) | dart | A | draft | 2026.09.2 | `**/test/**/*.dart`, `**/*_test.dart` |
 | common-testing-differential-oracle | [Differential Oracle and Characterization Testing Checklist](common/testing/differential-oracle-testing.md) | common | A | draft | 2026.07 | - |
-| cpp-googletest | [GoogleTest and GMock Patterns Checklist](cpp/testing/googletest-patterns.md) | cpp | C | draft | 2026.06 | - |
-| cpp-sanitizers | [Sanitizer Integration and Usage Checklist](cpp/testing/sanitizers.md) | cpp | N | draft | 2026.06 | - |
-| common-test-doubles | [Test Doubles Taxonomy and Selection Checklist](common/testing/test-doubles.md) | common | C | draft | 2026.06 | - |
+| cpp-googletest | [GoogleTest and GMock Patterns Checklist](cpp/testing/googletest-patterns.md) | cpp | C | draft | 2026.06 | `**/tests/**`, `**/test/**`, `**/*_test.cpp`, `**/*_test.hpp`, `**/*_test.cc`, `**/*Test.cpp`, `**/*Test.hpp`, `**/*Test.h` |
+| cpp-sanitizers | [Sanitizer Integration and Usage Checklist](cpp/testing/sanitizers.md) | cpp | N | draft | 2026.06 | `**/tests/**`, `**/test/**`, `**/*_test.cpp`, `**/*_test.hpp`, `**/*_test.cc`, `**/*Test.cpp`, `**/*Test.hpp`, `**/*Test.h` |
+| common-test-doubles | [Test Doubles Taxonomy and Selection Checklist](common/testing/test-doubles.md) | common | C | draft | 2026.06 | `**/tests/**`, `**/test/**`, `**/*_test.cpp`, `**/*_test.hpp`, `**/*_test.cc`, `**/*Test.cpp`, `**/*Test.hpp`, `**/*Test.h` |
 | common-testing-strategy | [Testing Strategy Checklist](common/testing/testing-strategy.md) | common | C | draft | 2026.09 | - |
 | python-pytest-patterns | [pytest Patterns Checklist](python/testing/pytest-patterns.md) | python | C | draft | 2026.06 | `**/test_*.py`, `**/*_test.py`, `**/tests/**/*.py`, `**/conftest.py` |
 
@@ -239,9 +239,9 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
 |----|-------|----------|------|--------|---------|-------------|
-| cpp-qt6-core | [Qt 6 C++ Core Pitfalls, Limitations, and Best Practices Checklist](cpp/third-party/qt6-core.md) | cpp | P | draft | 2026.07 | - |
-| cpp-qt6-qml | [Qt 6 QML Pitfalls, Limitations, and Best Practices Checklist](cpp/third-party/qt6-qml.md) | cpp | P | draft | 2026.07 | - |
-| cpp-wxwidgets-3-1-5 | [wxWidgets 3.1.5 Pitfalls, Limitations, and Best Practices Checklist](cpp/third-party/wxwidgets-3-1-5.md) | cpp | P | draft | 2026.08 | - |
+| cpp-qt6-core | [Qt 6 C++ Core Pitfalls, Limitations, and Best Practices Checklist](cpp/third-party/qt6-core.md) | cpp | P | draft | 2026.07 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
+| cpp-qt6-qml | [Qt 6 QML Pitfalls, Limitations, and Best Practices Checklist](cpp/third-party/qt6-qml.md) | cpp | P | draft | 2026.07 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
+| cpp-wxwidgets-3-1-5 | [wxWidgets 3.1.5 Pitfalls, Limitations, and Best Practices Checklist](cpp/third-party/wxwidgets-3-1-5.md) | cpp | P | draft | 2026.08 | `**/*.cpp`, `**/*.cc`, `**/*.cxx`, `**/*.hpp`, `**/*.h` |
 
 ### tooling-process
 

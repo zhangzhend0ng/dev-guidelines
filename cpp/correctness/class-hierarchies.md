@@ -18,6 +18,7 @@ based_on:
   - "[C] SEI/CERT OOP50-OOP58"
   - "[A] Effective C++ Items 7, 9, 20, 32-40 (Meyers)"
   - "[A] Effective Modern C++ Items 7-9 (Meyers)"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/api/abi-compatibility.md"
   - "cpp/correctness/interface-contracts.md"

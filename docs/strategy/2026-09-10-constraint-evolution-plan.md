@@ -207,9 +207,9 @@ python scripts/validate.py --json       # pass: true
 
 ## 8. 未回填目录 TODO（Phase 2 试点后由执行 agent 补全勾选）
 
-- [ ] `common/` 其余子目录（code-review、commits、debugging、planning、security、testing 等）
-- [ ] `cpp/` 其余子目录（correctness、functions、concurrency、templates 等）
-- [ ] `prompts/`、`projects/`（如适用）
+- [x] `common/` 其余子目录（2026-09-30 完成）：文件亲和类已回填——documentation 两份 → `**/*.md`；test-doubles → 测试文件锚点组；ui/state-machine → UI 部件名锚点组（dialog/panel/view/window/widget/wizard，仿 cpp/memory 主题锚点先例）。其余 29 份（code-review、commits、planning、meta、debugging、security、error-handling、logging、testing 策略类）为**任务驱动型 harness，无诚实路径锚点，刻意不回填**——继续走 INDEX.md 手选，不填 ≠ 缺口。
+- [x] `cpp/` 其余子目录（2026-09-30 完成）：代码检查类（correctness/architecture/api/concurrency/error-handling/functions/lifetime/performance/runtime/security/serialization/templates/third-party + debugging/sanitizer-triage）→ C++ 后缀组（`**/*.cpp|cc|cxx|hpp|h`）；build 三份 → CMake 组（package-management 加 vcpkg/conan）；testing 全部 + debugging/flaky-test-triage → 测试文件锚点组（fuzzing 加 `**/fuzz*`）。刻意不回填：design/feature-design-prerequisites、debugging/crash-dump-analysis（任务驱动）。
+- [x] `prompts/`、`projects/`（如适用）→ **不适用**：prompts/ 无 harness 文件；projects/ 为 P 级项目层 harness，按项目上下文手选，不做全局路径路由（避免跨项目误路由）。
 
 ## 9. 批准记录
 

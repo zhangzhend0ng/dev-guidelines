@@ -16,6 +16,7 @@ based_on:
   - "[A] xUnit Test Patterns (Meszaros, 2007)"
   - "[A] Mocks Aren't Stubs (Fowler, 2007)"
   - "[C] Google Testing Blog"
+apply_globs: ["**/tests/**", "**/test/**", "**/*_test.cpp", "**/*_test.hpp", "**/*_test.cc", "**/*Test.cpp", "**/*Test.hpp", "**/*Test.h"]
 related:
   - "common/testing/testing-strategy.md"
   - "cpp/testing/catch2-patterns.md"

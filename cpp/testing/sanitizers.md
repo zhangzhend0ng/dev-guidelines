@@ -16,6 +16,7 @@ based_on:
   - "[N] ISO C++ [defns.undefined]"
   - "[C] LLVM Compiler-RT Sanitizer Documentation"
   - "[A] Google Sanitizers Wiki (GitHub: google/sanitizers)"
+apply_globs: ["**/tests/**", "**/test/**", "**/*_test.cpp", "**/*_test.hpp", "**/*_test.cc", "**/*Test.cpp", "**/*Test.hpp", "**/*Test.h"]
 related:
   - "common/ai/ai-assisted-cpp-development.md"
   - "cpp/security/secure-coding.md"

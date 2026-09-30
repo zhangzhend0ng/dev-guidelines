@@ -17,6 +17,7 @@ based_on:
   - "[C] C++ Core Guidelines"
   - "[C] CMake Documentation"
   - "[A] GCC, Clang, and MSVC compiler documentation"
+apply_globs: ["**/CMakeLists.txt", "**/*.cmake"]
 related:
   - "cpp/api/abi-compatibility.md"
   - "cpp/build/cmake-include-hygiene.md"

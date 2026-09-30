@@ -16,6 +16,7 @@ based_on:
   - "[C] C++ Core Guidelines"
   - "[A] Large-Scale C++ Vol. I"
   - "[A] Lakos physical design principles"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/build/cmake-include-hygiene.md"
   - "cpp/correctness/interface-contracts.md"

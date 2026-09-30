@@ -17,6 +17,7 @@ based_on:
   - "[C] C++ Core Guidelines Per.1-Per.19"
   - "[A] Optimized C++ (Guntheroth, 2016)"
   - "[A] Chandler Carruth — CppCon Performance Talks"
+apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "cpp/memory/move-semantics.md"
   - "cpp/memory/raii.md"
