@@ -19,11 +19,13 @@ related:
   - "cpp/design/feature-design-prerequisites.md"
   - "common/planning/task-decomposition.md"
   - "cpp/serialization/parsing-and-validation.md"
+  - "common/ui/state-machine.md"
   - "design/feature-flag-rollout.md"
 supersedes: []
 changelog:
   - "2026.07: Initial draft — distilled from a session where a 'different value per mode' requirement was unrepresentable because the key's data dimension was [normal,stealth] (time-estimation mode), not per-extruder; a dimension mismatch is a design blocker, not a registration task"
   - "2026.09: Reciprocal link to design/feature-flag-rollout.md (remote feature-flag evaluation/rollout — what happens after registration) added to related."
+  - "2026.09.1: Reciprocal link to common/ui/state-machine.md (same consumer-site sweep discipline applied to UI state conditions)."
 ---
 
 # Configuration Option Registration and Dimension Classification Checklist

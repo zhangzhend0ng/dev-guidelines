@@ -88,12 +88,13 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | dart-error-handling | [Dart Asynchronous Error and Exception Safety Checklist](dart/error-handling.md) | dart | C | draft | 2026.09.3 | `**/*.dart` |
 | cpp-exception-safety | [Exception Safety Guarantees Checklist](cpp/correctness/exception-safety.md) | cpp | N | draft | 2026.06 | - |
 | cpp-format-strings | [Format Strings and Variadic API Call Checklist](cpp/correctness/format-strings.md) | cpp | C | draft | 2026.09 | - |
-| cpp-integer-safety | [Integer Safety Checklist](cpp/correctness/integer-safety.md) | cpp | N | draft | 2026.06 | - |
+| cpp-integer-safety | [Integer Safety Checklist](cpp/correctness/integer-safety.md) | cpp | N | draft | 2026.09 | - |
 | cpp-interface-contracts | [Interface Contracts and Design-by-Contract Checklist](cpp/correctness/interface-contracts.md) | cpp | N | draft | 2026.06 | - |
 | cpp-lifetime | [Object Lifetime and Dangling References Checklist](cpp/lifetime/dangling-references.md) | cpp | N | draft | 2026.06 | - |
 | python-type-hints-mypy | [Python Type Hints and mypy Checklist](python/correctness/type-hints-and-mypy.md) | python | C | draft | 2026.06 | `**/*.py` |
 | cpp-stl-containers | [STL Algorithms and Containers Checklist](cpp/correctness/stl-algorithms-containers.md) | cpp | N | draft | 2026.06 | - |
 | cpp-type-safety | [Type Safety and Implicit Conversions Checklist](cpp/correctness/type-safety.md) | cpp | N | draft | 2026.06 | - |
+| common-ui-state-machine | [UI State Machine and Event Re-entry Checklist](common/ui/state-machine.md) | common | A | draft | 2026.09 | - |
 | cpp-undefined-behavior | [Undefined Behavior Prevention Checklist](cpp/correctness/undefined-behavior.md) | cpp | N | draft | 2026.06 | - |
 
 ### debugging
@@ -180,7 +181,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 |----|-------|----------|------|--------|---------|-------------|
 | lava-login-logout-state-machine | [Lava Login/Logout State Machine Pre-Check](projects/lava/login-logout-state-machine.md) | dart | P | draft | 2026.09.1 | - |
 | snapmaker-orca-coding-standards | [SnapmakerOrca C++ Coding Standards](projects/snapmaker-orca/coding-standards.md) | cpp | P | draft | 2026.06 | - |
-| snapmaker-orca-workflow | [SnapmakerOrca PR and Workflow Standards](projects/snapmaker-orca/workflow-standards.md) | common | P | draft | 2026.09.1 | - |
+| snapmaker-orca-workflow | [SnapmakerOrca PR and Workflow Standards](projects/snapmaker-orca/workflow-standards.md) | common | P | draft | 2026.09.2 | - |
 
 ### resource-management
 
