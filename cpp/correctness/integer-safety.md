@@ -5,11 +5,11 @@ title: "Integer Safety Checklist"
 language: "cpp"
 category: "correctness"
 tier: "N"
-scope: "Prevent signed integer overflow, signed/unsigned mixing bugs, narrowing, division/shift UB, and size-type mismatches in C++"
-version: "2026.06"
+scope: "Prevent signed integer overflow, signed/unsigned mixing bugs, narrowing, division/shift UB, size-type mismatches, and unguarded container-size arithmetic in C++"
+version: "2026.09"
 status: "draft"
 stable_since: ""
-last_validated: "2026-06-03"
+last_validated: "2026-09-30"
 review_cycle: "12m"
 tags: [integer-safety, overflow, signed-unsigned, narrowing, shift, size_t, cpp]
 based_on:
@@ -18,6 +18,7 @@ based_on:
   - "[C] SEI/CERT INT30-C through INT36-C"
   - "[A] Boost.SafeNumerics documentation"
   - "[A] GCC/Clang -fsanitize=signed-integer-overflow, -ftrapv, -Wconversion documentation"
+  - "[A] dev-guidelines snapmaker-orca commit distillation (2026-08-31) — empty-container arithmetic cluster (commits c7f426abfd, 8168f5f0c5, 236f0d350b, 2e56dd12ee)"
 related:
   - "cpp/serialization/parsing-and-validation.md"
   - "cpp/security/secure-coding.md"
@@ -140,7 +141,15 @@ Using `int` for sizes, indices, and loop counters is a persistent source of sign
 - [ ] API boundary where a third-party C API returns `int` for sizes? → **(C)** Convert at the boundary with explicit validation. Check `api_size >= 0` before assigning to `size_t`. Never propagate `int` sizes into arithmetic-heavy code without first validating and converting. [R2][R3]
 - [ ] `ptrdiff_t` vs `size_t` choice? → **(A)** `ptrdiff_t` is the signed counterpart of `size_t`. Use it when negative deltas are meaningful (pointer subtraction results). Use `size_t` when the value is inherently non-negative (allocation sizes). [R2]
 
-### 7. Safe Arithmetic Abstractions
+### 7. Container Size in Arithmetic and Indexing (Empty/Boundary Guards)
+
+A container's `size()` is a *value that may be zero*; it is not a validity proof. Any arithmetic on it (`size() - N`, `% size()`, `size()` as a count handed downstream) silently changes meaning when the container is empty. This cluster produced ≥5 crashes in one codebase (distillation 2026-08-31): `content_lines.size() - 1` on an empty list wrapped to `SIZE_MAX` and the following `lines[i+1]` read out of bounds; `rand() % m_loaded_hints.size()` divided by zero on an empty hint set; a sync flow reduced a filament count to 0 and crashed downstream where the ≥1 invariant was assumed.
+
+- [ ] Container size in subtraction on a path where the container may be empty (`v.size() - 1`, `v.size() - N`)? → **(N)** Unsigned wraparound yields `SIZE_MAX` (well-defined, not UB), and the subsequent index access with the wrapped value is out-of-bounds UB. Guard `!v.empty()` **before** the arithmetic — the guard must dominate the subtraction and every index computed from it. [R2][R3]
+- [ ] Container size as divisor or modulo operand (`x / v.size()`, `x % v.size()`)? → **(N)** Division or modulo by zero is UB. The empty check must precede the operation in the same basic block (see also Item 4 for general variable divisors). [R1][R3]
+- [ ] Count derived from a container handed to an API or downstream state that assumes a domain minimum (e.g., `set_count(v.size())` where consumers require ≥1)? → **(C)** Guard the lower bound at the point of reduction, not at the (possibly distant) crash site; the first `size() - N` or empty-container write is where the invariant breaks, the crash surfaces later. [R2][R3]
+
+### 8. Safe Arithmetic Abstractions
 
 Raw integer arithmetic is fragile. Several library solutions provide checked, safe arithmetic that traps or signals on overflow rather than silently producing wrong results or UB.
 
@@ -150,7 +159,7 @@ Raw integer arithmetic is fragile. Several library solutions provide checked, sa
 - [ ] C++20 `std::cmp_less`, `std::cmp_greater`, `std::cmp_equal` for mixed-sign comparisons? → **(A)** These functions correctly compare signed and unsigned integers without the usual arithmetic conversions. `std::cmp_less(-1, 1u)` returns `true`. Prefer these over manual casts for comparisons. [R2]
 - [ ] Boost.SafeNumerics used for whole-module integer safety? → **(A)** `boost::safe_numerics::safe<int>` provides drop-in integer types that throw or trap on overflow, underflow, and narrowing. Consider for modules with high correctness requirements. [R4]
 
-### 8. Compiler Hardening Flags
+### 9. Compiler Hardening Flags
 
 Compiler flags provide baseline detection of integer misuse. A minimal set must be enabled in every build to catch integer bugs early.
 
@@ -186,6 +195,11 @@ Integer operation review:
   ├─ Loop / index?
   │     ├─ Counter declared int? → [Item 6] size_t for sizes; gsl::index for signed needs
   │     └─ Reverse loop with size_t? → [Item 6] sentinel pattern OR gsl::index
+  │
+  ├─ Container size in arithmetic or as count?
+  │     ├─ v.size() - N where v may be empty? → [Item 7] guard empty() BEFORE the subtraction
+  │     ├─ v.size() as divisor / modulo operand? → [Item 7] guard empty() BEFORE the operation
+  │     └─ Count handed downstream that assumes ≥1? → [Item 7] lower-bound guard at the reduction point
   │
   ├─ Safety-critical arithmetic?
   │     └─ → [Item 7] Boost.SafeNumerics / __builtin_*_overflow / std::cmp_*
@@ -251,4 +265,5 @@ Integer operation review:
 
 ## Changelog
 
+- 2026.09: Add Item 7 (container size in arithmetic/indexing — empty/boundary guards), aggregated from the snapmaker-orca commit-distillation cluster (c7f426abfd `size() - 1` underflow + `% size()` divide-by-zero, 8168f5f0c5 lower-bound on sync count, 236f0d350b/2e56dd12ee unguarded indexing). Former Items 7-8 renumbered to 8-9. Decision tree gained the container-size branch.
 - 2026.06: Initial draft -- 8 checklist items covering signed overflow, unsigned mixing, narrowing, division/shift UB, size_t correctness, safe arithmetic libraries, and compiler hardening flags
