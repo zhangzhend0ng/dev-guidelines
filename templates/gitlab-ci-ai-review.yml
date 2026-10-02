@@ -1,12 +1,12 @@
-# AI harness review job — copy into the target repo's .gitlab-ci.yml.
+# AI harness review job - PROVEN WORKING on 2026-10-02 (Snapmaker/OrcaSlicer !587).
+# Targets a WINDOWS shell-executor project runner (tag: ai-review); for a
+# docker-executor runner restore `image: python:3.11`, cmd syntax (%VAR%), and
+# a commit/tag DG_REF instead of a branch.
 # Requires two masked CI/CD variables on the target project:
-#   AI_REVIEW_GITLAB_TOKEN  — project access token with api scope (Reporter+)
-#   AI_REVIEW_LLM_API_KEY   — OpenAI-compatible LLM API key
-# See scripts/ai_review_gitlab.py in dev-guidelines for behavior details.
-
+#   AI_REVIEW_GITLAB_TOKEN  - project access token, api scope, Reporter+
+#   AI_REVIEW_LLM_API_KEY   - OpenAI-compatible LLM API key
 ai_review:
-  image: python:3.11
-  stage: test
+  tags: [ai-review]
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
   resource_group: "ai-review-mr-$CI_MERGE_REQUEST_IID"
@@ -18,9 +18,9 @@ ai_review:
     AI_REVIEW_MODEL: "deepseek-v4-pro"
     AI_REVIEW_LLM_EFFORT: "low"
     AI_REVIEW_PROJECT_STANDARDS: "projects/snapmaker-orca"
-    DG_REF: "main"
+    DG_REF: "project/snapmaker-orca"   # pin to a tag/commit for reproducibility
   script:
     - pip install --quiet pyyaml
-    - git clone --depth 1 https://github.com/zhangzhend0ng/dev-guidelines /tmp/dg
-    - git -C /tmp/dg checkout "$DG_REF" 2>/dev/null || true
-    - python /tmp/dg/scripts/ai_review_gitlab.py
+    - git clone --depth 1 --branch $env:DG_REF https://github.com/zhangzhend0ng/dev-guidelines dg
+    - if ($env:DG_REF) { git -C dg checkout $env:DG_REF }
+    - python dg/scripts/ai_review_gitlab.py
