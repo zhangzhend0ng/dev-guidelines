@@ -266,6 +266,24 @@ def main() -> int:
         return 0
     except Exception as exc:  # noqa: BLE001 - reviewer must never gate an MR
         print(f"ERROR: {exc}", file=sys.stderr)
+        if in_ci:
+            # A green job with a stale report is indistinguishable from a real
+            # review - surface the failure on the MR itself (best effort; if the
+            # GitLab token itself is dead this will also fail and log only).
+            try:
+                sha = "unknown"
+                try:
+                    mr, _ = fetch_mr(base, args.project, args.mr, token)
+                    sha = mr["sha"]
+                except Exception:
+                    pass
+                body = (NOTE_HEADER.format(sha=sha, sha8=str(sha)[:8], mode="ci",
+                                           verdict="REVIEW_FAILED")
+                        + f"\n**AI review failed**: `{exc}`\n\n"
+                        + "Check the job log; the previous report below may be stale.\n")
+                print("sticky note:", post_sticky_note(base, args.project, args.mr, token, body))
+            except Exception as nested:  # noqa: BLE001
+                print(f"ERROR: could not post failure notice: {nested}", file=sys.stderr)
         return 0 if in_ci else 1
 
 
