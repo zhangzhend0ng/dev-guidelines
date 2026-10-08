@@ -274,7 +274,7 @@ def plan_context(llm_base, llm_key, model, effort, diff_text, harness_ctx) -> di
 
 
 def gather_context(base, project, mr_iid, token, diff_text, harness_ctx,
-                   llm_base, llm_key, model, effort) -> str:
+                   llm_base, llm_key, model, effort, source_branch: str) -> str:
     repo_url = env("AI_REVIEW_REPO_URL") or env("CI_REPOSITORY_URL")
     if not repo_url:
         return ""
@@ -282,8 +282,9 @@ def gather_context(base, project, mr_iid, token, diff_text, harness_ctx,
                      Path(os.environ.get("USERPROFILE") or tempfile.gettempdir())
                      / ".ai-review-cache" / re.sub(r"[^\w.-]", "_", f"{base}_{project}"))
     ensure_cache_repo(cache_dir, repo_url)
-    run_git(cache_dir, "fetch", "--filter=blob:none", "origin",
-            f"refs/merge-requests/{mr_iid}/head", timeout=600)
+    # job tokens cannot fetch hidden refs (refs/merge-requests/*), so read the
+    # source branch tip instead - same content as the MR head for context reads
+    run_git(cache_dir, "fetch", "--filter=blob:none", "origin", source_branch, timeout=600)
     sha = run_git(cache_dir, "rev-parse", "FETCH_HEAD").strip()
     plan = plan_context(llm_base, llm_key, model, effort, diff_text, harness_ctx)
     regions = changed_regions(diff_text)
@@ -396,7 +397,8 @@ def main() -> int:
             try:
                 context = gather_context(base, args.project, args.mr, token,
                                          diff_text, harness_ctx,
-                                         llm_base, llm_key, model, effort)
+                                         llm_base, llm_key, model, effort,
+                                         source_branch=mr["source_branch"])
             except Exception as ctx_err:  # noqa: BLE001 - diff-only fallback
                 print(f"context gathering failed (diff-only fallback): {ctx_err}")
 
