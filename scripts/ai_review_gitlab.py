@@ -63,6 +63,8 @@ Rules:
 
 Output contract (markdown, English):
 1. First line: **VERDICT: APPROVE_WITH_COMMENTS | REQUEST_CHANGES** (pick one).
+   Prefer APPROVE_WITH_COMMENTS unless at least one BLOCKING or confirmed (not
+   speculative) defect exists; unverifiable concerns stay findings, not verdict.
 2. "### Findings" — table: | # | Location | Severity | Issue & suggested fix |.
 3. "### Checklist coverage" — which harnesses were applied vs N/A for this diff.
 4. "### Action items" — checkbox list for the author.
