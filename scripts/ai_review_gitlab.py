@@ -34,6 +34,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -69,7 +70,25 @@ Output contract (markdown, English):
 3. "### Checklist coverage" — which harnesses were applied vs N/A for this diff.
 4. "### Action items" — checkbox list for the author.
 5. One final line on limitations.
-Be concise: the report is posted as one MR comment."""
+Be concise: the report is posted as one MR comment.
+
+A "## Repo context" section may be supplied below the diff: real source fetched
+from the repository at the MR head specifically to verify this change. Cite it
+like any other evidence; if something you would verify is missing from it, say
+so under limitations instead of guessing."""
+
+PLAN_PROMPT = """You are the context planner for a code review. Below are a merge request
+diff and the routed harness checklists. Decide what repository evidence is needed
+to verify the change beyond the diff itself.
+
+Return ONLY a JSON object (no markdown fence, no prose):
+{"files": [{"path": "src/...", "reason": "why"}],
+ "searches": ["symbol-or-pattern", ...]}
+
+Limits: at most 8 files, at most 5 searches. Only request files whose content
+could confirm or refute a finding (callers/callees of changed functions, types
+used, config definitions). If the diff is self-contained (e.g. config/i18n-only),
+return empty lists."""
 
 NOTE_HEADER = """<!-- ai-review:sticky v1 | sha:{sha} | mode:{mode} -->
 ## :robot: AI Harness Review — `{sha8}` — **VERDICT: {verdict}**
@@ -163,6 +182,130 @@ def build_diff_text(diffs: list[dict]) -> tuple[str, bool]:
     return text, truncated
 
 
+def changed_regions(diff_text: str, radius: int = 30) -> dict[str, list[tuple[int, int]]]:
+    """Parse the unified diff for (start, end) new-file line spans per changed file,
+    padded by `radius`, to scope repo-context reads around actual edits."""
+    regions: dict[str, list[tuple[int, int]]] = {}
+    cur: str | None = None
+    new_ln = 0
+    for line in diff_text.splitlines():
+        if line.startswith("+++ b/"):
+            cur = line[6:]
+            regions.setdefault(cur, [])
+        elif line.startswith("@@"):
+            m = re.search(r"\+(\d+)", line)
+            if m and cur:
+                new_ln = int(m.group(1))
+                lo = max(1, new_ln - radius)
+                regions[cur].append((lo, new_ln))
+        elif cur is not None and new_ln and not line.startswith("-"):
+            regions[cur][-1] = (regions[cur][-1][0], new_ln + radius)
+            if line.startswith("+"):
+                new_ln += 1
+            elif not line.startswith("\\"):
+                new_ln += 1
+    return regions
+
+
+def run_git(cache_dir: Path, *args: str, timeout: int = 300) -> str:
+    proc = subprocess.run(["git", "-C", str(cache_dir), *args],
+                          capture_output=True, text=True, timeout=timeout)
+    if proc.returncode != 0:
+        raise RuntimeError(f"git {' '.join(args[:3])}: {proc.stderr.strip()[:200]}")
+    return proc.stdout
+
+
+def ensure_cache_repo(cache_dir: Path, repo_url: str):
+    if not (cache_dir / ".git").exists():
+        print(f"initializing blobless cache clone into {cache_dir} (one-time)...")
+        cache_dir.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["git", "clone", "--filter=blob:none", repo_url, str(cache_dir)],
+                       check=True, capture_output=True, text=True, timeout=1800)
+    return cache_dir
+
+
+def read_file_windows(cache_dir: Path, sha: str, path: str,
+                      spans: list[tuple[int, int]], cap: int = 30_000) -> str:
+    try:
+        blob = run_git(cache_dir, "show", f"{sha}:{path}")
+    except RuntimeError:
+        return f"(file {path} not present at {sha[:8]})"
+    lines = blob.splitlines()
+    if not spans:
+        spans = [(1, min(len(lines), 200))]
+    merged: list[tuple[int, int]] = []
+    for lo, hi in sorted(spans):
+        if merged and lo <= merged[-1][1] + 1:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], hi))
+        else:
+            merged.append((lo, hi))
+    parts, used = [], 0
+    for lo, hi in merged:
+        chunk = "\n".join(f"{n}: {lines[n-1]}" for n in range(lo, min(hi, len(lines)) + 1))
+        if used + len(chunk) > cap:
+            parts.append(f"({path}: window {lo}-{hi} omitted, budget)")
+            continue
+        parts.append(f"--- {path}:{lo}-{hi} ---\n{chunk}")
+        used += len(chunk)
+    return "\n".join(parts)
+
+
+def search_repo(cache_dir: Path, sha: str, pattern: str, cap: int = 6_000) -> str:
+    try:
+        out = run_git(cache_dir, "grep", "-n", "-I", pattern, sha, "--", "*.cpp", "*.hpp", "*.h", "*.cc")
+    except RuntimeError:
+        return f"(no matches for '{pattern}')"
+    return f"--- grep '{pattern}' ---\n" + out[:cap]
+
+
+def plan_context(llm_base, llm_key, model, effort, diff_text, harness_ctx) -> dict:
+    raw = call_llm(llm_base, llm_key, model, PLAN_PROMPT,
+                   f"## Routed harnesses (titles only)\n{harness_ctx[:3000]}\n\n## Diff\n```diff\n{diff_text}\n```")
+    m = re.search(r"\{.*\}", raw, re.S)
+    if not m:
+        return {}
+    try:
+        plan = json.loads(m.group(0))
+    except json.JSONDecodeError:
+        return {}
+    plan.setdefault("files", [])
+    plan.setdefault("searches", [])
+    return plan
+
+
+def gather_context(base, project, mr_iid, token, diff_text, harness_ctx,
+                   llm_base, llm_key, model, effort) -> str:
+    repo_url = env("AI_REVIEW_REPO_URL") or env("CI_REPOSITORY_URL")
+    if not repo_url:
+        return ""
+    cache_dir = Path(env("AI_REVIEW_CACHE_DIR") or
+                     Path(os.environ.get("USERPROFILE") or tempfile.gettempdir())
+                     / ".ai-review-cache" / re.sub(r"[^\w.-]", "_", f"{base}_{project}"))
+    ensure_cache_repo(cache_dir, repo_url)
+    run_git(cache_dir, "fetch", "--filter=blob:none", "origin",
+            f"refs/merge-requests/{mr_iid}/head", timeout=600)
+    sha = run_git(cache_dir, "rev-parse", "FETCH_HEAD").strip()
+    plan = plan_context(llm_base, llm_key, model, effort, diff_text, harness_ctx)
+    regions = changed_regions(diff_text)
+    print(f"context plan: {len(plan['files'])} files, {len(plan['searches'])} searches @ {sha[:8]}")
+    parts, budget = [], 200_000
+    for f in plan["files"][:8]:
+        if budget <= 0:
+            break
+        path = f.get("path", "")
+        spans = regions.get(path) or [(1, 200)]
+        chunk = read_file_windows(cache_dir, sha, path, spans)
+        parts.append(f"### {path} (reason: {f.get('reason', '?')})\n{chunk}")
+        budget -= len(chunk)
+    for pat in plan["searches"][:5]:
+        if budget <= 0:
+            break
+        chunk = search_repo(cache_dir, sha, pat)
+        parts.append(chunk)
+        budget -= len(chunk)
+    return "\n\n".join(parts)
+
+
 def call_llm(base_url: str, api_key: str, model: str, system: str, user: str,
              effort: str = "low") -> str:
     url = base_url.rstrip("/") + "/chat/completions"
@@ -248,13 +391,24 @@ def main() -> int:
         diff_text, truncated = build_diff_text(diffs)
         harness_ctx = read_harness_context(harnesses, standards)
 
+        context = ""
+        if env("AI_REVIEW_CONTEXT", "on") == "on" and llm_key:
+            try:
+                context = gather_context(base, args.project, args.mr, token,
+                                         diff_text, harness_ctx,
+                                         llm_base, llm_key, model, effort)
+            except Exception as ctx_err:  # noqa: BLE001 - diff-only fallback
+                print(f"context gathering failed (diff-only fallback): {ctx_err}")
+
         trunc_note = "NOTE: diff is truncated.\n" if truncated else ""
+        ctx_section = f"\n## Repo context (fetched from {sha[:8]} for verification)\n{context}\n" if context else ""
         user_prompt = (
             f"Merge request !{args.mr}: {mr['title']}\n"
             f"Branch: {mr['source_branch']} -> {mr['target_branch']} @ {sha[:8]}\n"
             f"Changed files: {', '.join(changed)}\n\n"
             f"{trunc_note}"
             f"## Harness checklists routed for these paths\n{harness_ctx}\n\n"
+            f"{ctx_section}"
             f"## Full MR diff\n```diff\n{diff_text}\n```\n\nProduce the review report now."
         )
         report = call_llm(llm_base, llm_key, model, SYSTEM_PROMPT, user_prompt, effort=effort)
