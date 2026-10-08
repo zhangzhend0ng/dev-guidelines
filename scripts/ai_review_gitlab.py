@@ -282,6 +282,9 @@ def gather_context(base, project, mr_iid, token, diff_text, harness_ctx,
                      Path(os.environ.get("USERPROFILE") or tempfile.gettempdir())
                      / ".ai-review-cache" / re.sub(r"[^\w.-]", "_", f"{base}_{project}"))
     ensure_cache_repo(cache_dir, repo_url)
+    # CI_REPOSITORY_URL embeds an ephemeral job token: a cached clone's origin
+    # keeps the previous job's dead token, so refresh the URL every run
+    run_git(cache_dir, "remote", "set-url", "origin", repo_url)
     # job tokens cannot fetch hidden refs (refs/merge-requests/*), so read the
     # source branch tip instead - same content as the MR head for context reads
     run_git(cache_dir, "fetch", "--filter=blob:none", "origin", source_branch, timeout=600)
