@@ -56,6 +56,10 @@ Rules:
 - Do not re-report what is already correct; a short "verified correct" list is fine.
 - Distinguish real defects from style questions; severity order: BLOCKING > QUESTION > MINOR > ADVISORY.
 - If the diff is partial (truncated) or coverage is incomplete, say so explicitly.
+- Severity discipline: BLOCKING is reserved for defects provable from the provided
+  diff/context. Facts you cannot verify (external repos, branch names, environment
+  config, other files) must at most be QUESTION severity, never BLOCKING, and must
+  be phrased as unverified assumptions.
 
 Output contract (markdown, English):
 1. First line: **VERDICT: APPROVE_WITH_COMMENTS | REQUEST_CHANGES** (pick one).
