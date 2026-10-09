@@ -180,8 +180,6 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
 |----|-------|----------|------|--------|---------|-------------|
 | lava-login-logout-state-machine | [Lava Login/Logout State Machine Pre-Check](projects/lava/login-logout-state-machine.md) | dart | P | draft | 2026.09.1 | - |
-| snapmaker-orca-coding-standards | [SnapmakerOrca C++ Coding Standards](projects/snapmaker-orca/coding-standards.md) | cpp | P | draft | 2026.06 | - |
-| snapmaker-orca-workflow | [SnapmakerOrca PR and Workflow Standards](projects/snapmaker-orca/workflow-standards.md) | common | P | draft | 2026.09.2 | - |
 
 ### resource-management
 

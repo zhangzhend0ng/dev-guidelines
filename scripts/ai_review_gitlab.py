@@ -129,6 +129,62 @@ def fetch_mr(base: str, project: str, mr_iid: str, token: str):
     return mr, diffs
 
 
+def load_module_map(standards_dir: str | None) -> list[dict]:
+    """Load projects/<std>/modules.yml: [{name, paths, owners, checklist}].
+    Empty list (routing off) when the dir or file is absent/unreadable."""
+    if not standards_dir:
+        return []
+    p = DG_ROOT / standards_dir / "modules.yml"
+    if not p.is_file():
+        return []
+    import yaml  # pyyaml is installed by the CI job before this script runs
+    try:
+        data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError as exc:
+        print(f"module map unreadable ({exc}); module routing off")
+        return []
+    mods = data.get("modules") or []
+    return [m for m in mods if isinstance(m, dict) and m.get("name") and m.get("paths")]
+
+
+def match_modules(module_map: list[dict], changed: list[str]) -> list[dict]:
+    """First prefix hit wins per file; returns matched modules in map order.
+    Entries are plain path-prefixes, so a stem like src/libslic3r/Print matches
+    the whole Print* file family (Print.cpp, PrintConfig.cpp, ...) AND the
+    Print/ directory if one existed - the starter map relies on this and picks
+    stems with no colliding siblings in the repo."""
+    hit: set[str] = set()
+    for path in changed:
+        for m in module_map:
+            if any(path.startswith(str(pre).rstrip("/")) for pre in m["paths"]):
+                hit.add(m["name"])
+                break
+    return [m for m in module_map if m["name"] in hit]
+
+
+def module_checklist_ctx(modules: list[dict], budget: int = 60_000) -> str:
+    parts: list[str] = []
+    for m in modules:
+        rel = m.get("checklist")
+        if not rel or budget <= 0:
+            continue
+        p = DG_ROOT / rel
+        if not p.is_file():
+            continue
+        chunk = p.read_text(encoding="utf-8", errors="replace")[:budget]
+        budget -= len(chunk)
+        parts.append(f"### Module checklist (P): {m['name']}\n{chunk}")
+    return "\n\n".join(parts)
+
+
+def owners_section(modules: list[dict]) -> str:
+    """@mention block for touched modules. Mentions notify on note creation;
+    in-place edits on later pushes do not re-notify (GitLab behavior)."""
+    lines = [f"- {m['name']}: {' '.join(m['owners'])}"
+             for m in modules if m.get("owners")]
+    return "\n### 模块负责人\n" + "\n".join(lines) + "\n" if lines else ""
+
+
 def route_harnesses(changed_files: list[str]) -> tuple[list[str], list[str]]:
     """Returns (harness_relpaths, unmatched_files). Exit 1 = partial coverage."""
     script = DG_ROOT / "scripts" / "route_harnesses.py"
@@ -345,18 +401,75 @@ def extract_verdict(body: str) -> str:
     return m.group(1) if m else "SEE_REPORT"
 
 
+def load_feishu_ids(stdards_dir: str | None = None) -> dict:
+    """gitlab-username -> feishu open_id map from projects/<std>/modules.yml."""
+    std = stdards_dir or env("AI_REVIEW_PROJECT_STANDARDS")
+    if not std:
+        return {}
+    p = DG_ROOT / std / "modules.yml"
+    if not p.is_file():
+        return {}
+    import yaml
+    try:
+        data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError:
+        return {}
+    return {str(k): str(v) for k, v in (data.get("feishu_open_ids") or {}).items()}
+
+
+def notify_feishu(modules, mr, verdict, note_result, standards_dir=None):
+    """Ping touched-module owners in the Feishu notify group (custom-bot
+    webhook, FEISHU_WEBHOOK_URL masked CI variable). Only fires when the
+    sticky note was newly created (mirrors GitLab mention-on-create), so
+    repeated pushes on the same MR do not re-ping. Never gates the review."""
+    hook = env("FEISHU_WEBHOOK_URL")
+    if not hook or not str(note_result).startswith("posted"):
+        return
+    ids = load_feishu_ids(standards_dir)
+    ats, seen = [], set()
+    for m in modules:
+        for o in m.get("owners") or []:
+            uname = str(o).lstrip("@")
+            if uname in seen:
+                continue
+            seen.add(uname)
+            oid = ids.get(uname)
+            ats.append(f'<at user_id="{oid}"></at>' if oid else o)
+    if not ats:
+        return
+    mods = ", ".join(sorted({m["name"] for m in modules}))
+    link = mr.get("web_url") or (
+        f"http://{env('GITLAB_HOST')}/{env('CI_PROJECT_PATH', 'snapmaker_orca/OrcaSlicer')}"
+        f"/-/merge_requests/{mr['iid']}")
+    text = (f"【AI 评审】!{mr['iid']} {mr['title']}\n"
+            f"VERDICT: {verdict} | 模块: {mods}\n{link}\n\n{' '.join(ats)}")
+    req = urllib.request.Request(
+        hook, data=json.dumps({"msg_type": "text", "content": {"text": text}}).encode(),
+        method="POST", headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        body = json.loads(resp.read() or b"{}")
+    if body.get("code") != 0:
+        print(f"feishu notify rejected: {body}")
+    else:
+        print(f"feishu notify sent to: {', '.join(sorted(seen))}")
+
+
 def post_sticky_note(base: str, project: str, mr_iid: str, token: str, body: str):
     """Find the previous sticky note (by marker) authored by this token, edit it;
     otherwise post a new one."""
-    notes = gitlab(base, project, f"merge_requests/{mr_iid}/notes?per_page=100&sort=desc",
-                   token)
     user = http("GET", f"http://{base}/api/v4/user", token=token)
     uid = user["id"]
-    for note in notes:
-        if note["author"]["id"] == uid and MARKER_RE.search(note["body"]):
-            gitlab(base, project, f"merge_requests/{mr_iid}/notes/{note['id']}", token,
-                   method="PUT", payload={"body": body})
-            return f"updated note {note['id']}"
+    for page in range(1, 6):  # newest first; walk pages so >100 notes still dedup
+        notes = gitlab(base, project,
+                       f"merge_requests/{mr_iid}/notes?per_page=100&sort=desc&page={page}",
+                       token)
+        if not notes:
+            break
+        for note in notes:
+            if note["author"]["id"] == uid and MARKER_RE.search(note["body"]):
+                gitlab(base, project, f"merge_requests/{mr_iid}/notes/{note['id']}", token,
+                       method="PUT", payload={"body": body})
+                return f"updated note {note['id']}"
     note = gitlab(base, project, f"merge_requests/{mr_iid}/notes", token, method="POST",
                   payload={"body": body})
     return f"posted note {note['id']}"
@@ -392,8 +505,16 @@ def main() -> int:
         harnesses, unmatched = route_harnesses(changed)
         print(f"routed {len(harnesses)} harnesses, {len(unmatched)} unmatched files")
 
+        module_map = load_module_map(standards)
+        modules = match_modules(module_map, changed)
+        if modules:
+            print(f"modules: {', '.join(m['name'] for m in modules)}")
+
         diff_text, truncated = build_diff_text(diffs)
         harness_ctx = read_harness_context(harnesses, standards)
+        mod_ctx = module_checklist_ctx(modules)
+        if mod_ctx:
+            harness_ctx += f"\n\n{mod_ctx}"
 
         context = ""
         if env("AI_REVIEW_CONTEXT", "on") == "on" and llm_key:
@@ -418,12 +539,19 @@ def main() -> int:
         )
         report = call_llm(llm_base, llm_key, model, SYSTEM_PROMPT, user_prompt, effort=effort)
 
+        mods_line = (f"**Modules**: {', '.join(m['name'] for m in modules)}\n"
+                     if modules else "")
         body = (NOTE_HEADER.format(sha=sha, sha8=sha[:8], mode="ci" if in_ci else "local",
                                    verdict=extract_verdict(report))
-                + "\n" + report + f"\n\n---\n:model `{model}` :pipeline "
+                + "\n" + mods_line + report + owners_section(modules)
+                + f"\n\n---\n:model `{model}` :pipeline "
                 f"`{env('CI_PIPELINE_URL', 'local dry-run')}`\n")
         result = post_sticky_note(base, args.project, args.mr, token, body)
         print("sticky note:", result)
+        try:
+            notify_feishu(modules, mr, extract_verdict(report), result, standards)
+        except Exception as fs_err:  # noqa: BLE001 - notify must never gate
+            print(f"feishu notify failed (ignored): {fs_err}")
         return 0
     except Exception as exc:  # noqa: BLE001 - reviewer must never gate an MR
         print(f"ERROR: {exc}", file=sys.stderr)
