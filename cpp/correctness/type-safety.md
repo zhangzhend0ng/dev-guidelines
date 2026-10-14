@@ -27,7 +27,6 @@ related:
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/correctness/compile-time-programming.md"
   - "cpp/correctness/integer-safety.md"
-  - "projects/snapmaker-orca/coding-standards.md"
 supersedes: []
 changelog:
   - "2026.06: Initial draft"

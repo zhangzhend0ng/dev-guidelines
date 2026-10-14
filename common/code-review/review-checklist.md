@@ -20,7 +20,6 @@ based_on:
 related:
   - "common/code-review/harness-driven-review.md"
   - "common/code-review/ai-generated-code-failure-modes.md"
-  - "projects/snapmaker-orca/workflow-standards.md"
   - "templates/pr-description.template.md"
 supersedes: []
 changelog:

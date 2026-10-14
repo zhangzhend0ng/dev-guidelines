@@ -32,7 +32,6 @@ related:
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/memory/raii.md"
   - "cpp/memory/move-semantics.md"
-  - "projects/snapmaker-orca/coding-standards.md"
 supersedes: []
 changelog:
   - "2026.05: Initial draft"

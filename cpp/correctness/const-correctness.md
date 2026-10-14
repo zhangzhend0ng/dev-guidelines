@@ -22,7 +22,6 @@ related:
   - "cpp/lifetime/dangling-references.md"
   - "cpp/correctness/undefined-behavior.md"
   - "cpp/third-party/wxwidgets-3-1-5.md"
-  - "projects/snapmaker-orca/coding-standards.md"
 supersedes: []
 changelog:
   - "2026.05: Initial draft"

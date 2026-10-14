@@ -24,7 +24,6 @@ apply_globs: ["**/*.cpp", "**/*.cc", "**/*.cxx", "**/*.hpp", "**/*.h"]
 related:
   - "common/security/input-validation.md"
   - "cpp/correctness/interface-contracts.md"
-  - "projects/snapmaker-orca/coding-standards.md"
 supersedes: []
 changelog:
   - "2026.05: Migrated from root; added frontmatter per harness template"
