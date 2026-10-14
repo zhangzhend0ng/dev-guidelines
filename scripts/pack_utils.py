@@ -13,7 +13,10 @@ INSTALLED_PATH = ROOT / ".dev-guidelines-installed.yml"
 # that walks the repo for harness files (validate.py, generate_index.py,
 # check_review_signals.py) so a single edit stays consistent across all of them.
 # Drift here would let one script see a harness another skips (or vice versa).
-HARNESS_SKIP_DIRS = {".git", ".claudine", "archive", "templates", "docs", ".github"}
+# "builds": local pipeline workspaces (gitignored installs of this repo into
+# downstream projects, e.g. builds/*/OrcaSlicer/dg/) — full harness copies whose
+# ids duplicate the originals, poisoning validate.py and INDEX.md generation.
+HARNESS_SKIP_DIRS = {".git", ".claudine", "archive", "templates", "docs", ".github", "builds"}
 
 
 def load_pack(pack_id):
