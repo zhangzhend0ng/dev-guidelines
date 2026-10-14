@@ -159,6 +159,12 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 |----|-------|----------|------|--------|---------|-------------|
 | common-naming-conventions | [Naming Conventions Checklist](common/naming/naming-conventions.md) | common | C | draft | 2026.06 | - |
 
+### packaging
+
+| ID | Title | Language | Tier | Status | Version | Apply Globs |
+|----|-------|----------|------|--------|---------|-------------|
+| common-nsis-installer-scripts | [NSIS Installer Script Checklist](common/packaging/nsis-installer-scripts.md) | common | C | draft | 2026.10 | - |
+
 ### performance
 
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
@@ -180,6 +186,7 @@ Cross-project shared code review and generation guidelines. Each harness is a ch
 | ID | Title | Language | Tier | Status | Version | Apply Globs |
 |----|-------|----------|------|--------|---------|-------------|
 | lava-login-logout-state-machine | [Lava Login/Logout State Machine Pre-Check](projects/lava/login-logout-state-machine.md) | dart | P | draft | 2026.09.1 | - |
+| snapmaker-orca-windows-installer | [Snapmaker Orca Windows Installer Pipeline](projects/snapmaker-orca/windows-installer.md) | cpp | P | draft | 2026.10 | - |
 
 ### resource-management
 
